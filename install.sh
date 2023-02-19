@@ -16,7 +16,7 @@ get_backup_name() {
 
 backup_and_set_zdotdir() {
 	echo Backing up ~/.zshenv into $MY_ZDOTDIR/backups
-	[[ ! -d $MY_ZDOTDIR/backups ]] mkdir $MY_ZDOTDIR/backups || echo Skiping backup directory creation 
+	[[ ! -d $MY_ZDOTDIR/backups ]] && mkdir $MY_ZDOTDIR/backups || echo Skiping backup directory creation 
 	BACKUP_NAME=$(get_backup_name zshenv)
 	cp ~/.zshenv $BACKUP_NAME
 
@@ -27,6 +27,6 @@ backup_and_set_zdotdir() {
 
 # init
 () {
-	[[ -z "${ZDOTDIR}" || $ZDOTDIR != $MY_ZDOTDIR ]] && backup_and_set_zdotdir || echo ZDOTDIR is already configured.
 	git clone https://github.com/abalamilla/zdotdir.git $MY_ZDOTDIR
+	[[ -z "${ZDOTDIR}" || $ZDOTDIR != $MY_ZDOTDIR ]] && backup_and_set_zdotdir || echo ZDOTDIR is already configured.
 }
