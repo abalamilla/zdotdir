@@ -11,7 +11,7 @@ get_backup_name() {
 	RESOURCE_NAME=$2
 	DATE=$(date +%F-%H_%M_%S)
 
-	return "$RESOURCE_NAME_-$DATE.bkp"
+	echo "$RESOURCE_NAME_-$DATE.bkp"
 }
 
 backup_and_set_zdotdir() {
