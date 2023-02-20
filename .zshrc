@@ -12,11 +12,13 @@ set -e
 [[ -f $AUTOLOAD_FUNCTIONS ]] && source $AUTOLOAD_FUNCTIONS || { echo "$AUTOLOAD_FUNCTIONS not found."; return 127; }
 set +e
 
-# loading prompt
-[[ -f $MY_PROMTP_PATH ]] && source $MY_PROMTP_PATH || echo "$MY_PROMTP_PATH not found. Skipping file load."
+SOURCE_PATHS=(
+  $MY_PROMTP_PATH     # custom prompt
+  $ZSH_OPTIONS        # zsh options
+  )
 
-# setting up zsh options
-[[ -f $ZSH_OPTIONS ]] && source $ZSH_OPTIONS || echo "$ZSH_OPTIONS not found. Skipping file load."
+for f ($^SOURCE_PATHS(.N)) ssource $f
+unset SOURCE_PATHS
 
 # zsh profiling disabled
 [[ "${ZDOTFILES_DEBUG:-0}" == 0 ]] || zprof
