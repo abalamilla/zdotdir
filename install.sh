@@ -55,6 +55,8 @@ clone_repo() {
 () {
 	REPOS_TO_CLONE=(
 		"abalamilla/zdotdir":$CONFIG_DIR
+		
+		# zsh plugins
 		"Aloxaf/fzf-tab":$ZDOTDIR_PLUGINS
 		"Freed-Wu/fzf-tab-source":$ZDOTDIR_PLUGINS
 		"zsh-users/zsh-autosuggestions":$ZDOTDIR_PLUGINS
@@ -62,6 +64,8 @@ clone_repo() {
 		"zsh-users/zsh-completions":$ZDOTDIR_PLUGINS
 		"lukechilds/zsh-nvm":$ZDOTDIR_PLUGINS
 		"zsh-users/zsh-syntax-highlighting":$ZDOTDIR_PLUGINS
+
+		# vim plugins
 		"sheerun/vim-polyglot":$VIM_PLUGIN_PATH
 		"junegunn/fzf":$VIM_PLUGIN_PATH
 		"junegunn/fzf.vim":$VIM_PLUGIN_PATH
