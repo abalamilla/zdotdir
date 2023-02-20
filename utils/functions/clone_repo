@@ -1,0 +1,23 @@
+# clone a github repository
+get_directory_name() {
+  FROM_PATH=$1
+  awk -F '/' '{print $NF}' <<< $FROM_PATH
+}
+
+GIT_REPO_PATH=$1
+DEST_PATH=$2
+PROJECT_NAME="$(get_directory_name $GIT_REPO_PATH)"
+FINAL_DEST_PATH="$2/$PROJECT_NAME"
+GITHUB_URL="https://github.com"
+
+echo Verifying local path: $FINAL_DEST_PATH
+if [ ! -d $FINAL_DEST_PATH ]; then
+   echo "Cloning repository..."
+   git clone $GITHUB_URL/$GIT_REPO_PATH $FINAL_DEST_PATH
+else
+   echo "Updating repository..."
+   git -C $FINAL_DEST_PATH pull
+fi
+echo "Installed on: $FINAL_DEST_PATH"
+
+# vim:ft=zsh

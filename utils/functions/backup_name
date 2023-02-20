@@ -1,0 +1,7 @@
+# adds current date to the specified value
+RESOURCE_NAME=$1
+DATE=$(date +%F-%H_%M_%S)
+
+echo $RESOURCE_NAME"_$DATE.bkp"
+
+# vim:ft=zsh

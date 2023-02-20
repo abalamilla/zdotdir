@@ -1,0 +1,11 @@
+# backup a file
+FILE_TO_BACKUP=$1
+DEST_PATH=$2
+NEW_FILE_NAME=${3:-FILE_TO_BACKUP}
+FINAL_FILE="$DEST_PATH/$NEW_FILE_NAME"
+
+[[ -d $DEST_PATH ]] && mkdir -p $DEST_PATH || echo Directory already exists.
+
+cp $FILE_TO_BACKUP $FINAL_FILE
+
+# vim:ft=zsh

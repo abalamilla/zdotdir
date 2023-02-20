@@ -1,0 +1,20 @@
+# update zdotdir in zshenv
+MY_ZDOTDIR=$1
+
+usage() {
+  cat << HELP_USAGE
+  Updates ZDOTDIR environment variable from .zshenv
+
+  set_zdotdir /path/to/custom/zdotdir
+HELP_USAGE
+}
+
+[[ -z $MY_ZDOTDIR ]] && { usage; return 1; }
+
+# cleaning
+sed -i -E 's/ZDOTDIR=.*//g' ~/.zshenv
+
+# setting new value
+echo ZDOTDIR=$MY_ZDOTDIR >> ~/.zshenv
+
+# vim:ft=zsh
