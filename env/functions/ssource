@@ -1,0 +1,15 @@
+
+# Secure source
+usage() {
+	cat <<HELP_USAGE
+	Usage: ssource path
+	 path		valid file to source
+HELP_USAGE
+	}
+
+USER_PATH=$1
+[[ -z $USER_PATH ]] && { usage; return 1; }
+
+[[ -f $USER_PATH ]] && source $USER_PATH || { echo "$USER_PATH not found. Skiping file sourcing."; return 1; }
+
+# vim:ft=zsh
