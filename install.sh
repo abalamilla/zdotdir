@@ -51,6 +51,15 @@ clone_repo() {
 
 # init
 () {
-	clone_repo abalamilla/zdotdir $CONFIG_DIR
+	REPOS_TO_CLONE=(
+		"abalamilla/zdotdir":$CONFIG_DIR
+	)
+
+	typeset -T r CURRENT_REPO
+	for r in $REPOS_TO_CLONE; do
+		typeset -p r
+		clone_repo $CURRENT_REPO[1] $CURRENT_REPO[2]
+	done
+
 	[[ -z "${ZDOTDIR}" || $ZDOTDIR != $MY_ZDOTDIR ]] && backup_and_set_zdotdir || echo ZDOTDIR is already configured.
 }
