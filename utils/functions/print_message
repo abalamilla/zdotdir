@@ -1,0 +1,12 @@
+# prints a message
+MESSAGE=$1
+CMD_STATUS=${2:-0}
+
+case $CMD_STATUS in
+	-2) echo "${Purple} Skipping: ${Color_Off} $MESSAGE";;
+	-1) echo "${Cyan} Processing: ${Color_Off} $MESSAGE";;
+	0) echo "${Green}${CHECK_MARK} Success: ${Color_Off} $MESSAGE";;
+	*) echo "${Red}${CROSS_MARK} Error: ${Color_Off} $MESSAGE";;
+esac
+
+# vim:ft=zsh

@@ -10,14 +10,15 @@ PROJECT_NAME="$(get_directory_name $GIT_REPO_PATH)"
 FINAL_DEST_PATH="$2/$PROJECT_NAME"
 GITHUB_URL="https://github.com"
 
-echo Verifying local path: $FINAL_DEST_PATH
+print_message "Verifying local path: $FINAL_DEST_PATH" -1
 if [ ! -d $FINAL_DEST_PATH ]; then
-   echo "Cloning repository..."
+   print_message "Cloning repository..." -1
    git clone $GITHUB_URL/$GIT_REPO_PATH $FINAL_DEST_PATH
 else
-   echo "Updating repository..."
+   print_message "Updating repository..." -1
    git -C $FINAL_DEST_PATH pull
 fi
-echo "Installed on: $FINAL_DEST_PATH"
+
+print_message "Installed on: $FINAL_DEST_PATH" $?
 
 # vim:ft=zsh

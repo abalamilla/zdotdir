@@ -1,4 +1,5 @@
 #!/bin/zsh
+
 CONFIG_DIR=~/.config
 MY_ZDOTDIR=$CONFIG_DIR/zdotdir
 ZDOTDIR_PLUGINS="$MY_ZDOTDIR/plugins"
@@ -6,6 +7,7 @@ VIM_PLUGIN_PATH=$HOME/.vim/pack/plugins/start
 UTILS_PATH=$MY_ZDOTDIR/utils
 BACKUPS_PATH=$MY_ZDOTDIR/backups
 
+source $UTILS_PATH/colors.sh
 source env/autoload_functions.sh $UTILS_PATH
 
 backup_and_set_zdotdir() {
@@ -17,7 +19,7 @@ backup_and_set_zdotdir() {
 
 # init
 () {
-	echo "Installing zdotdir environment..."
+	print_message "Installing zdotdir environment..." -1
 
 	REPOS_TO_CLONE=(
 		"abalamilla/zdotdir":$CONFIG_DIR
@@ -50,5 +52,5 @@ backup_and_set_zdotdir() {
 
 	[[ -z "${ZDOTDIR}" || $ZDOTDIR != $MY_ZDOTDIR ]] && backup_and_set_zdotdir || echo ZDOTDIR is already configured.
 
-	echo "Finish! Enjoy your new environment."
+	print_message "Finish! Enjoy your new environment."
 }
