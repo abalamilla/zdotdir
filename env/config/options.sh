@@ -1,3 +1,4 @@
+#!/bin/zsh
 # setting up zsh options
 # https://zsh.sourceforge.io/Doc/Release/Options.html
 
