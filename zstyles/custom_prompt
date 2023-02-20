@@ -38,8 +38,10 @@ function +vi-git-st() {
 }
 
 # add ${vcs_info_msg_0} to the prompt
-local STATUS=' %(?:🧑🏽‍💻:🚨) '
-PROMPT='${STATUS}%F{cyan}%1~%f %# '
+CURRENT_STATUS=' %(?:🧑🏽‍💻:🚨) '
+PROMPT='${CURRENT_STATUS}%F{cyan}%1~%f %# '
 # Display the VCS information in the right prompt. The {..:- } is a
 # workaround for Zsh below 4.3.9.
 RPROMPT='${vcs_info_msg_0_:- }'
+
+# vim:ft=zsh
