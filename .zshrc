@@ -13,7 +13,6 @@ SOURCE_PATHS=(
   $MY_ZTYLES_PATH         # zsh options
   $MY_ENV_PATH            # environment path
   )
-echo $SOURCE_PATHS
 
 for f ($^SOURCE_PATHS(.N)) ssource $f
 unset SOURCE_PATHS
