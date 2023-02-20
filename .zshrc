@@ -3,19 +3,17 @@
 [[ "${ZDOTFILES_DEBUG:-0}" == 0 ]] || zmodload zsh/zprof
 
 # VARS
-MY_FUNCTIONS_PATH=$ZDOTDIR/env/functions
-AUTOLOAD_FUNCTIONS=$ZDOTDIR/env/autoload_functions.sh
-MY_PROMTP_PATH=$ZDOTDIR/zstyles/custom_prompt
-ZSH_OPTIONS=$ZDOTDIR/env/options
+MY_INITIAL_CONFIGURATION=$ZDOTDIR/env/autoload_functions.sh
+MY_ZTYLES_PATH=($ZDOTDIR/zstyles/*)
+MY_ENV_PATH=($ZDOTDIR/env/config/*)
 
-set -e
-[[ -f $AUTOLOAD_FUNCTIONS ]] && source $AUTOLOAD_FUNCTIONS || { echo "$AUTOLOAD_FUNCTIONS not found."; return 127; }
-set +e
+source $MY_INITIAL_CONFIGURATION
 
 SOURCE_PATHS=(
-  $MY_PROMTP_PATH     # custom prompt
-  $ZSH_OPTIONS        # zsh options
+  $MY_ZTYLES_PATH         # zsh options
+  $MY_ENV_PATH            # environment path
   )
+echo $SOURCE_PATHS
 
 for f ($^SOURCE_PATHS(.N)) ssource $f
 unset SOURCE_PATHS
