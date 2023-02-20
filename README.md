@@ -1,4 +1,4 @@
-# zdotdir
+# zdotdir [![Sparkline](https://stars.medv.io/abalamilla/zdotdir.svg)](https://stars.medv.io/abalamilla/zdotdir)
 My custom zsh configuration
 
 ## Installing
