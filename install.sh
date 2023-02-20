@@ -1,6 +1,7 @@
 #!/bin/zsh
 CONFIG_DIR=~/.config
 MY_ZDOTDIR=$CONFIG_DIR/zdotdir
+ZDOTDIR_PLUGINS="$MY_ZDOTDIR/plugins"
 
 # Setting up ZDOTDIR
 set_zdotdir() {
@@ -53,6 +54,13 @@ clone_repo() {
 () {
 	REPOS_TO_CLONE=(
 		"abalamilla/zdotdir":$CONFIG_DIR
+		"Aloxaf/fzf-tab":$ZDOTDIR_PLUGINS
+		"Freed-Wu/fzf-tab-source":$ZDOTDIR_PLUGINS
+		"zsh-users/zsh-autosuggestions":$ZDOTDIR_PLUGINS
+		"zsh-users/zsh-history-substring-search":$ZDOTDIR_PLUGINS
+		"zsh-users/zsh-completions":$ZDOTDIR_PLUGINS
+		"lukechilds/zsh-nvm":$ZDOTDIR_PLUGINS
+		"zsh-users/zsh-syntax-highlighting":$ZDOTDIR_PLUGINS
 	)
 
 	typeset -T r CURRENT_REPO
