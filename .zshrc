@@ -3,6 +3,7 @@
 [[ "${ZDOTFILES_DEBUG:-0}" == 0 ]] || zmodload zsh/zprof
 
 # VARS
+# IMPORTANT! Order matters
 MY_INITIAL_CONFIGURATION=$ZDOTDIR/env/autoload_functions.sh
 MY_ZTYLES_PATH=($ZDOTDIR/zstyles/*)
 MY_ENV_PATH=($ZDOTDIR/env/config/*)
