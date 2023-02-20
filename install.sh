@@ -25,8 +25,32 @@ backup_and_set_zdotdir() {
 	set_zdotdir
 }
 
+get_project_name() {
+	FROM_PATH=$1
+
+	awk -F '/' '{print $NF}' <<< $FROM_PATH
+}
+
+clone_repo() {
+	GIT_REPO_PATH=$1
+    DEST_PATH=$2
+	PROJECT_NAME="$(get_project_name $GIT_REPO_PATH)"
+	FINAL_DEST_PATH="$2/$PROJECT_NAME"
+    GITHUB_URL="https://github.com"
+
+	echo Verifying local path: $FINAL_DEST_PATH
+    if [ ! -d $FINAL_DEST_PATH ]; then
+        echo "Cloning repository..."
+        git clone $GITHUB_URL/$GIT_REPO_PATH $FINAL_DEST_PATH
+    else
+        echo "Updating repository..."
+        git -C $FINAL_DEST_PATH pull
+    fi
+    echo "Installed on: $FINAL_DEST_PATH"
+}
+
 # init
 () {
-	git clone https://github.com/abalamilla/zdotdir.git $MY_ZDOTDIR
+	clone_repo abalamilla/zdotdir $CONFIG_DIR
 	[[ -z "${ZDOTDIR}" || $ZDOTDIR != $MY_ZDOTDIR ]] && backup_and_set_zdotdir || echo ZDOTDIR is already configured.
 }
