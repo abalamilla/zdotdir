@@ -2,6 +2,7 @@
 CONFIG_DIR=~/.config
 MY_ZDOTDIR=$CONFIG_DIR/zdotdir
 ZDOTDIR_PLUGINS="$MY_ZDOTDIR/plugins"
+VIM_PLUGIN_PATH=$HOME/.vim/pack/plugins/start
 
 # Setting up ZDOTDIR
 set_zdotdir() {
@@ -61,6 +62,14 @@ clone_repo() {
 		"zsh-users/zsh-completions":$ZDOTDIR_PLUGINS
 		"lukechilds/zsh-nvm":$ZDOTDIR_PLUGINS
 		"zsh-users/zsh-syntax-highlighting":$ZDOTDIR_PLUGINS
+		"sheerun/vim-polyglot":$VIM_PLUGIN_PATH
+		"junegunn/fzf":$VIM_PLUGIN_PATH
+		"junegunn/fzf.vim":$VIM_PLUGIN_PATH
+		"eslint/eslint":$VIM_PLUGIN_PATH
+		"prettier/vim-prettier":$VIM_PLUGIN_PATH
+		"ludovicchabant/vim-gutentags":$VIM_PLUGIN_PATH
+		"vim-autoformat/vim-autoformat":$VIM_PLUGIN_PATH
+		"junegunn/vader.vim":$VIM_PLUGIN_PATH
 	)
 
 	typeset -T r CURRENT_REPO
