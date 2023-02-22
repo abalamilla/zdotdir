@@ -6,14 +6,15 @@ get_directory_name() {
 
 GIT_REPO_PATH=$1
 DEST_PATH=$2
+GIT_OPTIONS=$3
 PROJECT_NAME="$(get_directory_name $GIT_REPO_PATH)"
-FINAL_DEST_PATH="$2/$PROJECT_NAME"
+FINAL_DEST_PATH="$DEST_PATH/$PROJECT_NAME"
 GITHUB_URL="https://github.com"
 
 print_message "Verifying local path: $FINAL_DEST_PATH" -1
 if [ ! -d $FINAL_DEST_PATH ]; then
    print_message "Cloning repository..." -1
-   git clone $GITHUB_URL/$GIT_REPO_PATH $FINAL_DEST_PATH
+   git clone $GIT_OPTIONS $GITHUB_URL/$GIT_REPO_PATH $FINAL_DEST_PATH
 else
    print_message "Updating repository..." -1
    git -C $FINAL_DEST_PATH pull
