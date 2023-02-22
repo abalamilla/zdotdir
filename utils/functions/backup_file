@@ -4,6 +4,16 @@ DEST_PATH=$2
 NEW_FILE_NAME=${3:-FILE_TO_BACKUP}
 FINAL_FILE="$DEST_PATH/$NEW_FILE_NAME"
 
+usage() {
+	cat <<HELP_USAGE
+	Backup a file to a destination path
+
+	backup_file file_path destination_path [new_file_name]
+HELP_USAGE
+}
+
+[[ -z $FILE_TO_BACKUP || -z $DEST_PATH ]] && { usage; return 1; }
+
 print_message "Creating directory..." -1
 [[ -d $DEST_PATH ]] && mkdir -p $DEST_PATH || echo Directory already exists.
 
