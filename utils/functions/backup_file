@@ -4,8 +4,11 @@ DEST_PATH=$2
 NEW_FILE_NAME=${3:-FILE_TO_BACKUP}
 FINAL_FILE="$DEST_PATH/$NEW_FILE_NAME"
 
+print_message "Creating directory..." -1
 [[ -d $DEST_PATH ]] && mkdir -p $DEST_PATH || echo Directory already exists.
 
+print_message "Copying file..." -1
 cp $FILE_TO_BACKUP $FINAL_FILE
+print_message "File copied: $FILE_TO_BACKUP -> $FINAL_FILE"
 
 # vim:ft=zsh
