@@ -4,3 +4,5 @@ plugins
 office_profile.sh
 backups
 themes
+.zcompcache
+.zcompdump
