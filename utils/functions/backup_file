@@ -14,6 +14,7 @@ HELP_USAGE
 
 [[ -z $FILE_TO_BACKUP || -z $DEST_PATH ]] && { usage; return 1; }
 [[ ! -f $FILE_TO_BACKUP ]] && { print_message "The file $FILE_TO_BACKUP do not exists." 1; return 1; }
+[[ ! -w $DEST_PATH ]] && { print_message "Current user do not have write permissions over $DEST_PATH."; return 1; }
 
 print_message "Creating directory..." -1
 [[ -d $DEST_PATH ]] && mkdir -p $DEST_PATH || echo Directory already exists.
