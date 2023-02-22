@@ -20,3 +20,5 @@ unset SOURCE_PATHS
 
 # zsh profiling disabled
 [[ "${ZDOTFILES_DEBUG:-0}" == 0 ]] || zprof
+
+# vim:ft=zsh
