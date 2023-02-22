@@ -6,6 +6,7 @@ ZDOTDIR_PLUGINS="$MY_ZDOTDIR/plugins"
 VIM_PLUGIN_PATH=$HOME/.vim/pack/plugins/start
 UTILS_PATH=$MY_ZDOTDIR/utils
 BACKUPS_PATH=$MY_ZDOTDIR/backups
+ZDOTDIR_THEMES=$MY_ZDOTDIR/themes
 
 source $UTILS_PATH/colors.sh
 source env/autoload_functions.sh $UTILS_PATH
@@ -42,12 +43,15 @@ backup_and_set_zdotdir() {
 		"ludovicchabant/vim-gutentags":$VIM_PLUGIN_PATH
 		"vim-autoformat/vim-autoformat":$VIM_PLUGIN_PATH
 		"junegunn/vader.vim":$VIM_PLUGIN_PATH
+
+		# themes
+		"romkatv/powerlevel10k":$ZDOTDIR_THEMES:"--depth=1"
 	)
 
 	typeset -T r CURRENT_REPO
 	for r in $REPOS_TO_CLONE; do
 		typeset -p r
-		clone_repo $CURRENT_REPO[1] $CURRENT_REPO[2]
+		clone_repo $CURRENT_REPO[1] $CURRENT_REPO[2] $CURRENT_REPO[3]
 	done
 
 	[[ -z "${ZDOTDIR}" || $ZDOTDIR != $MY_ZDOTDIR ]] && backup_and_set_zdotdir || echo ZDOTDIR is already configured.
