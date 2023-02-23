@@ -8,9 +8,6 @@ UTILS_PATH=$MY_ZDOTDIR/utils
 BACKUPS_PATH=$MY_ZDOTDIR/backups
 ZDOTDIR_THEMES=$MY_ZDOTDIR/themes
 
-source $UTILS_PATH/colors.sh
-source env/autoload_functions.sh $UTILS_PATH
-
 backup_and_set_zdotdir() {
 	BACKUP_NAME="$(backup_name "zshenv")"
 	backup_file ~/.zshenv $BACKUPS_PATH $BACKUP_NAME
@@ -18,10 +15,7 @@ backup_and_set_zdotdir() {
 	set_zdotdir "$MY_ZDOTDIR"
 }
 
-# init
-() {
-	print_message "Installing zdotdir environment..." -1
-
+clone_repos() {
 	REPOS_TO_CLONE=(
 		"abalamilla/zdotdir":$CONFIG_DIR
 		
@@ -53,7 +47,16 @@ backup_and_set_zdotdir() {
 		typeset -p r
 		clone_repo $CURRENT_REPO[1] $CURRENT_REPO[2] $CURRENT_REPO[3]
 	done
+}
 
+# init
+() {
+	source $UTILS_PATH/colors.sh
+	source env/autoload_functions.sh $UTILS_PATH
+
+	clone_repos
+
+	print_message "Installing zdotdir environment..." -1
 	[[ -z "${ZDOTDIR}" || $ZDOTDIR != $MY_ZDOTDIR ]] && backup_and_set_zdotdir || echo ZDOTDIR is already configured.
 
 	print_message "Finish! Enjoy your new environment."
