@@ -6,3 +6,4 @@ backups
 themes
 .zcompcache
 .zcompdump
+Brewfile.lock.json
