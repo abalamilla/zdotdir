@@ -52,12 +52,37 @@ clone_repos() {
 	print_message "Finished cloning plugins and themes"
 }
 
+install_homebrew() {
+	print_message "Installing Homebrew" -1
+	# install brew
+    if [ ! -x "$(command -v brew)" ]; then
+        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    else
+        print_message "Brew is already installed" -2
+    fi
+	print_message "Brew installed"
+}
+
+install_brewfile() {
+  	print_message "Installing Brewfile" -1
+
+	brew update
+    brew upgrade
+
+    # install brewfile dependencies
+    brew bundle install
+
+	print_message "Installing Brewfile finished" $?
+}
+
 # init
 () {
 	source $UTILS_PATH/colors.sh
 	source env/autoload_functions.sh $UTILS_PATH
 
 	clone_repos
+	install_homebrew
+	install_brewfile
 
 	print_message "Installing zdotdir environment..." -1
 	[[ -z "${ZDOTDIR}" || $ZDOTDIR != $MY_ZDOTDIR ]] && backup_and_set_zdotdir || echo ZDOTDIR is already configured.
