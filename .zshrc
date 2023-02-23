@@ -16,6 +16,7 @@ MY_ZTYLES_PATH=($ZDOTDIR/zstyles/*)
 MY_ENV_PATH=($ZDOTDIR/env/config/*)
 ZSH_THEME=$ZDOTDIR/themes/powerlevel10k/powerlevel10k.zsh-theme
 HB_CNF_HANDLER="$(brew --repository)/Library/Taps/homebrew/homebrew-command-not-found/handler.sh"
+AUTOJUMP_SH="$(brew --repository)/etc/autojump.sh"
 
 source $MY_INITIAL_CONFIGURATION
 
@@ -24,9 +25,16 @@ SOURCE_PATHS=(
   $MY_ENV_PATH            # environment path
   $ZSH_THEME
   $HB_CNF_HANDLER
-  )
+  $AUTOJUMP_SH
+)
 
-for f ($^SOURCE_PATHS(.N)) ssource $f
+# zsh glob expansion
+# . only files
+# N sets the NULL_GLOB option for the current pattern
+# @ symlinks (required for autojump)
+# https://zsh.sourceforge.io/Doc/Release/Expansion.html
+# ------👇🏼----------👇🏼----
+for f ($^SOURCE_PATHS(.N,@)) ssource $f
 unset SOURCE_PATHS
 
 # zsh profiling disabled
