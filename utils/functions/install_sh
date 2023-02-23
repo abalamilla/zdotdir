@@ -1,0 +1,15 @@
+# gets and execute an installer from sh file
+SH_URL=$1
+COMMAND=$2
+
+print_message "Attempting to install $COMMAND" -1
+
+if [ ! -x "$(command -v $COMMAND)" ]; then
+	/bin/bash -c "$(curl -fsSL $SH_URL)"
+else
+	print_message "$COMMAND is already installed" -2
+fi
+
+print_message "Finished processing $COMMAND installation" $?
+
+# vim:ft=zsh
