@@ -15,6 +15,7 @@ MY_INITIAL_CONFIGURATION=$ZDOTDIR/env/autoload_functions.sh
 MY_ZTYLES_PATH=($ZDOTDIR/zstyles/*)
 MY_ENV_PATH=($ZDOTDIR/env/config/*)
 ZSH_THEME=$ZDOTDIR/themes/powerlevel10k/powerlevel10k.zsh-theme
+HB_CNF_HANDLER="$(brew --repository)/Library/Taps/homebrew/homebrew-command-not-found/handler.sh"
 
 source $MY_INITIAL_CONFIGURATION
 
@@ -22,6 +23,7 @@ SOURCE_PATHS=(
   $MY_ZTYLES_PATH         # zsh options
   $MY_ENV_PATH            # environment path
   $ZSH_THEME
+  $HB_CNF_HANDLER
   )
 
 for f ($^SOURCE_PATHS(.N)) ssource $f
