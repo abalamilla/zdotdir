@@ -43,24 +43,24 @@ clone_repos() {
 		"romkatv/powerlevel10k":$ZDOTDIR_THEMES:"--depth=1"
 	)
 
-	typeset -T r CURRENT_REPO
 	for r in $REPOS_TO_CLONE; do
-		typeset -p r
+		CURRENT_REPO=(${(s(:))r})
 		clone_repo $CURRENT_REPO[1] $CURRENT_REPO[2] $CURRENT_REPO[3]
 	done
 
 	print_message "Finished cloning plugins and themes"
 }
 
-install_homebrew() {
-	print_message "Installing Homebrew" -1
-	# install brew
-    if [ ! -x "$(command -v brew)" ]; then
-        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-    else
-        print_message "Brew is already installed" -2
-    fi
-	print_message "Brew installed"
+install_apps() {
+	APPS=(
+		"https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh"::"brew"
+		"https://get.sdkman.io"::"sdk"
+	)
+
+	for a in $APPS; do
+		CURRENT_APP=(${(s(::))a})
+		install_sh $CURRENT_APP[1] $CURRENT_APP[2]
+	done
 }
 
 install_brewfile() {
@@ -81,7 +81,7 @@ install_brewfile() {
 	source env/autoload_functions.sh $UTILS_PATH
 
 	clone_repos
-	install_homebrew
+	install_apps
 	install_brewfile
 
 	print_message "Installing zdotdir environment..." -1
