@@ -6,7 +6,7 @@ if [[ "$(pbpaste)" != *"AWS"* ]]; then
   return
 fi
 
-awk -i inplace -v beg='# AWS_BEGIN' -v end='# AWS_END' -v CRED="$(pbpaste)" ' $0~end{f=0} !f{print} $0~beg{printf "%s\n",CRED; f=1}' $PROFILE_PATH
+gawk -i inplace -v beg='# AWS_BEGIN' -v end='# AWS_END' -v CRED="$(pbpaste)" ' $0~end{f=0} !f{print} $0~beg{printf "%s\n",CRED; f=1}' $PROFILE_PATH
 
 
 # vim:ft=zsh
