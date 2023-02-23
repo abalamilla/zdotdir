@@ -16,6 +16,7 @@ backup_and_set_zdotdir() {
 }
 
 clone_repos() {
+	print_message "Cloning plugins and themes" -1
 	REPOS_TO_CLONE=(
 		"abalamilla/zdotdir":$CONFIG_DIR
 		
@@ -47,6 +48,8 @@ clone_repos() {
 		typeset -p r
 		clone_repo $CURRENT_REPO[1] $CURRENT_REPO[2] $CURRENT_REPO[3]
 	done
+
+	print_message "Finished cloning plugins and themes"
 }
 
 # init
