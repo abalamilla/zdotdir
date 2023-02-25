@@ -26,3 +26,4 @@ SOURCE_PATHS=(
 export MYVIMRC=$ZDOTDIR/.vimrc
 export VIMINIT="source $MYVIMRC"
 
+export EDITOR=vim
