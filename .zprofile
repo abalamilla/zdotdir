@@ -22,3 +22,7 @@ SOURCE_PATHS=(
   $NIX_DAEMON_PATH
 )
 
+# move .vimrc
+export MYVIMRC=$ZDOTDIR/.vimrc
+export VIMINIT="source $MYVIMRC"
+
