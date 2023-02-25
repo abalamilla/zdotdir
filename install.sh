@@ -22,7 +22,6 @@ clone_repos() {
 		
 		# zsh plugins
 		"Aloxaf/fzf-tab":$ZDOTDIR_PLUGINS
-		"Freed-Wu/fzf-tab-source":$ZDOTDIR_PLUGINS
 		"zsh-users/zsh-autosuggestions":$ZDOTDIR_PLUGINS
 		"zsh-users/zsh-history-substring-search":$ZDOTDIR_PLUGINS
 		"zsh-users/zsh-completions":$ZDOTDIR_PLUGINS
