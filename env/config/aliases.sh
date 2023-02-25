@@ -6,7 +6,8 @@ else
     alias ls='ls -F --color=auto'
 fi
 
-alias la='ls -la'
+alias la='exa -lahl --icons --git'
+alias lagi='exa -lahl --git --git-ignore --icons'
 
 alias search='grep --color=auto --exclude-dir=node_modules'
 alias grep='grep --color=auto'
