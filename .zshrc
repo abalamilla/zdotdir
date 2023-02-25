@@ -9,28 +9,7 @@ fi
 # zsh profiling enabled
 [[ "${ZDOTFILES_DEBUG:-0}" == 0 ]] || zmodload zsh/zprof
 
-# VARS
-# IMPORTANT! Order matters
-MY_INITIAL_CONFIGURATION=$ZDOTDIR/env/autoload_functions.sh
-MY_ZTYLES_PATH=($ZDOTDIR/zstyles/*)
-MY_ENV_PATH=($ZDOTDIR/env/config/*)
-ZSH_THEME=$ZDOTDIR/themes/powerlevel10k/powerlevel10k.zsh-theme
-HB_CNF_HANDLER="$(brew --repository)/Library/Taps/homebrew/homebrew-command-not-found/handler.sh"
-AUTOJUMP_SH="$(brew --repository)/etc/autojump.sh"
-SDKMAN_PATH="$HOME/.sdkman/bin/sdkman-init.sh"
-NIX_DAEMON_PATH="/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh"
-
 source $MY_INITIAL_CONFIGURATION
-
-SOURCE_PATHS=(
-  $MY_ZTYLES_PATH         # zsh options
-  $MY_ENV_PATH            # environment path
-  $ZSH_THEME
-  $HB_CNF_HANDLER
-  $AUTOJUMP_SH
-  $SDKMAN_PATH
-  $NIX_DAEMON_PATH
-)
 
 # zsh glob expansion
 # . only files
