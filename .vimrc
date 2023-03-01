@@ -45,3 +45,5 @@ inoremap <Down>  <Nop>
 inoremap <Left>  <Nop>
 inoremap <Right> <Nop>
 
+" set wrap for vimdiff
+au VimEnter * if &diff | execute 'windo set wrap' | endif
