@@ -25,9 +25,6 @@ nnoremap <silent><esc><esc> :noh<esc>
 "nnoremap <esc>^[ <esc>^[
 
 " open files window
-nnoremap <silent> <C-f> :Files<CR>
-
-" open files window
 nnoremap <silent> <leader>f :Files<CR>
 " open Git files window
 nnoremap <silent> <leader>g :GFiles<CR>
