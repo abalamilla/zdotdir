@@ -8,6 +8,110 @@ UTILS_PATH=$MY_ZDOTDIR/utils
 BACKUPS_PATH=$MY_ZDOTDIR/backups
 ZDOTDIR_THEMES=$MY_ZDOTDIR/themes
 
+backup_file() {
+	# backup a file
+	FILE_TO_BACKUP=$1
+	DEST_PATH=$2
+	NEW_FILE_NAME=${3:-FILE_TO_BACKUP}
+	FINAL_FILE="$DEST_PATH/$NEW_FILE_NAME"
+
+	usage() {
+		cat <<HELP_USAGE
+		Backup a file to a destination path
+
+		backup_file file_path destination_path [new_file_name]
+HELP_USAGE
+	}
+
+	[[ -z $FILE_TO_BACKUP || -z $DEST_PATH ]] && { usage; return 1; }
+	[[ ! -f $FILE_TO_BACKUP ]] && { print_message "The file $FILE_TO_BACKUP do not exists." 1; return 1; }
+	[[ ! -w $DEST_PATH ]] && { print_message "Current user do not have write permissions over $DEST_PATH."; return 1; }
+
+	print_message "Creating directory..." -1
+	[[ -d $DEST_PATH ]] && mkdir -p $DEST_PATH || echo Directory already exists.
+
+	print_message "Copying file..." -1
+	cp $FILE_TO_BACKUP $FINAL_FILE
+	print_message "File copied: $FILE_TO_BACKUP -> $FINAL_FILE"
+}
+
+set_zdotdir() {
+	# update zdotdir in zshenv
+	MY_ZDOTDIR=$1
+	FILE_PATH=${2:-$HOME/.zshenv}
+
+	usage() {
+	  cat << HELP_USAGE
+	  Updates ZDOTDIR environment variable from .zshenv
+
+	  set_zdotdir /path/to/custom/zdotdir [/path/to/.zshenv default: $HOME/.zshenv]
+HELP_USAGE
+	}
+
+	[[ -z $MY_ZDOTDIR ]] && { usage; return 1; }
+
+	# cleaning
+	sed -i -E 's/ZDOTDIR=.*//g' $FILE_PATH
+
+	# setting new value
+	echo ZDOTDIR=$MY_ZDOTDIR >> $FILE_PATH
+}
+
+print_message() {
+	# prints a message
+	MESSAGE=$1
+	CMD_STATUS=${2:-0}
+
+	case $CMD_STATUS in
+		-2) echo "${Purple} Skipping: ${Color_Off} $MESSAGE";;
+		-1) echo "${Cyan} Processing: ${Color_Off} $MESSAGE";;
+		0) echo "${Green}${CHECK_MARK} Success: ${Color_Off} $MESSAGE";;
+		*) echo "${Red}${CROSS_MARK} Error: ${Color_Off} $MESSAGE";;
+	esac
+}
+
+clone_repo() {
+	# clone a github repository
+	get_directory_name() {
+	  FROM_PATH=$1
+	  awk -F '/' '{print $NF}' <<< $FROM_PATH
+	}
+
+	GIT_REPO_PATH=$1
+	DEST_PATH=$2
+	GIT_OPTIONS=$3
+	PROJECT_NAME="$(get_directory_name $GIT_REPO_PATH)"
+	FINAL_DEST_PATH="$DEST_PATH/$PROJECT_NAME"
+	GITHUB_URL="https://github.com"
+
+	print_message "Verifying local path: $FINAL_DEST_PATH" -1
+	if [ ! -d $FINAL_DEST_PATH ]; then
+	   print_message "Cloning repository..." -1
+	   git clone $GIT_OPTIONS $GITHUB_URL/$GIT_REPO_PATH $FINAL_DEST_PATH
+	else
+	   print_message "Updating repository..." -1
+	   git -C $FINAL_DEST_PATH pull
+	fi
+
+	print_message "Installed on: $FINAL_DEST_PATH" $?
+}
+
+install_sh() {
+	# gets and execute an installer from sh file
+	SH_URL=$1
+	COMMAND=$2
+
+	print_message "Attempting to install $COMMAND" -1
+
+	if [ ! -x "$(command -v $COMMAND)" ]; then
+		/bin/bash -c "$(curl -fsSL $SH_URL)"
+	else
+		print_message "$COMMAND is already installed" -2
+	fi
+
+	print_message "Finished processing $COMMAND installation" $?
+}
+
 backup_and_set_zdotdir() {
 	BACKUP_NAME="$(backup_name "zshenv")"
 	backup_file ~/.zshenv $BACKUPS_PATH $BACKUP_NAME
