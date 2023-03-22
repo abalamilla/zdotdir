@@ -10,6 +10,8 @@ export AUTOJUMP_SH="$(brew --repository)/etc/autojump.sh"
 export SDKMAN_PATH="$HOME/.sdkman/bin/sdkman-init.sh"
 export NIX_DAEMON_PATH="/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh"
 
+# office profile - not under version control
+OFFICE_PROFILE=$ZDOTDIR/office_profile
 
 # IMPORTANT! Order matters
 SOURCE_PATHS=(
@@ -20,6 +22,7 @@ SOURCE_PATHS=(
   $AUTOJUMP_SH
   $SDKMAN_PATH
   $NIX_DAEMON_PATH
+  $OFFICE_PROFILE
 )
 
 # move .vimrc
@@ -27,3 +30,4 @@ export MYVIMRC=$ZDOTDIR/.vimrc
 export VIMINIT="source $MYVIMRC"
 
 export EDITOR=vim
+
