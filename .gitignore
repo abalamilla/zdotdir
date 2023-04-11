@@ -1,9 +1,10 @@
 tags
 .zsh_history
 plugins
-office_profile.sh
+office_profile
 backups
 themes
 .zcompcache
 .zcompdump
 Brewfile.lock.json
+*.pem
