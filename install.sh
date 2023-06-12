@@ -178,6 +178,18 @@ install_brewfile() {
 	print_message "Installing Brewfile finished" $?
 }
 
+install_lisp() {
+	curl -o /tmp/ql.lisp http://beta.quicklisp.org/quicklisp.lisp
+	sbcl --no-sysinit --no-userinit --load /tmp/ql.lisp \
+       --eval '(quicklisp-quickstart:install :path "~/.quicklisp")' \
+       --eval '(ql:add-to-init-file)' \
+       --quit
+}
+
+install_others() {
+	install_lisp
+}
+
 # init
 () {
 	source $UTILS_PATH/colors.sh
@@ -186,6 +198,7 @@ install_brewfile() {
 	clone_repos
 	install_apps
 	install_brewfile
+	install_others
 
 	print_message "Installing zdotdir environment..." -1
 	[[ -z "${ZDOTDIR}" || $ZDOTDIR != $MY_ZDOTDIR ]] && backup_and_set_zdotdir || echo ZDOTDIR is already configured.
