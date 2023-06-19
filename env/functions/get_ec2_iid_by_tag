@@ -1,0 +1,1 @@
+aws ec2 describe-instances --filters "Name=tag:$1,Values=$2" --query "Reservations[].Instances[?State.Name=='running'].InstanceId" --output text
