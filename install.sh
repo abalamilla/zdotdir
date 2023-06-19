@@ -141,6 +141,7 @@ clone_repos() {
 		"ludovicchabant/vim-gutentags":$VIM_PLUGIN_PATH
 		"vim-autoformat/vim-autoformat":$VIM_PLUGIN_PATH
 		"junegunn/vader.vim":$VIM_PLUGIN_PATH
+		"JuliaEditorSupport/julia-vim":$VIM_PLUGIN_PATH
 
 		# themes
 		"romkatv/powerlevel10k":$ZDOTDIR_THEMES:"--depth=1"
@@ -179,15 +180,21 @@ install_brewfile() {
 }
 
 install_lisp() {
-	curl -o /tmp/ql.lisp http://beta.quicklisp.org/quicklisp.lisp
-	sbcl --no-sysinit --no-userinit --load /tmp/ql.lisp \
-       --eval '(quicklisp-quickstart:install :path "~/.quicklisp")' \
-       --eval '(ql:add-to-init-file)' \
-       --quit
+	COMMAND=$1
+
+	if [ ! -x "$(command -v $COMMAND)" ]; then
+		curl -o /tmp/ql.lisp http://beta.quicklisp.org/quicklisp.lisp
+		sbcl --no-sysinit --no-userinit --load /tmp/ql.lisp \
+		   --eval '(quicklisp-quickstart:install :path "~/.quicklisp")' \
+		   --eval '(ql:add-to-init-file)' \
+		   --quit
+	else
+		print_message "$COMMAND is already installed" -2
+	fi
 }
 
 install_others() {
-	install_lisp
+	install_lisp lisp
 }
 
 # init
