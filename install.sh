@@ -142,6 +142,7 @@ clone_repos() {
 		"vim-autoformat/vim-autoformat":$VIM_PLUGIN_PATH
 		"junegunn/vader.vim":$VIM_PLUGIN_PATH
 		"JuliaEditorSupport/julia-vim":$VIM_PLUGIN_PATH
+		"vim-airline/vim-airline":$VIM_PLUGIN_PATH
 
 		# themes
 		"romkatv/powerlevel10k":$ZDOTDIR_THEMES:"--depth=1"
