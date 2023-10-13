@@ -77,3 +77,4 @@ cask "keycastr"
 
 tap "microsoft/git"
 tap "powershell/tap"
+tap "homebrew/command-not-found"
