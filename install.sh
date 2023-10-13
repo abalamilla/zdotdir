@@ -160,7 +160,7 @@ install_apps() {
 	APPS=(
 		"https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh"::"brew"
 		"https://get.sdkman.io"::"sdk"
-		"https://nixos.org/nix/install::nix-shell"
+		"https://nixos.org/nix/install"::"nix-shell"
 	)
 
 	for a in $APPS; do
