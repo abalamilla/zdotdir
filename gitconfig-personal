@@ -1,0 +1,6 @@
+[user]
+  name = Abraham Alamilla
+  email = abraham.alamilla@aalamilla.com
+
+[commit]
+  gpgsign = true
