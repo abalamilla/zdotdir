@@ -28,7 +28,7 @@ HELP_USAGE
 	[[ ! -w $DEST_PATH ]] && { print_message "Current user do not have write permissions over $DEST_PATH."; return 1; }
 
 	print_message "Creating directory..." -1
-	[[ -d $DEST_PATH ]] && mkdir -p $DEST_PATH || echo Directory already exists.
+	[[ -d $DEST_PATH ]] && mkdir -p $DEST_PATH || print_message "Directory already exists." -2
 
 	print_message "Copying file..." -1
 	cp $FILE_TO_BACKUP $FINAL_FILE
@@ -184,7 +184,7 @@ install_brewfile() {
 install_lisp() {
 	COMMAND=$1
 
-	if [ ! -x "$(command -v $COMMAND)" ]; then
+	if [[ ! -f ~/.quicklisp/setup.lisp ]]; then
 		curl -o /tmp/ql.lisp http://beta.quicklisp.org/quicklisp.lisp
 		sbcl --no-sysinit --no-userinit --load /tmp/ql.lisp \
 		   --eval '(quicklisp-quickstart:install :path "~/.quicklisp")' \
@@ -195,8 +195,19 @@ install_lisp() {
 	fi
 }
 
+link_gitconfig() {
+	print_message "Linking gitconfig global file" -1
+	if [[ ! -f ~/.gitconfig ]]; then
+		ln -s $ZDOTDIR/gitconfig ~/.gitconfig
+	else
+		print_message "Gitconfig global file already linked" -2
+	fi
+	print_message "Gitconfig file linked" $?
+}
+
 install_others() {
 	install_lisp lisp
+	link_gitconfig
 }
 
 # init
@@ -210,7 +221,7 @@ install_others() {
 	install_others
 
 	print_message "Installing zdotdir environment..." -1
-	[[ -z "${ZDOTDIR}" || $ZDOTDIR != $MY_ZDOTDIR ]] && backup_and_set_zdotdir || echo ZDOTDIR is already configured.
+	[[ -z "${ZDOTDIR}" || $ZDOTDIR != $MY_ZDOTDIR ]] && backup_and_set_zdotdir || print_message "ZDOTDIR is already configured." -2
 
 	print_message "Finish! Enjoy your new environment."
 }
