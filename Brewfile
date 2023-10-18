@@ -1,3 +1,9 @@
+tap "homebrew/cask"
+tap "homebrew/cask-fonts"
+tap "microsoft/git"
+tap "powershell/tap"
+tap "homebrew/command-not-found"
+
 brew "autojump"
 brew "awscli"
 brew "aws-cdk"
@@ -72,11 +78,9 @@ brew "zsh-completions"
 brew "zsh-history-substring-search"
 
 cask "dbvisualizer"
+cask "font-meslo-for-powerline"
 cask "git-credential-manager-core"
 cask "hammerspoon"
 cask "karabiner-elements"
 cask "keycastr"
 
-tap "microsoft/git"
-tap "powershell/tap"
-tap "homebrew/command-not-found"
