@@ -78,6 +78,7 @@ brew "zsh"
 brew "zsh-completions"
 brew "zsh-history-substring-search"
 
+cask "beyond-compare"
 cask "dbvisualizer"
 cask "dynamodb-local"
 cask "font-meslo-lg-nerd-font"
