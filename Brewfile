@@ -79,10 +79,12 @@ brew "zsh-completions"
 brew "zsh-history-substring-search"
 
 cask "dbvisualizer"
+cask "dynamodb-local"
 cask "font-meslo-lg-nerd-font"
 cask "git-credential-manager-core" if RbConfig::CONFIG['host_cpu'] == "arm64"
 cask "git-credential-manager" if RbConfig::CONFIG['host_cpu'] == "x86_64"
 cask "hammerspoon"
 cask "karabiner-elements"
 cask "keycastr"
+cask "nosql-workbench"
 
