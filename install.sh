@@ -72,15 +72,10 @@ print_message() {
 
 clone_repo() {
 	# clone a github repository
-	get_directory_name() {
-	  FROM_PATH=$1
-	  awk -F '/' '{print $NF}' <<< $FROM_PATH
-	}
-
 	GIT_REPO_PATH=$1
 	DEST_PATH=$2
 	GIT_OPTIONS=$3
-	PROJECT_NAME="$(get_directory_name $GIT_REPO_PATH)"
+	PROJECT_NAME="$(basename $GIT_REPO_PATH)"
 	FINAL_DEST_PATH="$DEST_PATH/$PROJECT_NAME"
 	GITHUB_URL="https://github.com"
 
@@ -195,19 +190,26 @@ install_lisp() {
 	fi
 }
 
-link_gitconfig() {
-	print_message "Linking gitconfig global file" -1
-	if [[ ! -f ~/.gitconfig ]]; then
-		ln -s $ZDOTDIR/gitconfig ~/.gitconfig
+link_file() {
+	SOURCE_FILE=$1
+	DEST_PATH=$2
+	
+	print_message "Linking $SOURCE_FILE file to $DEST_PATH" -1
+	if [[ ! -f $DEST_PATH ]]; then
+		ln -s $SOURCE_FILE $DEST_PATH
 	else
-		print_message "Gitconfig global file already linked" -2
+		print_message "File $DEST_PATH already linked" -2
 	fi
-	print_message "Gitconfig file linked" $?
+	print_message "File $DEST_PATH linked" $?
 }
 
 install_others() {
 	install_lisp lisp
-	link_gitconfig
+	link_file $ZDOTDIR/gitconfig $HOME/.gitconfig
+
+	HAMMERSPOON_PATH=$HOME/.hammerspoon
+	[[ ! -d $HAMMERSPOON_PATH ]] && mkdir -p $HAMMERSPOON_PATH || print_message "Directory $HAMMERSPOON_PATH already exists." -2
+	link_file $ZDOTDIR/tools/hammerspoon/init.lua $HAMMERSPOON_PATH/init.lua
 }
 
 # init
