@@ -1,7 +1,7 @@
 [include]
     path = ~/.config/zdotdir/gitconfig-personal
 
-[includeIf "gitdir:~/Documents/gitlab*/**"]
+[includeIf "hasconfig:remote.*.url:git@gitlab.*.*:*/**"]
     path = ~/.config/zdotdir/gitconfig-office
 
 [core]
