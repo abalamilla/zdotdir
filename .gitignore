@@ -8,3 +8,4 @@ themes
 .zcompdump
 Brewfile.lock.json
 *.pem
+gitconfig-office
