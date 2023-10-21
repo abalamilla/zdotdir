@@ -9,3 +9,4 @@ themes
 Brewfile.lock.json
 *.pem
 gitconfig-office
+.zsh_sessions
