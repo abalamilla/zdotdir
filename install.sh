@@ -97,8 +97,9 @@ install_sh() {
 	COMMAND=$2
 
 	print_message "Attempting to install $COMMAND" -1
+	print_message "$(type -w $COMMAND)" -1
 
-	if [ ! -x "$(command -v $COMMAND)" ]; then
+	if [ "$(type -w $COMMAND)" = "$COMMAND: none" ]; then
 		/bin/bash -c "$(curl -fsSL $SH_URL)"
 	else
 		print_message "$COMMAND is already installed" -2
@@ -138,6 +139,7 @@ clone_repos() {
 		"junegunn/vader.vim":$VIM_PLUGIN_PATH
 		"JuliaEditorSupport/julia-vim":$VIM_PLUGIN_PATH
 		"vim-airline/vim-airline":$VIM_PLUGIN_PATH
+		"github/copilot.vim":$VIM_PLUGIN_PATH
 
 		# themes
 		"romkatv/powerlevel10k":$ZDOTDIR_THEMES:"--depth=1"
