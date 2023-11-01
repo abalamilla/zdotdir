@@ -29,8 +29,15 @@ if [ ! -d "$OUTPUT_DIR" ]; then
   mkdir -p "$OUTPUT_DIR"
 fi
 
-# trap to return to current directory
-trap "cd $CURRENT_DIR" EXIT
+# trap to clean up test runner directory remove test exercise directory and output directory
+# and get back to current directory
+function cleanup {
+  echo "Cleaning up..."
+  rm -rf "$TEST_RUNNER_DIR/$CURRENT_EXERCISE"
+  rm -rf "$OUTPUT_DIR"
+  cd "$CURRENT_DIR"
+}
+trap cleanup EXIT
 
 # change to test runner directory
 echo "Changing to test runner directory..."
