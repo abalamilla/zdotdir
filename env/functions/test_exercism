@@ -1,0 +1,47 @@
+
+CURRENT_DIR=$(pwd)
+CURRENT_TRACK=$(basename $(dirname $CURRENT_DIR))
+CURRENT_EXERCISE=$(basename $CURRENT_DIR)
+EXERCISM_DIR=$(exercism workspace)
+TEST_RUNNER_DIR="$EXERCISM_DIR/$CURRENT_TRACK/$CURRENT_TRACK-test-runner"
+TEST_EXERCISE_DIR="$TEST_RUNNER_DIR/$CURRENT_EXERCISE"
+OUTPUT_DIR="$TEST_RUNNER_DIR/output/$CURRENT_EXERCISE"
+GITHUB_REPO="https://github.com/exercism/$CURRENT_TRACK-test-runner.git"
+
+# verify if test runner directory exists
+if [ ! -d "$TEST_RUNNER_DIR" ]; then
+  echo "Test runner directory does not exist. Cloning..."
+  git clone $GITHUB_REPO $TEST_RUNNER_DIR
+fi
+
+# verify if current exercise directory exists remove if it does and copy new one
+if [ -d "$TEST_RUNNER_DIR/$CURRENT_EXERCISE" ]; then
+  echo "Removing current exercise directory..."
+  rm -rf "$TEST_RUNNER_DIR/$CURRENT_EXERCISE"
+fi
+
+echo "Copying current exercise directory..."
+cp -r "$CURRENT_DIR" "$TEST_RUNNER_DIR/$CURRENT_EXERCISE"
+
+# create exercise output directory if it does not exist
+if [ ! -d "$OUTPUT_DIR" ]; then
+  echo "Creating output directory..."
+  mkdir -p "$OUTPUT_DIR"
+fi
+
+# trap to return to current directory
+trap "cd $CURRENT_DIR" EXIT
+
+# change to test runner directory
+echo "Changing to test runner directory..."
+cd "$TEST_RUNNER_DIR"
+
+# run test using bin/run-in-docker.sh track exercise output_dir
+echo "Running test..."
+"./bin/run-in-docker.sh" "$CURRENT_EXERCISE" "$TEST_EXERCISE_DIR" "$OUTPUT_DIR"
+
+# display results files in output directory
+echo "Displaying results..."
+cat "$OUTPUT_DIR/results.json"
+
+# vim:ft=zsh
