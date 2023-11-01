@@ -42,5 +42,12 @@ inoremap <Down>  <Nop>
 inoremap <Left>  <Nop>
 inoremap <Right> <Nop>
 
+" set movement keys for insert mode
+inoremap <C-h> <Left>
+inoremap <C-j> <Down>
+inoremap <C-k> <Up>
+inoremap <C-l> <Right>
+
 " set wrap for vimdiff
 au VimEnter * if &diff | execute 'windo set wrap' | endif
+
