@@ -45,6 +45,7 @@ hs.hotkey.bind(hyper, "v", typePasteboardContet)
 
 hs.loadSpoon("SpoonInstall")
 
+-- ctrl + alt + hotkey
 spoon.SpoonInstall:andUse("AppLauncher", {
         hotkeys = {
             c = "Calendar",
