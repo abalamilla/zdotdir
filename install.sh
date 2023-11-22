@@ -140,6 +140,7 @@ clone_repos() {
 		"JuliaEditorSupport/julia-vim":$VIM_PLUGIN_PATH
 		"vim-airline/vim-airline":$VIM_PLUGIN_PATH
 		"github/copilot.vim":$VIM_PLUGIN_PATH
+		"tpope/vim-fugitive":$VIM_PLUGIN_PATH
 
 		# themes
 		"romkatv/powerlevel10k":$ZDOTDIR_THEMES:"--depth=1"
