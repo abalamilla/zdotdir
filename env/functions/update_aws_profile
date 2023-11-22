@@ -1,0 +1,44 @@
+# current aws credentials format is: export AWS_ACCESS_KEY_ID=VALUE && export AWS_SECRET_ACCESS_KEY=VALUE && export AWS_SESSION_TOKEN=VALUE
+
+# get aws profile name from first argument
+profile=$1
+region=$2
+
+function usage() {
+  echo "usage: aws-set-profile <profile> <region>"
+  echo "example: aws-set-profile default us-east-1"
+  echo "credentials must be in clipboard"
+}
+
+# verify profile name is received as argument
+[[ -z "$profile" ]] && usage && return
+
+# verify region name is received as argument
+[[ -z "$region" ]] && usage && return
+
+# get aws credentials from clipboard
+aws_credentials=$(pbpaste)
+
+# verify clipboard for aws credentials
+if [[ "$(echo $aws_credentials)" != *"AWS"*  ]]; then
+  echo "aws credentials not found in clipboard"
+  return
+fi
+
+# parse aws credentials from clipboard
+aws_credentials=$(echo "$aws_credentials && region=$region" | sed 's/export//g' | sed 's/&&/\n/g' | sed 's/ //g' | sed 's/=/ /g')
+
+# run aws config set to save credentials
+while read -r line; do
+  # key to lower case
+  KEY=$(echo $line | awk '{print $1}' | tr '[:upper:]' '[:lower:]')
+  VALUE=$(echo $line | awk '{print $2}')
+
+  aws configure set $KEY $VALUE --profile $profile
+done <<< "$aws_credentials"
+
+# set aws profile as default
+set_aws_default_profile $profile
+
+
+# vim:ft=zsh

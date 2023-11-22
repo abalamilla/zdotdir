@@ -1,0 +1,12 @@
+profile=$1
+
+if [ -z "$profile" ]; then
+	echo "Usage: $0 <profile>"
+	return
+fi
+
+sed -i '' "s/AWS_PROFILE=.*/AWS_PROFILE=$profile/g" $OFFICE_PROFILE
+
+echo "aws default profile set to $profile, reload your shell to take effect"
+
+# vim:ft=zsh
