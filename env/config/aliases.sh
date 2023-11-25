@@ -39,3 +39,6 @@ alias grst='git restore'
 alias gf='git fetch --all'
 alias gclean='git clean -f -d -x'
 alias glog='git log --stat'
+
+# zdotdir
+alias zdotdir='cd ${ZDOTDIR:-HOME}'
