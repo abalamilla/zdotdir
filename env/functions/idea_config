@@ -1,0 +1,16 @@
+# https://stackoverflow.com/a/70911250
+# globally remove ApplePressAndHoldEnabled
+# disable ApplePressAndHoldEnabled for IntelliJ
+
+KEY='ApplePressAndHoldEnabled' \
+&& defaults delete -g "$KEY" \
+; echo \
+&& APP_ID_PREFIX='com\.jetbrains\.' \
+&& defaults read | egrep -o "${APP_ID_PREFIX}[^\"]+" | sort --unique \
+| while read APP_ID; do
+    echo "Setting \"repeat-character-while-key-held\" for application: '$APP_ID'..."
+    defaults write "$APP_ID" "$KEY" -bool 'false'
+done
+
+# vim:ft=zsh
+
