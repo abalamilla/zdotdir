@@ -66,6 +66,7 @@ brew "rlwrap"
 brew "ruby"
 brew "shellcheck"
 brew "sbcl"
+brew "swi-prolog"
 brew "tidy-html5"
 brew "tree"
 brew "universal-ctags/universal-ctags/universal-ctags", args: ['HEAD']
