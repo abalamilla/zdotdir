@@ -1,0 +1,13 @@
+query=$1
+shift
+
+# replace each ? with the next argument
+for arg in $@; do
+	query=${query/\?/\'$arg\'}
+done
+
+# return the query
+echo $query
+
+# vim:ft=zsh
+
