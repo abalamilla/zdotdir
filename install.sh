@@ -154,9 +154,31 @@ clone_repos() {
 	print_message "Finished cloning plugins and themes"
 }
 
+install_homebrew() {
+	# install homebrew
+	print_message "Installing homebrew" -1
+	install_sh "https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh" "brew"
+	print_message "Homebrew installed" $?
+}
+
+load_homebrew() {
+	print_message "Loading homebrew" -1
+	if [[ "$OSTYPE" == "darwin"* ]]; then
+		if [[ $(uname -m) == "arm64" ]]; then
+			# macos sillicon
+			eval $(/opt/homebrew/bin/brew shellenv)
+		else
+			# macos intel
+			eval $(/usr/local/bin/brew shellenv)
+		fi
+	else
+		# linux
+		eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
+	fi
+}
+
 install_apps() {
 	APPS=(
-		"https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh"::"brew"
 		"https://get.sdkman.io"::"sdk"
 		"https://nixos.org/nix/install"::"nix-shell"
 	)
@@ -217,10 +239,12 @@ install_others() {
 
 # init
 () {
-	source $UTILS_PATH/colors.sh
-	source env/autoload_functions.sh $UTILS_PATH
+	#source $UTILS_PATH/colors.sh
+	#source env/autoload_functions.sh $UTILS_PATH
 
 	clone_repos
+	install_homebrew
+	load_homebrew
 	install_apps
 	install_brewfile
 	install_others
