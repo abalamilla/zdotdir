@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/usr/bin/env zsh
 
 CONFIG_DIR=~/.config
 MY_ZDOTDIR=$CONFIG_DIR/zdotdir
