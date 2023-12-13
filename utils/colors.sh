@@ -1,6 +1,6 @@
 #!/bin/zsh
-CHECK_MARK="\u2714"
-CROSS_MARK="\u2718"
+CHECK_MARK="✅"
+CROSS_MARK="❌"
 
 # source: https://stackoverflow.com/a/28938235
 # Reset

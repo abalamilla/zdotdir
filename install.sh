@@ -50,6 +50,9 @@ HELP_USAGE
 
 	[[ -z $MY_ZDOTDIR ]] && { usage; return 1; }
 
+	[[ ! -f $FILE_PATH ]] && { print_message "File $FILE_PATH do not exists. Creating a blank file..." 1; touch $FILE_PATH; }
+	[[ ! -w $FILE_PATH ]] && { print_message "Current user do not have write permissions over $FILE_PATH." 1; return 1; }
+
 	# cleaning
 	sed -i -E 's/ZDOTDIR=.*//g' $FILE_PATH
 
@@ -115,10 +118,17 @@ backup_and_set_zdotdir() {
 	set_zdotdir "$MY_ZDOTDIR"
 }
 
+load_scripts() {
+	print_message "Loading scripts" -1
+	source $UTILS_PATH/colors.sh
+	source env/autoload_functions.sh $UTILS_PATH
+	print_message "Scripts loaded" $?
+}
+
 clone_repos() {
 	print_message "Cloning plugins and themes" -1
 	REPOS_TO_CLONE=(
-		"abalamilla/zdotdir":$CONFIG_DIR
+		"abalamilla/zdotdir":$CONFIG_DIR:" ":load_scripts
 		
 		# zsh plugins
 		"Aloxaf/fzf-tab":$ZDOTDIR_PLUGINS
@@ -149,6 +159,9 @@ clone_repos() {
 	for r in $REPOS_TO_CLONE; do
 		CURRENT_REPO=(${(s(:))r})
 		clone_repo $CURRENT_REPO[1] $CURRENT_REPO[2] $CURRENT_REPO[3]
+
+		CALLBACK=$CURRENT_REPO[4]
+		[[ ! -z $CALLBACK ]] && eval $CALLBACK
 	done
 
 	print_message "Finished cloning plugins and themes"
@@ -239,9 +252,6 @@ install_others() {
 
 # init
 () {
-	#source $UTILS_PATH/colors.sh
-	#source env/autoload_functions.sh $UTILS_PATH
-
 	clone_repos
 	install_homebrew
 	load_homebrew
