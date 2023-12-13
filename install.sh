@@ -245,8 +245,8 @@ install_others() {
 	clone_repos
 	install_homebrew
 	load_homebrew
-	install_apps
 	install_brewfile
+	install_apps
 	install_others
 
 	print_message "Installing zdotdir environment..." -1
