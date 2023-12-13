@@ -196,7 +196,7 @@ install_brewfile() {
     brew upgrade
 
     # install brewfile dependencies
-    brew bundle install
+    brew bundle install --file=$MY_ZDOTDIR/Brewfile
 
 	print_message "Installing Brewfile finished" $?
 }
@@ -230,11 +230,11 @@ link_file() {
 
 install_others() {
 	install_lisp lisp
-	link_file $ZDOTDIR/gitconfig $HOME/.gitconfig
+	link_file $MY_ZDOTDIR/gitconfig $HOME/.gitconfig
 
 	HAMMERSPOON_PATH=$HOME/.hammerspoon
 	[[ ! -d $HAMMERSPOON_PATH ]] && mkdir -p $HAMMERSPOON_PATH || print_message "Directory $HAMMERSPOON_PATH already exists." -2
-	link_file $ZDOTDIR/tools/hammerspoon/init.lua $HAMMERSPOON_PATH/init.lua
+	link_file $MY_ZDOTDIR/tools/hammerspoon/init.lua $HAMMERSPOON_PATH/init.lua
 }
 
 # init
