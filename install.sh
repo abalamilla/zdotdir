@@ -77,7 +77,7 @@ clone_repo() {
 	# clone a github repository
 	GIT_REPO_PATH=$1
 	DEST_PATH=$2
-	GIT_OPTIONS=$3
+	GIT_OPTIONS=${3:-""}
 	PROJECT_NAME="$(basename $GIT_REPO_PATH)"
 	FINAL_DEST_PATH="$DEST_PATH/$PROJECT_NAME"
 	GITHUB_URL="https://github.com"
@@ -128,7 +128,7 @@ load_scripts() {
 clone_repos() {
 	print_message "Cloning plugins and themes" -1
 	REPOS_TO_CLONE=(
-		"abalamilla/zdotdir":$CONFIG_DIR:" ":load_scripts
+		"abalamilla/zdotdir":$CONFIG_DIR:"":load_scripts
 		
 		# zsh plugins
 		"Aloxaf/fzf-tab":$ZDOTDIR_PLUGINS
