@@ -157,7 +157,7 @@ clone_repos() {
 install_homebrew() {
 	# install homebrew
 	print_message "Installing homebrew" -1
-	install_sh "https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh" "brew"
+	NONINTERACTIVE=1 install_sh "https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh" "brew"
 	print_message "Homebrew installed" $?
 }
 
