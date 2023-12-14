@@ -1,7 +1,14 @@
-if [ command -v /opt/homebrew/bin/brew >/dev/null 2>&1 ]; then
-  eval "$(/opt/homebrew/bin/brew shellenv)"
-elif [ command -v /usr/local/bin/brew >/dev/null 2>&1 ]; then
-  eval "$(/usr/local/bin/brew shellenv)"
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    if [[ $(uname -m) == "arm64" ]]; then
+        # macos sillicon
+        eval $(/opt/homebrew/bin/brew shellenv)
+    else
+        # macos intel
+        eval $(/usr/local/bin/brew shellenv)
+    fi
+else
+    # linux
+    eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
 fi
 
 # VARS
