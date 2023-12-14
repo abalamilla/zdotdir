@@ -127,40 +127,51 @@ load_scripts() {
 
 clone_repos() {
 	print_message "Cloning plugins and themes" -1
+
+	local INDEX=1
+	typeset -a REPOS_TO_CLONE
+
 	REPOS_TO_CLONE=(
-		"abalamilla/zdotdir":$CONFIG_DIR:"":load_scripts
+		[((INDEX++))]=(["repo"]="abalamilla/zdotdir" ["dest"]=$CONFIG_DIR ["callback"]=load_scripts)
 		
 		# zsh plugins
-		"Aloxaf/fzf-tab":$ZDOTDIR_PLUGINS
-		"zsh-users/zsh-autosuggestions":$ZDOTDIR_PLUGINS
-		"zsh-users/zsh-history-substring-search":$ZDOTDIR_PLUGINS
-		"zsh-users/zsh-completions":$ZDOTDIR_PLUGINS
-		"lukechilds/zsh-nvm":$ZDOTDIR_PLUGINS
-		"zsh-users/zsh-syntax-highlighting":$ZDOTDIR_PLUGINS
+		[((INDEX++))]=(["repo"]="Aloxaf/fzf-tab" ["dest"]=$ZDOTDIR_PLUGINS)
+		[((INDEX++))]=(["repo"]="zsh-users/zsh-autosuggestions" ["dest"]=$ZDOTDIR_PLUGINS)
+		[((INDEX++))]=(["repo"]="zsh-users/zsh-history-substring-search" ["dest"]=$ZDOTDIR_PLUGINS)
+		[((INDEX++))]=(["repo"]="zsh-users/zsh-completions" ["dest"]=$ZDOTDIR_PLUGINS)
+		[((INDEX++))]=(["repo"]="lukechilds/zsh-nvm" ["dest"]=$ZDOTDIR_PLUGINS)
+		[((INDEX++))]=(["repo"]="zsh-users/zsh-syntax-highlighting" ["dest"]=$ZDOTDIR_PLUGINS)
 
 		# vim plugins
-		"sheerun/vim-polyglot":$VIM_PLUGIN_PATH
-		"junegunn/fzf":$VIM_PLUGIN_PATH
-		"junegunn/fzf.vim":$VIM_PLUGIN_PATH
-		"eslint/eslint":$VIM_PLUGIN_PATH
-		"prettier/vim-prettier":$VIM_PLUGIN_PATH
-		"ludovicchabant/vim-gutentags":$VIM_PLUGIN_PATH
-		"vim-autoformat/vim-autoformat":$VIM_PLUGIN_PATH
-		"junegunn/vader.vim":$VIM_PLUGIN_PATH
-		"JuliaEditorSupport/julia-vim":$VIM_PLUGIN_PATH
-		"vim-airline/vim-airline":$VIM_PLUGIN_PATH
-		"github/copilot.vim":$VIM_PLUGIN_PATH
-		"tpope/vim-fugitive":$VIM_PLUGIN_PATH
+		[((INDEX++))]=(["repo"]="sheerun/vim-polyglot" ["dest"]=$VIM_PLUGIN_PATH)
+		[((INDEX++))]=(["repo"]="junegunn/fzf" ["dest"]=$VIM_PLUGIN_PATH)
+		[((INDEX++))]=(["repo"]="junegunn/fzf.vim" ["dest"]=$VIM_PLUGIN_PATH)
+		[((INDEX++))]=(["repo"]="eslint/eslint" ["dest"]=$VIM_PLUGIN_PATH)
+		[((INDEX++))]=(["repo"]="prettier/vim-prettier" ["dest"]=$VIM_PLUGIN_PATH)
+		[((INDEX++))]=(["repo"]="ludovicchabant/vim-gutentags" ["dest"]=$VIM_PLUGIN_PATH)
+		[((INDEX++))]=(["repo"]="vim-autoformat/vim-autoformat" ["dest"]=$VIM_PLUGIN_PATH)
+		[((INDEX++))]=(["repo"]="junegunn/vader.vim" ["dest"]=$VIM_PLUGIN_PATH)
+		[((INDEX++))]=(["repo"]="JuliaEditorSupport/julia-vim" ["dest"]=$VIM_PLUGIN_PATH)
+		[((INDEX++))]=(["repo"]="vim-airline/vim-airline" ["dest"]=$VIM_PLUGIN_PATH)
+		[((INDEX++))]=(["repo"]="github/copilot.vim" ["dest"]=$VIM_PLUGIN_PATH)
+		[((INDEX++))]=(["repo"]="tpope/vim-fugitive" ["dest"]=$VIM_PLUGIN_PATH)
 
 		# themes
-		"romkatv/powerlevel10k":$ZDOTDIR_THEMES:"--depth=1"
+		[((INDEX++))]=(["repo"]="romkatv/powerlevel10k" ["dest"]=$ZDOTDIR_THEMES ["options"]="--depth=1")
 	)
 
-	for r in $REPOS_TO_CLONE; do
-		CURRENT_REPO=(${(s(:))r})
-		clone_repo $CURRENT_REPO[1] $CURRENT_REPO[2] $CURRENT_REPO[3]
+	typeset -A CURRENT_REPO
 
-		CALLBACK=$CURRENT_REPO[4]
+	for CURRENT_VALUE in $REPOS_TO_CLONE; do
+		eval "CURRENT_REPO=$CURRENT_VALUE"
+
+		GIT_URL=$CURRENT_REPO[repo]
+		DEST_PATH=$CURRENT_REPO[dest]
+		GIT_OPTIONS=$CURRENT_REPO[options]
+		CALLBACK=$CURRENT_REPO[callback]
+
+		clone_repo $GIT_URL $DEST_PATH $GIT_OPTIONS
+
 		[[ ! -z $CALLBACK ]] && eval $CALLBACK
 	done
 
