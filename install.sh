@@ -119,6 +119,8 @@ backup_and_set_zdotdir() {
 }
 
 load_scripts() {
+	cd $MY_ZDOTDIR
+
 	print_message "Loading scripts" -1
 	source $UTILS_PATH/colors.sh
 	source env/autoload_functions.sh $UTILS_PATH
