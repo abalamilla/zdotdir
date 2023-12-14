@@ -1,5 +1,7 @@
 #!/usr/bin/env zsh
 
+BRANCH_NAME=${1:-main}
+
 CONFIG_DIR=~/.config
 MY_ZDOTDIR=$CONFIG_DIR/zdotdir
 ZDOTDIR_PLUGINS="$MY_ZDOTDIR/plugins"
@@ -120,6 +122,7 @@ backup_and_set_zdotdir() {
 
 load_scripts() {
 	cd $MY_ZDOTDIR
+	git checkout $BRANCH_NAME
 
 	print_message "Loading scripts" -1
 	source $UTILS_PATH/colors.sh
