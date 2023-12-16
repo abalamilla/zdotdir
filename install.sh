@@ -130,6 +130,21 @@ load_scripts() {
 	print_message "Scripts loaded" $?
 }
 
+install_markdown_preview() {
+	APP_DIR=$VIM_PLUGIN_PATH/markdown-preview.nvim
+	print_message "Installing markdown-preview.nvim" -1
+	cd $APP_DIR
+
+	if [[ "$(type -w node)" == "node: command" ]]; then
+		npx --yes yarn install
+	else
+		print_message "Node is not installed. Skipping markdown-preview.nvim installation." -2
+	fi
+
+	cd -
+	print_message "Finished installing markdown-preview.nvim" $?
+}
+
 clone_repos() {
 	print_message "Cloning plugins and themes" -1
 
@@ -160,6 +175,7 @@ clone_repos() {
 		[((INDEX++))]=(["repo"]="vim-airline/vim-airline" ["dest"]=$VIM_PLUGIN_PATH)
 		[((INDEX++))]=(["repo"]="github/copilot.vim" ["dest"]=$VIM_PLUGIN_PATH)
 		[((INDEX++))]=(["repo"]="tpope/vim-fugitive" ["dest"]=$VIM_PLUGIN_PATH)
+		[((INDEX++))]=(["repo"]="iamcco/markdown-preview.nvim" ["dest"]=$VIM_PLUGIN_PATH ["callback"]=install_markdown_preview)
 
 		# themes
 		[((INDEX++))]=(["repo"]="romkatv/powerlevel10k" ["dest"]=$ZDOTDIR_THEMES ["options"]="--depth=1")
@@ -177,7 +193,7 @@ clone_repos() {
 
 		clone_repo $GIT_URL $DEST_PATH $GIT_OPTIONS
 
-		[[ ! -z $CALLBACK ]] && eval $CALLBACK
+		[[ "$(type -w $CALLBACK)" = "$CALLBACK: function" ]] && $CALLBACK
 	done
 
 	print_message "Finished cloning plugins and themes"
