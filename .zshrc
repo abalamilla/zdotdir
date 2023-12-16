@@ -5,6 +5,9 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
+# To customize prompt, run `p10k configure` or edit ~/.config/zdotdir/.p10k.zsh.
+[[ ! -f ~/.config/zdotdir/.p10k.zsh ]] || source ~/.config/zdotdir/.p10k.zsh
+
 # begin zshrc
 # zsh profiling enabled
 [[ "${ZDOTFILES_DEBUG:-0}" == 0 ]] || zmodload zsh/zprof
@@ -23,8 +26,5 @@ unset SOURCE_PATHS
 # zsh profiling disabled
 [[ "${ZDOTFILES_DEBUG:-0}" == 0 ]] || zprof
 
-# To customize prompt, run `p10k configure` or edit ~/.config/zdotdir/.p10k.zsh.
-[[ ! -f ~/.config/zdotdir/.p10k.zsh ]] || source ~/.config/zdotdir/.p10k.zsh
-
-
 # vim:ft=zsh
+
