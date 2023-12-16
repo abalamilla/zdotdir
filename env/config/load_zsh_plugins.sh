@@ -11,4 +11,6 @@
         [[ -f $FILE0 ]] && ssource $FILE0 || ssource $FILE1
         
     done
+
+    autoload -U compinit && compinit
 }
