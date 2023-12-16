@@ -166,7 +166,6 @@ clone_repos() {
 		[((INDEX++))]=(["repo"]="sheerun/vim-polyglot" ["dest"]=$VIM_PLUGIN_PATH)
 		[((INDEX++))]=(["repo"]="junegunn/fzf" ["dest"]=$VIM_PLUGIN_PATH)
 		[((INDEX++))]=(["repo"]="junegunn/fzf.vim" ["dest"]=$VIM_PLUGIN_PATH)
-		[((INDEX++))]=(["repo"]="eslint/eslint" ["dest"]=$VIM_PLUGIN_PATH)
 		[((INDEX++))]=(["repo"]="prettier/vim-prettier" ["dest"]=$VIM_PLUGIN_PATH)
 		[((INDEX++))]=(["repo"]="ludovicchabant/vim-gutentags" ["dest"]=$VIM_PLUGIN_PATH)
 		[((INDEX++))]=(["repo"]="vim-autoformat/vim-autoformat" ["dest"]=$VIM_PLUGIN_PATH)
