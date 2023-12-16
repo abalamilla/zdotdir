@@ -49,3 +49,4 @@ command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv init -)"
 
 export ZDOTFILES_DEBUG=0
+export NVM_LAZY_LOAD=true
