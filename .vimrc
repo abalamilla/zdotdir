@@ -15,8 +15,8 @@ set si              " smart indent
 set shiftwidth=4    " change tab width
 set tabstop=4       " tab equal 4 spaces
 
-set bg=dark         " set backgrouond color to dark
-color slate         " sets color schema
+"set bg=dark         " set backgrouond color to dark
+color sorbet         " sets color schema
 
 
 " clear highlighting on escape in normal mode
