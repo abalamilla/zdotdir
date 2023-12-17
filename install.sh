@@ -172,6 +172,7 @@ clone_repos() {
 		[((INDEX++))]=(["repo"]="junegunn/vader.vim" ["dest"]=$VIM_PLUGIN_PATH)
 		[((INDEX++))]=(["repo"]="JuliaEditorSupport/julia-vim" ["dest"]=$VIM_PLUGIN_PATH)
 		[((INDEX++))]=(["repo"]="vim-airline/vim-airline" ["dest"]=$VIM_PLUGIN_PATH)
+		[((INDEX++))]=(["repo"]="vim-airline/vim-airline-themes" ["dest"]=$VIM_PLUGIN_PATH)
 		[((INDEX++))]=(["repo"]="github/copilot.vim" ["dest"]=$VIM_PLUGIN_PATH)
 		[((INDEX++))]=(["repo"]="tpope/vim-fugitive" ["dest"]=$VIM_PLUGIN_PATH)
 		[((INDEX++))]=(["repo"]="iamcco/markdown-preview.nvim" ["dest"]=$VIM_PLUGIN_PATH ["callback"]=install_markdown_preview)
