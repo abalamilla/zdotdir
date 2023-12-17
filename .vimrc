@@ -51,3 +51,4 @@ inoremap <C-l> <Right>
 " set wrap for vimdiff
 au VimEnter * if &diff | execute 'windo set wrap' | endif
 
+let g:airline_theme='random'
