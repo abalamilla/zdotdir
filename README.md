@@ -143,3 +143,12 @@ Live preview Markdown changes in your web explorer
 
 You can find more in [iamcco/markdown-preview.nvim](https://github.com/iamcco/markdown-preview.nvim) repo.
 
+## Zsh themes
+
+### powerlevel10k
+
+Zsh theme lightweight, fast and flexible
+
+You can find more in [romkatv/powerlevel10k](https://github.com/romkatv/powerlevel10k) repo.
+
+
