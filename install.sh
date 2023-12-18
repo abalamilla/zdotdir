@@ -176,6 +176,7 @@ clone_repos() {
 		[((INDEX++))]=(["repo"]="github/copilot.vim" ["dest"]=$VIM_PLUGIN_PATH)
 		[((INDEX++))]=(["repo"]="tpope/vim-fugitive" ["dest"]=$VIM_PLUGIN_PATH)
 		[((INDEX++))]=(["repo"]="iamcco/markdown-preview.nvim" ["dest"]=$VIM_PLUGIN_PATH ["callback"]=install_markdown_preview)
+		[((INDEX++))]=(["repo"]="sillybun/vim-repl" ["dest"]=$VIM_PLUGIN_PATH)
 
 		# themes
 		[((INDEX++))]=(["repo"]="romkatv/powerlevel10k" ["dest"]=$ZDOTDIR_THEMES ["options"]="--depth=1")

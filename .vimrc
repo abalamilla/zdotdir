@@ -52,3 +52,17 @@ inoremap <C-l> <Right>
 au VimEnter * if &diff | execute 'windo set wrap' | endif
 
 let g:airline_theme='random'
+
+" vim-repl
+let g:repl_program = {
+			\ 'julia': ['julia'],
+			\ 'default': ['zsh'],
+			\ 'lua': 'lua',
+			\ 'clojure': 'lein repl',
+			\ }
+let g:repl_exit_commands = {
+			\ 'julia': 'exit()',
+			\ }
+let g:repl_output_copy_to_register = "t"
+nnoremap <leader>r :REPLToggle<CR>
+
