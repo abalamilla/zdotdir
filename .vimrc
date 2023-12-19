@@ -66,3 +66,5 @@ let g:repl_exit_commands = {
 let g:repl_output_copy_to_register = "t"
 nnoremap <leader>r :REPLToggle<CR>
 
+" julia-vim
+let g:latex_to_unicode_auto = 1
