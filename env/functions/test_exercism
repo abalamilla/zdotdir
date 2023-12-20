@@ -49,6 +49,6 @@ echo "Running test..."
 
 # display results files in output directory
 echo "Displaying results..."
-jq . "$OUTPUT_DIR/results.json"
+jq . "$OUTPUT_DIR/results.json" || cat "$OUTPUT_DIR/results.json"
 
 # vim:ft=zsh
