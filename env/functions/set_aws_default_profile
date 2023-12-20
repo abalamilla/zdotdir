@@ -5,8 +5,12 @@ if [ -z "$profile" ]; then
 	return
 fi
 
+# persisting the profile
 sed -i '' "s/AWS_PROFILE=.*/AWS_PROFILE=$profile/g" $OFFICE_PROFILE
 
-echo "aws default profile set to $profile, reload your shell to take effect"
+# setting the profile for the current shell
+export AWS_PROFILE=$profile
+
+echo "aws default profile set to $profile. Reload other shells to apply changes."
 
 # vim:ft=zsh
