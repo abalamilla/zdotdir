@@ -50,3 +50,5 @@ eval "$(pyenv init -)"
 
 export ZDOTFILES_DEBUG=0
 export NVM_LAZY_LOAD=true
+export NVM_AUTO_USE=true
+export NVM_COMPLETION=true
