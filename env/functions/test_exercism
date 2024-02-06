@@ -4,15 +4,29 @@ CURRENT_TRACK=$(basename $(dirname $CURRENT_DIR))
 CURRENT_EXERCISE=$(basename $CURRENT_DIR)
 EXERCISM_DIR=$(exercism workspace)
 TEST_RUNNER_DIR="$EXERCISM_DIR/$CURRENT_TRACK/$CURRENT_TRACK-test-runner"
-TEST_EXERCISE_DIR="$TEST_RUNNER_DIR/$CURRENT_EXERCISE"
-OUTPUT_DIR="$TEST_RUNNER_DIR/output/$CURRENT_EXERCISE"
 GITHUB_REPO="https://github.com/exercism/$CURRENT_TRACK-test-runner.git"
+
+if [ $CURRENT_TRACK = "python" ]; then
+  TEST_EXERCISE_DIR="./$CURRENT_EXERCISE"
+  OUTPUT_DIR="./output/$CURRENT_EXERCISE"
+
+  echo "Renaming test file for current exercise..."
+  CURRENT_EXERCISE_FNAME=${CURRENT_EXERCISE//-/_}
+  mv $CURRENT_DIR/*_test.py "${CURRENT_DIR}/${CURRENT_EXERCISE_FNAME}_test.py"
+else
+  TEST_EXERCISE_DIR="$TEST_RUNNER_DIR/$CURRENT_EXERCISE"
+  OUTPUT_DIR="$TEST_RUNNER_DIR/output/$CURRENT_EXERCISE"
+fi
 
 # verify if test runner directory exists
 if [ ! -d "$TEST_RUNNER_DIR" ]; then
   echo "Test runner directory does not exist. Cloning..."
   git clone $GITHUB_REPO $TEST_RUNNER_DIR
 fi
+
+# change to test runner directory
+echo "Changing to test runner directory..."
+cd "$TEST_RUNNER_DIR"
 
 # verify if current exercise directory exists remove if it does and copy new one
 if [ -d "$TEST_RUNNER_DIR/$CURRENT_EXERCISE" ]; then
@@ -38,10 +52,6 @@ function cleanup {
   cd "$CURRENT_DIR"
 }
 trap cleanup EXIT
-
-# change to test runner directory
-echo "Changing to test runner directory..."
-cd "$TEST_RUNNER_DIR"
 
 # run test using bin/run-in-docker.sh track exercise output_dir
 echo "Running test..."
