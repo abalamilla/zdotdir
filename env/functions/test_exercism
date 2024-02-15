@@ -1,4 +1,3 @@
-
 CURRENT_DIR=$(pwd)
 CURRENT_TRACK=$(basename $(dirname $CURRENT_DIR))
 CURRENT_EXERCISE=$(basename $CURRENT_DIR)
@@ -6,9 +5,6 @@ EXERCISM_DIR=$(exercism workspace)
 TEST_RUNNER_DIR="$EXERCISM_DIR/$CURRENT_TRACK/$CURRENT_TRACK-test-runner"
 GITHUB_REPO="https://github.com/exercism/$CURRENT_TRACK-test-runner.git"
 RUN_TEST_SCRIPT="./bin/run-in-docker.sh"
-
-if [ "$CURRENT_TRACK" = "javascript" ]; then
-fi
 
 # switch case to current track
 case $CURRENT_TRACK in
@@ -26,10 +22,13 @@ case $CURRENT_TRACK in
     TEST_EXERCISE_DIR="./$CURRENT_EXERCISE"
     OUTPUT_DIR="./output/$CURRENT_EXERCISE"
     ;;
+  "pharo-smalltalk")
+    TEST_EXERCISE_DIR="./$CURRENT_EXERCISE"
+    OUTPUT_DIR="./output/$CURRENT_EXERCISE"
+    ;;
   *)
     TEST_EXERCISE_DIR="$TEST_RUNNER_DIR/$CURRENT_EXERCISE"
     OUTPUT_DIR="$TEST_RUNNER_DIR/output/$CURRENT_EXERCISE"
-    exit 1
     ;;
 esac
 
