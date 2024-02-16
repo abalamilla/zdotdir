@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>customSites</key>
+	<dict>
+		<key>92F42A7E-2179-4E8F-A22C-676318375731</key>
+		<dict>
+			<key>enabled</key>
+			<true/>
+			<key>keyword</key>
+			<string>cjsearch</string>
+			<key>text</key>
+			<string>CJ Search</string>
+			<key>url</key>
+			<string>http://search.t.cjpowered.com/#search/{query}</string>
+		</dict>
+	</dict>
+</dict>
+</plist>

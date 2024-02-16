@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>bundleid</key>
+	<string>com.alfredapp.andrew.gettingstarted.universalactions</string>
+	<key>connections</key>
+	<dict>
+		<key>7C7F0602-B9F2-4FFA-870C-CEA945590CF4</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>C89C3774-C99B-46DF-B210-2240417A8648</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<true/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>9B501FD7-0D22-4A73-A617-DEA23CAAABCE</string>
+				<key>modifiers</key>
+				<integer>1048576</integer>
+				<key>modifiersubtext</key>
+				<string>Upper case text</string>
+				<key>vitoclose</key>
+				<true/>
+			</dict>
+		</array>
+		<key>9B501FD7-0D22-4A73-A617-DEA23CAAABCE</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>C1A1E798-EB1F-4BE0-A9B3-43DD4E0D48D8</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>C89C3774-C99B-46DF-B210-2240417A8648</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>C1A1E798-EB1F-4BE0-A9B3-43DD4E0D48D8</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>C99D997E-293E-48E5-A16D-2990FA36D6BB</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>C1A1E798-EB1F-4BE0-A9B3-43DD4E0D48D8</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>FC653622-D3D1-4E8A-8002-2A225F79464F</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>C1A1E798-EB1F-4BE0-A9B3-43DD4E0D48D8</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+	</dict>
+	<key>createdby</key>
+	<string>Andrew Pepperrell</string>
+	<key>description</key>
+	<string>Some basic Universal Action integration examples</string>
+	<key>disabled</key>
+	<false/>
+	<key>name</key>
+	<string>Universal Actions Integration</string>
+	<key>objects</key>
+	<array>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>type</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.transform</string>
+			<key>uid</key>
+			<string>C89C3774-C99B-46DF-B210-2240417A8648</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>acceptsfiles</key>
+				<false/>
+				<key>acceptsmulti</key>
+				<false/>
+				<key>acceptstext</key>
+				<true/>
+				<key>acceptsurls</key>
+				<false/>
+				<key>name</key>
+				<string>Trim text</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.trigger.universalaction</string>
+			<key>uid</key>
+			<string>7C7F0602-B9F2-4FFA-870C-CEA945590CF4</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>type</key>
+				<integer>1</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.transform</string>
+			<key>uid</key>
+			<string>9B501FD7-0D22-4A73-A617-DEA23CAAABCE</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>path</key>
+				<string></string>
+				<key>skipprocessing</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.actioninalfred</string>
+			<key>uid</key>
+			<string>C1A1E798-EB1F-4BE0-A9B3-43DD4E0D48D8</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>action</key>
+				<integer>0</integer>
+				<key>argument</key>
+				<integer>2</integer>
+				<key>focusedappvariable</key>
+				<false/>
+				<key>focusedappvariablename</key>
+				<string></string>
+				<key>hotkey</key>
+				<integer>96</integer>
+				<key>hotmod</key>
+				<integer>8912896</integer>
+				<key>hotstring</key>
+				<string>F5</string>
+				<key>leftcursor</key>
+				<false/>
+				<key>modsmode</key>
+				<integer>0</integer>
+				<key>relatedAppsMode</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.trigger.hotkey</string>
+			<key>uid</key>
+			<string>C99D997E-293E-48E5-A16D-2990FA36D6BB</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>text</key>
+				<string>Action in Alfred</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.trigger.fallback</string>
+			<key>uid</key>
+			<string>FC653622-D3D1-4E8A-8002-2A225F79464F</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+	</array>
+	<key>readme</key>
+	<string>Universal Actions let you take any text, URLs or files and perform actions on them from anywhere on your Mac.
+
+This workflow shares various ways of using Universal Actions:
+
+1. The "Trim text" action will appear in your Actions panel for text-based selections. Choosing it will trim white spaces at the beginning and end of the text you copied. Holding ⌘ (Cmd) while pressing return will take the alternative path, where your text will be uppercased.
+
+In both cases, you then return to Alfred's Actions panel with your newly transformed text.
+
+2. Hotkeys are stripped on import, to ensure that they don't clash with your existing hotkeys, so double-click the object and set your own hotkey. 
+
+Using this hotkey will bring up the Action panel, pre-populated with your clipboard contents.
+
+3. Add Universal Actions as an Alfred Fallback Search result.</string>
+	<key>uidata</key>
+	<dict>
+		<key>7C7F0602-B9F2-4FFA-870C-CEA945590CF4</key>
+		<dict>
+			<key>note</key>
+			<string>Don't forget to hint to Alfred not to close in the connection config</string>
+			<key>xpos</key>
+			<integer>30</integer>
+			<key>ypos</key>
+			<integer>75</integer>
+		</dict>
+		<key>9B501FD7-0D22-4A73-A617-DEA23CAAABCE</key>
+		<dict>
+			<key>note</key>
+			<string>Alternative action to uppercase when actioning with cmd</string>
+			<key>xpos</key>
+			<integer>265</integer>
+			<key>ypos</key>
+			<integer>105</integer>
+		</dict>
+		<key>C1A1E798-EB1F-4BE0-A9B3-43DD4E0D48D8</key>
+		<dict>
+			<key>xpos</key>
+			<integer>500</integer>
+			<key>ypos</key>
+			<integer>200</integer>
+		</dict>
+		<key>C89C3774-C99B-46DF-B210-2240417A8648</key>
+		<dict>
+			<key>xpos</key>
+			<integer>265</integer>
+			<key>ypos</key>
+			<integer>30</integer>
+		</dict>
+		<key>C99D997E-293E-48E5-A16D-2990FA36D6BB</key>
+		<dict>
+			<key>note</key>
+			<string>Use a hotkey to bring the clipboard contents into universal actions</string>
+			<key>xpos</key>
+			<integer>220</integer>
+			<key>ypos</key>
+			<integer>255</integer>
+		</dict>
+		<key>FC653622-D3D1-4E8A-8002-2A225F79464F</key>
+		<dict>
+			<key>note</key>
+			<string>Add Universal Actions as a fallback search in Alfred's Features &gt; Default Results &gt; Setup Fallback Results</string>
+			<key>xpos</key>
+			<integer>220</integer>
+			<key>ypos</key>
+			<integer>435</integer>
+		</dict>
+	</dict>
+	<key>variablesdontexport</key>
+	<array/>
+	<key>version</key>
+	<string>1.1</string>
+	<key>webaddress</key>
+	<string>https://www.alfredapp.com</string>
+</dict>
+</plist>
