@@ -274,6 +274,13 @@ link_file() {
 	print_message "File $DEST_PATH linked" $?
 }
 
+configure_docker_buildx() {
+	print_message "Configuring docker buildx" -1
+	mkdir -p ~/.docker/cli-plugins
+	link_file /usr/local/bin/docker-buildx ~/.docker/cli-plugins/docker-buildx
+	print_message "Finished configuring docker buildx" $?
+}
+
 install_others() {
 	install_lisp lisp
 	link_file $MY_ZDOTDIR/gitconfig $HOME/.gitconfig
@@ -281,6 +288,9 @@ install_others() {
 	HAMMERSPOON_PATH=$HOME/.hammerspoon
 	[[ ! -d $HAMMERSPOON_PATH ]] && mkdir -p $HAMMERSPOON_PATH || print_message "Directory $HAMMERSPOON_PATH already exists." -2
 	link_file $MY_ZDOTDIR/tools/hammerspoon/init.lua $HAMMERSPOON_PATH/init.lua
+
+	# symlink docker buildx
+	configure_docker_buildx
 }
 
 # init
