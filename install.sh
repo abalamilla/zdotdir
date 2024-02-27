@@ -282,8 +282,11 @@ configure_docker_buildx() {
 
 config_asdf() {
 	print_message "Configuring asdf" -1
+
 	asdf plugin add dotnet
 	asdf plugin add nodejs
+
+	print_message "Finished configuring asdf" $?
 }
 
 install_others() {
