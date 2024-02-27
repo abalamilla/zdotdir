@@ -281,6 +281,12 @@ configure_docker_buildx() {
 	print_message "Finished configuring docker buildx" $?
 }
 
+config_asdf() {
+	print_message "Configuring asdf" -1
+	asdf plugin add dotnet
+	asdf plugin add nodejs
+}
+
 install_others() {
 	install_lisp lisp
 	link_file $MY_ZDOTDIR/gitconfig $HOME/.gitconfig
@@ -291,6 +297,9 @@ install_others() {
 
 	# symlink docker buildx
 	configure_docker_buildx
+
+	# add asdf plugins
+	config_asdf
 }
 
 # init

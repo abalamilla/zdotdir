@@ -57,3 +57,6 @@ export NVM_COMPLETION=true
 
 # set docker buildkit as default
 export DOCKER_BUILDKIT=1
+
+# asdf config
+export ASDF_CONFIG_FILE=$ZDOTDIR/.asdfrc
