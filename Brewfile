@@ -3,6 +3,7 @@ tap "microsoft/git"
 tap "powershell/tap"
 tap "homebrew/command-not-found"
 
+brew "asdf"
 brew "autojump"
 brew "awscli"
 brew "aws-cdk"
