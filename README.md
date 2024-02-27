@@ -47,12 +47,6 @@ By default Zsh already have some completions, but for those that are still missi
 
 You can find more in [zsh-completions](https://github.com/zsh-users/zsh-completions) repo.
 
-### zsh-nvm
-
-Nvm manager: installs, updates and loads nvm.
-
-You can find more in [zsh-nvm](https://github.com/lukechilds/zsh-nvm) repo.
-
 ### zsh-syntax-highlighting
 
 Highlights commands whilst they are typed, helpful to identify if the current command syntax is well formed before running

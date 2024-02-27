@@ -51,9 +51,6 @@ command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv init -)"
 
 export ZDOTFILES_DEBUG=0
-export NVM_LAZY_LOAD=true
-export NVM_AUTO_USE=true
-export NVM_COMPLETION=true
 
 # set docker buildkit as default
 export DOCKER_BUILDKIT=1
