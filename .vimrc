@@ -59,6 +59,7 @@ let g:repl_program = {
 			\ 'default': ['zsh'],
 			\ 'lua': 'lua',
 			\ 'clojure': 'lein repl',
+			\ 'crystal': 'crystal i',
 			\ }
 let g:repl_exit_commands = {
 			\ 'julia': 'exit()',
