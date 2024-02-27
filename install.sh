@@ -224,7 +224,6 @@ load_homebrew() {
 
 install_apps() {
 	APPS=(
-		"https://get.sdkman.io"::"sdk"
 		"https://nixos.org/nix/install"::"nix-shell"
 	)
 
@@ -285,6 +284,7 @@ config_asdf() {
 
 	asdf plugin add dotnet
 	asdf plugin add nodejs
+	asdf plugin add java
 
 	print_message "Finished configuring asdf" $?
 }
