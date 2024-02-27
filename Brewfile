@@ -69,7 +69,7 @@ brew "sbcl"
 brew "swi-prolog"
 brew "tidy-html5"
 brew "tree"
-brew "universal-ctags/universal-ctags/universal-ctags", args: ['HEAD']
+brew "universal-ctags"
 brew "vim"
 brew "watch"
 brew "wget"
