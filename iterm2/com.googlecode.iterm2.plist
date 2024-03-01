@@ -747,6 +747,8 @@
 			<true/>
 			<key>Use Bright Bold</key>
 			<true/>
+			<key>Use Cursor Guide</key>
+			<true/>
 			<key>Use Italic Font</key>
 			<true/>
 			<key>Use Non-ASCII Font</key>
@@ -1528,6 +1530,8 @@
 			<integer>0</integer>
 			<key>Silence Bell</key>
 			<false/>
+			<key>Smart Cursor Color</key>
+			<true/>
 			<key>Space</key>
 			<integer>-1</integer>
 			<key>Status Bar Layout</key>
@@ -1559,6 +1563,8 @@
 			<key>Use Bold Font</key>
 			<true/>
 			<key>Use Bright Bold</key>
+			<true/>
+			<key>Use Cursor Guide</key>
 			<true/>
 			<key>Use Italic Font</key>
 			<true/>
