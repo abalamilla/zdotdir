@@ -152,8 +152,6 @@ clone_repos() {
 	typeset -a REPOS_TO_CLONE
 
 	REPOS_TO_CLONE=(
-		[((INDEX++))]=(["repo"]="abalamilla/zdotdir" ["dest"]=$CONFIG_DIR ["callback"]=load_scripts)
-		
 		# zsh plugins
 		[((INDEX++))]=(["repo"]="Aloxaf/fzf-tab" ["dest"]=$ZDOTDIR_PLUGINS)
 		[((INDEX++))]=(["repo"]="zsh-users/zsh-autosuggestions" ["dest"]=$ZDOTDIR_PLUGINS)
@@ -279,16 +277,6 @@ configure_docker_buildx() {
 	print_message "Finished configuring docker buildx" $?
 }
 
-config_asdf() {
-	print_message "Configuring asdf" -1
-
-	asdf plugin add dotnet
-	asdf plugin add nodejs
-	asdf plugin add java
-
-	print_message "Finished configuring asdf" $?
-}
-
 install_others() {
 	install_lisp lisp
 	link_file $MY_ZDOTDIR/gitconfig $HOME/.gitconfig
@@ -299,17 +287,53 @@ install_others() {
 
 	# symlink docker buildx
 	configure_docker_buildx
+}
 
-	# add asdf plugins
+config_asdf() {
+	print_message "Configuring asdf" -1
+
+	asdf plugin add nodejs
+	asdf plugin add java
+
+	# install tools
+	asdf install
+
+	print_message "Finished configuring asdf" $?
+}
+
+install_asdf() {
+	print_message "Installing asdf" -1
+	brew install asdf
 	config_asdf
+	print_message "Finished installing asdf" $?
+}
+
+init_config() {
+	# install homebrew
+	install_homebrew
+	load_homebrew
+
+	# load zdotdir scripts
+	load_scripts
+
+	# install and configure asdf
+	install_asdf
 }
 
 # init
 () {
+	# clone my zdotdir repository
+	clone_repo abalamilla/zdotdir $CONFIG_DIR
+
+	# setup initial configuration
+	init_config
+
+	# clone plugins and themes
 	clone_repos
-	install_homebrew
-	load_homebrew
+
+	# install brewfile
 	install_brewfile
+
 	install_apps
 	install_others
 
