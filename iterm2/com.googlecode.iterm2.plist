@@ -12,6 +12,8 @@
 	<false/>
 	<key>HotkeyMigratedFromSingleToMulti</key>
 	<true/>
+	<key>Mark Alert Action</key>
+	<string>Post Notification</string>
 	<key>New Bookmarks</key>
 	<array>
 		<dict>
