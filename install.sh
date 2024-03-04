@@ -298,6 +298,12 @@ config_asdf() {
 	# install tools
 	asdf install
 
+	# link .tool-versions to home directory
+	link_file $MY_ZDOTDIR/.tool-versions $HOME/.tool-versions
+
+	# load asdf
+	source "$(brew --prefix asdf)/libexec/asdf.sh"
+
 	print_message "Finished configuring asdf" $?
 }
 
