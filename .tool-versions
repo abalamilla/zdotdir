@@ -2,5 +2,4 @@ nodejs 20.8.1
 java corretto-11.0.13.8.1
 java corretto-8.402.08.1
 scala 2.13.9
-python 3.12.2 latest
-ansible-base 2.10.17 latest
+python 3.12.2
