@@ -295,6 +295,7 @@ config_asdf() {
 	asdf plugin add nodejs
 	asdf plugin add java
 	asdf plugin add scala
+	asdf plugin add python
 
 	# install tools
 	asdf install
