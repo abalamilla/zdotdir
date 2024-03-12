@@ -21,6 +21,7 @@ export AUTOJUMP_SH="$(brew --repository)/etc/autojump.sh"
 export AUTOJUMP_SH_x86="/usr/local/etc/profile.d/autojump.sh"
 export NIX_DAEMON_PATH="/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh"
 export ASDF_SH="$(brew --prefix asdf)/libexec/asdf.sh"
+export ASDF_SET_JAVA_HOME="$HOME/.asdf/plugins/java/set-java-home.zsh"
 
 # office profile - not under version control
 OFFICE_PROFILE=$ZDOTDIR/office_profile
@@ -36,6 +37,7 @@ SOURCE_PATHS=(
   $NIX_DAEMON_PATH
   $OFFICE_PROFILE
   $ASDF_SH
+  $ASDF_SET_JAVA_HOME
 )
 
 # move .vimrc
