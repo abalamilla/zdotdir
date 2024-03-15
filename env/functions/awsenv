@@ -5,12 +5,12 @@ local profile
 local region
 
 function usage() {
-  echo "usage: awsenv [--profile <profile>] [--region <region>]"
+  echo "usage: awsenv [--profile <profile>] [--region <region>]\n"
   echo "example: awsenv --profile default --region us-east-1"
   echo "example: awsenv -p default -r us-east-1"
   echo "example: awsenv -p default"
-  echo "example: awsenv -r us-east-1"
-  echo "credentials must be in clipboard"
+  echo "example: awsenv -r us-east-1\n"
+  echo "credentials must be in clipboard if profile parameter is set"
 }
 
 # loop through arguments
@@ -39,9 +39,9 @@ if [[ -z $profile ]] && [[ -z $region ]]; then
   return 1
 fi
 
-# set profile to current profile if not set
+# only update region if profile is not set
 if [[ -z $profile ]]; then
-  profile=$(echo $AWS_PROFILE)
+  profile=$AWS_PROFILE
 
   if [[ -z $profile ]]; then
     echo "profile not set"
@@ -49,6 +49,9 @@ if [[ -z $profile ]]; then
     usage
     return 1
   fi
+
+  aws configure set region $region --profile $profile
+  return $?
 fi
 
 # set region to current profile region if not set
@@ -67,7 +70,7 @@ fi
 aws_credentials=$(pbpaste)
 
 # verify clipboard for aws credentials
-if [[ "$(echo $aws_credentials)" != *"AWS"*  ]]; then
+if [[ $aws_credentials != *"AWS"*  ]]; then
   echo "aws credentials not found in clipboard"
   return 1
 fi
