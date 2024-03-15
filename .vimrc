@@ -69,3 +69,6 @@ nnoremap <leader>r :REPLToggle<CR>
 
 " julia-vim
 let g:latex_to_unicode_auto = 1
+
+" copilot maps
+imap <C-L> <Plug>(copilot-accept-word)
