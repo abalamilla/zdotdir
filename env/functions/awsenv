@@ -5,8 +5,8 @@ profile=$1
 region=$2
 
 function usage() {
-  echo "usage: aws-set-profile <profile> <region>"
-  echo "example: aws-set-profile default us-east-1"
+  echo "usage: awsenv <profile> <region>"
+  echo "example: awsenv default us-east-1"
   echo "credentials must be in clipboard"
 }
 
