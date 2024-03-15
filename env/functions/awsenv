@@ -1,20 +1,67 @@
 # current aws credentials format is: export AWS_ACCESS_KEY_ID=VALUE && export AWS_SECRET_ACCESS_KEY=VALUE && export AWS_SESSION_TOKEN=VALUE
 
-# get aws profile name from first argument
-profile=$1
-region=$2
+# get profile and region from arguments
+local profile
+local region
 
 function usage() {
-  echo "usage: awsenv <profile> <region>"
-  echo "example: awsenv default us-east-1"
+  echo "usage: awsenv [--profile <profile>] [--region <region>]"
+  echo "example: awsenv --profile default --region us-east-1"
+  echo "example: awsenv -p default -r us-east-1"
+  echo "example: awsenv -p default"
+  echo "example: awsenv -r us-east-1"
   echo "credentials must be in clipboard"
 }
 
-# verify profile name is received as argument
-[[ -z "$profile" ]] && usage && return
+# loop through arguments
+while [[ $# -gt 0 ]]; do
+  key="$1"
 
-# verify region name is received as argument
-[[ -z "$region" ]] && usage && return
+  case $key in
+    -p|--profile)
+      profile="$2"
+      shift 2
+      ;;
+    -r|--region)
+      region="$2"
+      shift 2
+      ;;
+    *)
+      usage
+      return 1
+      ;;
+  esac
+done
+
+# show usage in case profile or region are not set
+if [[ -z $profile ]] && [[ -z $region ]]; then
+  usage
+  return 1
+fi
+
+# set profile to current profile if not set
+if [[ -z $profile ]]; then
+  profile=$(echo $AWS_PROFILE)
+
+  if [[ -z $profile ]]; then
+    echo "profile not set"
+    echo "please specify profile parameter\n"
+    usage
+    return 1
+  fi
+fi
+
+# set region to current profile region if not set
+if [[ -z $region ]]; then
+  region=$(aws configure get region --profile $profile 2>/dev/null)
+
+  if [[ -z $region ]]; then
+    echo "profile $profile does not exist"
+    echo "please specify region parameter\n"
+    usage
+    return 1
+  fi
+fi
 
 # get aws credentials from clipboard
 aws_credentials=$(pbpaste)
@@ -22,11 +69,11 @@ aws_credentials=$(pbpaste)
 # verify clipboard for aws credentials
 if [[ "$(echo $aws_credentials)" != *"AWS"*  ]]; then
   echo "aws credentials not found in clipboard"
-  return
+  return 1
 fi
 
 # parse aws credentials from clipboard
-aws_credentials=$(echo "$aws_credentials && region=$region" | sed 's/export//g' | sed 's/&&/\n/g' | sed 's/ //g' | sed 's/=/ /g')
+aws_credentials=$(echo $aws_credentials | sed 's/export//g' | sed 's/&&/\n/g' | sed 's/ //g' | sed 's/=/ /g')
 
 # run aws config set to save credentials
 while read -r line; do
@@ -34,7 +81,7 @@ while read -r line; do
   KEY=$(echo $line | awk '{print $1}' | tr '[:upper:]' '[:lower:]')
   VALUE=$(echo $line | awk '{print $2}')
 
-  aws configure set $KEY $VALUE --profile $profile
+  aws configure set $KEY $VALUE --profile $profile --region $region
 done <<< "$aws_credentials"
 
 # set aws profile as default
