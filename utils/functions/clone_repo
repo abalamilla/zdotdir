@@ -1,13 +1,8 @@
 # clone a github repository
-get_directory_name() {
-  FROM_PATH=$1
-  awk -F '/' '{print $NF}' <<< $FROM_PATH
-}
-
 GIT_REPO_PATH=$1
 DEST_PATH=$2
 GIT_OPTIONS=$3
-PROJECT_NAME="$(get_directory_name $GIT_REPO_PATH)"
+PROJECT_NAME="$(basename $GIT_REPO_PATH)"
 FINAL_DEST_PATH="$DEST_PATH/$PROJECT_NAME"
 GITHUB_URL="https://github.com"
 
