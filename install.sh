@@ -10,58 +10,6 @@ UTILS_PATH=$MY_ZDOTDIR/utils
 BACKUPS_PATH=$MY_ZDOTDIR/backups
 ZDOTDIR_THEMES=$MY_ZDOTDIR/themes
 
-backup_file() {
-	# backup a file
-	FILE_TO_BACKUP=$1
-	DEST_PATH=$2
-	NEW_FILE_NAME=${3:-FILE_TO_BACKUP}
-	FINAL_FILE="$DEST_PATH/$NEW_FILE_NAME"
-
-	usage() {
-		cat <<HELP_USAGE
-		Backup a file to a destination path
-
-		backup_file file_path destination_path [new_file_name]
-HELP_USAGE
-	}
-
-	[[ -z $FILE_TO_BACKUP || -z $DEST_PATH ]] && { usage; return 1; }
-	[[ ! -f $FILE_TO_BACKUP ]] && { print_message "The file $FILE_TO_BACKUP do not exists." 1; return 1; }
-	[[ ! -w $DEST_PATH ]] && { print_message "Current user do not have write permissions over $DEST_PATH."; return 1; }
-
-	print_message "Creating directory..." -1
-	[[ -d $DEST_PATH ]] && mkdir -p $DEST_PATH || print_message "Directory already exists." -2
-
-	print_message "Copying file..." -1
-	cp $FILE_TO_BACKUP $FINAL_FILE
-	print_message "File copied: $FILE_TO_BACKUP -> $FINAL_FILE"
-}
-
-set_zdotdir() {
-	# update zdotdir in zshenv
-	MY_ZDOTDIR=$1
-	FILE_PATH=${2:-$HOME/.zshenv}
-
-	usage() {
-	  cat << HELP_USAGE
-	  Updates ZDOTDIR environment variable from .zshenv
-
-	  set_zdotdir /path/to/custom/zdotdir [/path/to/.zshenv default: $HOME/.zshenv]
-HELP_USAGE
-	}
-
-	[[ -z $MY_ZDOTDIR ]] && { usage; return 1; }
-
-	[[ ! -f $FILE_PATH ]] && { print_message "File $FILE_PATH do not exists. Creating a blank file..." 1; touch $FILE_PATH; }
-	[[ ! -w $FILE_PATH ]] && { print_message "Current user do not have write permissions over $FILE_PATH." 1; return 1; }
-
-	# cleaning
-	sed -i -E 's/ZDOTDIR=.*//g' $FILE_PATH
-
-	# setting new value
-	echo ZDOTDIR=$MY_ZDOTDIR >> $FILE_PATH
-}
-
 print_message() {
 	# prints a message
 	MESSAGE=$1

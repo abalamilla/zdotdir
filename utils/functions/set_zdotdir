@@ -12,6 +12,9 @@ HELP_USAGE
 
 [[ -z $MY_ZDOTDIR ]] && { usage; return 1; }
 
+[[ ! -f $FILE_PATH ]] && { print_message "File $FILE_PATH do not exists. Creating a blank file..." 1; touch $FILE_PATH; }
+[[ ! -w $FILE_PATH ]] && { print_message "Current user do not have write permissions over $FILE_PATH." 1; return 1; }
+
 # cleaning
 sed -i -E 's/ZDOTDIR=.*//g' $FILE_PATH
 
