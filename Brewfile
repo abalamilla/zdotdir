@@ -1,7 +1,6 @@
 tap "homebrew/cask-fonts"
 tap "microsoft/git"
 tap "powershell/tap"
-tap "homebrew/command-not-found"
 
 brew "asdf"
 brew "autojump"
@@ -76,8 +75,6 @@ brew "yarn"
 brew "yq"
 brew "zlib"
 brew "zsh"
-brew "zsh-completions"
-brew "zsh-history-substring-search"
 
 cask "beyond-compare"
 cask "dbvisualizer"
