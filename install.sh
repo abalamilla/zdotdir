@@ -235,6 +235,9 @@ install_others() {
 
 	# symlink docker buildx
 	configure_docker_buildx
+
+	# symlink karabiner configuration file
+	link_file $MY_ZDOTDIR/karabiner $HOME/.config
 }
 
 config_asdf() {
