@@ -16,8 +16,33 @@ set shiftwidth=4    " change tab width
 set tabstop=4       " tab equal 4 spaces
 
 "set bg=dark         " set backgrouond color to dark
-color sorbet         " sets color schema
+if has('nvim')
+	colorscheme slate
+else
+	color sorbet         " sets color schema
+endif
 
+let data_dir = has('nvim') ? stdpath('data') . '/site' : '~/.vim'
+if empty(glob(data_dir . '/autoload/plug.vim'))
+  silent execute '!curl -fLo '.data_dir.'/autoload/plug.vim --create-dirs  https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif
+
+call plug#begin('$HOME/.vim/plugged')
+	Plug 'sheerun/vim-polyglot'
+	Plug 'junegunn/fzf'
+	Plug 'junegunn/fzf.vim'
+	Plug 'prettier/vim-prettier'
+	Plug 'ludovicchabant/vim-gutentags'
+	Plug 'vim-autoformat/vim-autoformat'
+	Plug 'junegunn/vader.vim'
+	Plug 'vim-airline/vim-airline'
+	Plug 'vim-airline/vim-airline-themes'
+	Plug 'github/copilot.vim'
+	Plug 'tpope/vim-fugitive'
+	Plug 'iamcco/markdown-preview.nvim'
+	Plug 'sillybun/vim-repl'
+call plug#end()
 
 " clear highlighting on escape in normal mode
 " mapping to the escape key
@@ -60,9 +85,11 @@ let g:repl_program = {
 			\ 'lua': 'lua',
 			\ 'clojure': 'lein repl',
 			\ 'crystal': 'crystal i',
+			\ 'scala': 'scala',
 			\ }
 let g:repl_exit_commands = {
 			\ 'julia': 'exit()',
+			\ 'scala': ':q',
 			\ }
 let g:repl_output_copy_to_register = "t"
 nnoremap <leader>r :REPLToggle<CR>
