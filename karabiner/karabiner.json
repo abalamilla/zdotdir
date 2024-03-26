@@ -235,7 +235,7 @@
                         "product_id": 0,
                         "vendor_id": 0
                     },
-                    "ignore": false,
+                    "ignore": true,
                     "manipulate_caps_lock_led": true,
                     "mouse_flip_horizontal_wheel": false,
                     "mouse_flip_vertical_wheel": false,
