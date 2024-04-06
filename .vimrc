@@ -43,6 +43,7 @@ call plug#begin('$HOME/.vim/plugged')
 	Plug 'iamcco/markdown-preview.nvim'
 	Plug 'sillybun/vim-repl'
 	Plug 'preservim/nerdtree'
+	Plug 'jparise/vim-graphql'
 call plug#end()
 
 " clear highlighting on escape in normal mode
