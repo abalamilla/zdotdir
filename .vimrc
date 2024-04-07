@@ -22,29 +22,66 @@ else
 	color sorbet         " sets color schema
 endif
 
-let data_dir = has('nvim') ? stdpath('data') . '/site' : '~/.vim'
-if empty(glob(data_dir . '/autoload/plug.vim'))
-  silent execute '!curl -fLo '.data_dir.'/autoload/plug.vim --create-dirs  https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
-  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
-endif
+if !(&diff)
+	let data_dir = has('nvim') ? stdpath('data') . '/site' : '~/.vim'
+	if empty(glob(data_dir . '/autoload/plug.vim'))
+	  silent execute '!curl -fLo '.data_dir.'/autoload/plug.vim --create-dirs  https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+	  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+	endif
 
-call plug#begin('$HOME/.vim/plugged')
-	Plug 'sheerun/vim-polyglot'
-	Plug 'junegunn/fzf'
-	Plug 'junegunn/fzf.vim'
-	Plug 'prettier/vim-prettier'
-	Plug 'ludovicchabant/vim-gutentags'
-	Plug 'vim-autoformat/vim-autoformat'
-	Plug 'junegunn/vader.vim'
-	Plug 'vim-airline/vim-airline'
-	Plug 'vim-airline/vim-airline-themes'
-	Plug 'github/copilot.vim'
-	Plug 'tpope/vim-fugitive'
-	Plug 'iamcco/markdown-preview.nvim'
-	Plug 'sillybun/vim-repl'
-	Plug 'preservim/nerdtree'
-	Plug 'jparise/vim-graphql'
-call plug#end()
+	call plug#begin('$HOME/.vim/plugged')
+		Plug 'sheerun/vim-polyglot'
+		Plug 'junegunn/fzf'
+		Plug 'junegunn/fzf.vim'
+		Plug 'prettier/vim-prettier'
+		Plug 'ludovicchabant/vim-gutentags'
+		Plug 'vim-autoformat/vim-autoformat'
+		Plug 'junegunn/vader.vim'
+		Plug 'vim-airline/vim-airline'
+		Plug 'vim-airline/vim-airline-themes'
+		Plug 'github/copilot.vim'
+		Plug 'tpope/vim-fugitive'
+		Plug 'iamcco/markdown-preview.nvim'
+		Plug 'sillybun/vim-repl'
+		Plug 'preservim/nerdtree'
+		Plug 'jparise/vim-graphql'
+	call plug#end()
+
+	let g:airline_theme='random'
+
+	" vim-repl
+	let g:repl_program = {
+				\ 'julia': ['julia'],
+				\ 'default': ['zsh'],
+				\ 'lua': 'lua',
+				\ 'clojure': 'lein repl',
+				\ 'crystal': 'crystal i',
+				\ 'scala': 'scala',
+				\ }
+	let g:repl_exit_commands = {
+				\ 'julia': 'exit()',
+				\ 'scala': ':q',
+				\ }
+	let g:repl_output_copy_to_register = "t"
+	nnoremap <leader>r :REPLToggle<CR>
+
+	" julia-vim
+	let g:latex_to_unicode_auto = 1
+
+	" copilot maps
+	imap <C-L> <Plug>(copilot-accept-word)
+
+	" Nerdtree
+	nnoremap <leader>n :NERDTreeFocus<CR>
+	nnoremap <C-n> :NERDTree<CR>
+	nnoremap <C-t> :NERDTreeToggle<CR>
+	nnoremap <C-f> :NERDTreeFind<CR>
+
+	let g:NERDTreeShowHidden=1
+	let g:NERDTreeShowLineNumbers=1
+	au VimEnter * NERDTree
+
+endif
 
 " clear highlighting on escape in normal mode
 " mapping to the escape key
@@ -75,38 +112,3 @@ inoremap <Right> <Nop>
 
 " set wrap for vimdiff
 au VimEnter * if &diff | execute 'windo set wrap' | endif
-
-let g:airline_theme='random'
-
-" vim-repl
-let g:repl_program = {
-			\ 'julia': ['julia'],
-			\ 'default': ['zsh'],
-			\ 'lua': 'lua',
-			\ 'clojure': 'lein repl',
-			\ 'crystal': 'crystal i',
-			\ 'scala': 'scala',
-			\ }
-let g:repl_exit_commands = {
-			\ 'julia': 'exit()',
-			\ 'scala': ':q',
-			\ }
-let g:repl_output_copy_to_register = "t"
-nnoremap <leader>r :REPLToggle<CR>
-
-" julia-vim
-let g:latex_to_unicode_auto = 1
-
-" copilot maps
-imap <C-L> <Plug>(copilot-accept-word)
-
-" Nerdtree
-nnoremap <leader>n :NERDTreeFocus<CR>
-nnoremap <C-n> :NERDTree<CR>
-nnoremap <C-t> :NERDTreeToggle<CR>
-nnoremap <C-f> :NERDTreeFind<CR>
-
-let g:NERDTreeShowHidden=1
-let g:NERDTreeShowLineNumbers=1
-au VimEnter * NERDTree
-
