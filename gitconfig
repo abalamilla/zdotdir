@@ -89,9 +89,9 @@
 [commit]
 	template = $HOME/.stCommitMsg
 [diff]
-	tool = vimdiff
+	tool = nvimdiff
 [merge]
-	tool = vimdiff
+	tool = nvimdiff
 [credential]
 	helper = 
 	helper = /usr/local/share/gcm-core/git-credential-manager
