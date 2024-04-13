@@ -89,7 +89,7 @@ if !(&diff)
 		nnoremap <C-n> :NvimTreeRefresh<CR>
 
 		" python
-		let g:python3_host_prog = '/Users/abralami/.config/zdotdir/py3nvim/bin/python'
+		let g:python3_host_prog = '$ZDOTDIR/py3nvim/bin/python'
 	else
 		" Nerdtree
 		nnoremap <leader>n :NERDTreeFocus<CR>

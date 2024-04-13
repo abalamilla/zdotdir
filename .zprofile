@@ -12,6 +12,7 @@ else
 fi
 
 # VARS
+export ZDOTDIR=$ZDOTDIR # reexporting to make it available in nvim
 export MY_INITIAL_CONFIGURATION=$ZDOTDIR/env/autoload_functions.sh
 export MY_ZTYLES_PATH=($ZDOTDIR/zstyles/*)
 export MY_ENV_PATH=($ZDOTDIR/env/config/*)
