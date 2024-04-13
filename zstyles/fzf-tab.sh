@@ -12,8 +12,13 @@ zstyle ':fzf-tab:complete:-command-:*' fzf-preview \
 # Homebrew
 zstyle ':fzf-tab:complete:brew-(install|uninstall|search|info):*-argument-rest' fzf-preview 'brew info $word'
 
-# show file contents
-zstyle ':fzf-tab:complete:*:*' fzf-preview 'less ${(Q)realpath}'
+# disable sort when completing `git checkout`
+zstyle ':completion:*:git-checkout:*' sort false
+# force zsh not to show completion menu, which allows fzf-tab to capture the unambiguous prefix
+zstyle ':completion:*' menu no
+# preview directory's content with eza when completing cd
+zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza -1 --color=always $realpath'
+
 export LESSOPEN='| $ZDOTDIR/.lessfilter %s'
 export LESS='-r'
 
