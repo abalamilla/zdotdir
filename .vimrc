@@ -17,7 +17,7 @@ set tabstop=4       " tab equal 4 spaces
 
 "set bg=dark         " set backgrouond color to dark
 if has('nvim')
-	colorscheme slate
+	colorscheme habamax
 else
 	color sorbet         " sets color schema
 endif
@@ -25,29 +25,35 @@ endif
 if !(&diff)
 	let data_dir = has('nvim') ? stdpath('data') . '/site' : '~/.vim'
 	if empty(glob(data_dir . '/autoload/plug.vim'))
-	  silent execute '!curl -fLo '.data_dir.'/autoload/plug.vim --create-dirs  https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
-	  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+		silent execute '!curl -fLo '.data_dir.'/autoload/plug.vim --create-dirs  https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+		autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
 	endif
 
 	call plug#begin('$HOME/.vim/plugged')
 		Plug 'sheerun/vim-polyglot'
 		Plug 'junegunn/fzf'
 		Plug 'junegunn/fzf.vim'
-		Plug 'prettier/vim-prettier'
 		Plug 'ludovicchabant/vim-gutentags'
 		Plug 'vim-autoformat/vim-autoformat'
-		Plug 'junegunn/vader.vim'
 		Plug 'vim-airline/vim-airline'
 		Plug 'vim-airline/vim-airline-themes'
 		Plug 'github/copilot.vim'
 		Plug 'tpope/vim-fugitive'
-		Plug 'iamcco/markdown-preview.nvim'
-		Plug 'sillybun/vim-repl'
-		Plug 'preservim/nerdtree'
 		Plug 'jparise/vim-graphql'
+
+		if has('nvim')
+			Plug 'nvim-tree/nvim-web-devicons'
+			Plug 'nvim-tree/nvim-tree.lua'
+			Plug 'f-person/git-blame.nvim'
+		else
+			Plug 'sillybun/vim-repl'
+			Plug 'preservim/nerdtree'
+			Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug'] }
+		endif
 	call plug#end()
 
-	let g:airline_theme='random'
+	let g:airline_theme='angr'
+	let g:airline_powerline_fonts = 1
 
 	" vim-repl
 	let g:repl_program = {
@@ -71,15 +77,30 @@ if !(&diff)
 	" copilot maps
 	imap <C-L> <Plug>(copilot-accept-word)
 
-	" Nerdtree
-	nnoremap <leader>n :NERDTreeFocus<CR>
-	nnoremap <C-n> :NERDTree<CR>
-	nnoremap <C-t> :NERDTreeToggle<CR>
-	nnoremap <C-f> :NERDTreeFind<CR>
+	if has('nvim')
+		lua require 'nvim-tree'.setup()
+		lua require('gitblame')
 
-	let g:NERDTreeShowHidden=1
-	let g:NERDTreeShowLineNumbers=1
-	au VimEnter * NERDTree
+		au VimEnter * NvimTreeToggle
+
+		" nvim-tree
+		nnoremap <leader>e :NvimTreeToggle<CR>
+		nnoremap <C-f> :NvimTreeFindFile<CR>
+		nnoremap <C-n> :NvimTreeRefresh<CR>
+
+		" python
+		let g:python3_host_prog = '/Users/abralami/.config/zdotdir/py3nvim/bin/python'
+	else
+		" Nerdtree
+		nnoremap <leader>n :NERDTreeFocus<CR>
+		nnoremap <C-n> :NERDTree<CR>
+		nnoremap <C-t> :NERDTreeToggle<CR>
+		nnoremap <C-f> :NERDTreeFind<CR>
+
+		let g:NERDTreeShowHidden=1
+		let g:NERDTreeShowLineNumbers=1
+		au VimEnter * NERDTree
+	endif
 
 endif
 
