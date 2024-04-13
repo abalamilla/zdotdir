@@ -6,6 +6,10 @@
 	<true/>
 	<key>BracketedPasteMode</key>
 	<true/>
+	<key>Coprocess MRU</key>
+	<array>
+		<string>clear</string>
+	</array>
 	<key>Default Bookmark Guid</key>
 	<string>7374F517-B0A6-477F-8362-D8CC8D2FC709</string>
 	<key>EscapeShellCharsWithBackslash</key>
