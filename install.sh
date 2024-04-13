@@ -5,7 +5,6 @@ BRANCH_NAME=${1:-main}
 CONFIG_DIR=~/.config
 MY_ZDOTDIR=$CONFIG_DIR/zdotdir
 ZDOTDIR_PLUGINS="$MY_ZDOTDIR/plugins"
-VIM_PLUGIN_PATH=$HOME/.vim/pack/plugins/start
 UTILS_PATH=$MY_ZDOTDIR/utils
 BACKUPS_PATH=$MY_ZDOTDIR/backups
 ZDOTDIR_THEMES=$MY_ZDOTDIR/themes
@@ -34,11 +33,11 @@ clone_repo() {
 
 	print_message "Verifying local path: $FINAL_DEST_PATH" -1
 	if [ ! -d $FINAL_DEST_PATH ]; then
-	   print_message "Cloning repository..." -1
-	   git clone $GIT_OPTIONS $GITHUB_URL/$GIT_REPO_PATH $FINAL_DEST_PATH
+		print_message "Cloning repository..." -1
+		git clone $GIT_OPTIONS $GITHUB_URL/$GIT_REPO_PATH $FINAL_DEST_PATH
 	else
-	   print_message "Updating repository..." -1
-	   git -C $FINAL_DEST_PATH pull
+		print_message "Updating repository..." -1
+		git -C $FINAL_DEST_PATH pull
 	fi
 
 	print_message "Installed on: $FINAL_DEST_PATH" $?
@@ -78,21 +77,6 @@ load_scripts() {
 	print_message "Scripts loaded" $?
 }
 
-install_markdown_preview() {
-	APP_DIR=$VIM_PLUGIN_PATH/markdown-preview.nvim
-	print_message "Installing markdown-preview.nvim" -1
-	cd $APP_DIR
-
-	if [[ "$(type -w node)" == "node: command" ]]; then
-		npx --yes yarn install
-	else
-		print_message "Node is not installed. Skipping markdown-preview.nvim installation." -2
-	fi
-
-	cd -
-	print_message "Finished installing markdown-preview.nvim" $?
-}
-
 clone_repos() {
 	print_message "Cloning plugins and themes" -1
 
@@ -106,22 +90,6 @@ clone_repos() {
 		[((INDEX++))]=(["repo"]="zsh-users/zsh-history-substring-search" ["dest"]=$ZDOTDIR_PLUGINS)
 		[((INDEX++))]=(["repo"]="zsh-users/zsh-completions" ["dest"]=$ZDOTDIR_PLUGINS)
 		[((INDEX++))]=(["repo"]="zsh-users/zsh-syntax-highlighting" ["dest"]=$ZDOTDIR_PLUGINS)
-
-		# vim plugins
-		[((INDEX++))]=(["repo"]="sheerun/vim-polyglot" ["dest"]=$VIM_PLUGIN_PATH)
-		[((INDEX++))]=(["repo"]="junegunn/fzf" ["dest"]=$VIM_PLUGIN_PATH)
-		[((INDEX++))]=(["repo"]="junegunn/fzf.vim" ["dest"]=$VIM_PLUGIN_PATH)
-		[((INDEX++))]=(["repo"]="prettier/vim-prettier" ["dest"]=$VIM_PLUGIN_PATH)
-		[((INDEX++))]=(["repo"]="ludovicchabant/vim-gutentags" ["dest"]=$VIM_PLUGIN_PATH)
-		[((INDEX++))]=(["repo"]="vim-autoformat/vim-autoformat" ["dest"]=$VIM_PLUGIN_PATH)
-		[((INDEX++))]=(["repo"]="junegunn/vader.vim" ["dest"]=$VIM_PLUGIN_PATH)
-		[((INDEX++))]=(["repo"]="JuliaEditorSupport/julia-vim" ["dest"]=$VIM_PLUGIN_PATH)
-		[((INDEX++))]=(["repo"]="vim-airline/vim-airline" ["dest"]=$VIM_PLUGIN_PATH)
-		[((INDEX++))]=(["repo"]="vim-airline/vim-airline-themes" ["dest"]=$VIM_PLUGIN_PATH)
-		[((INDEX++))]=(["repo"]="github/copilot.vim" ["dest"]=$VIM_PLUGIN_PATH)
-		[((INDEX++))]=(["repo"]="tpope/vim-fugitive" ["dest"]=$VIM_PLUGIN_PATH)
-		[((INDEX++))]=(["repo"]="iamcco/markdown-preview.nvim" ["dest"]=$VIM_PLUGIN_PATH ["callback"]=install_markdown_preview)
-		[((INDEX++))]=(["repo"]="sillybun/vim-repl" ["dest"]=$VIM_PLUGIN_PATH)
 
 		# themes
 		[((INDEX++))]=(["repo"]="romkatv/powerlevel10k" ["dest"]=$ZDOTDIR_THEMES ["options"]="--depth=1")
@@ -180,13 +148,13 @@ install_apps() {
 }
 
 install_brewfile() {
-  	print_message "Installing Brewfile" -1
+	print_message "Installing Brewfile" -1
 
 	brew update
-    brew upgrade
+	brew upgrade
 
-    # install brewfile dependencies
-    brew bundle install --file=$MY_ZDOTDIR/Brewfile
+	# install brewfile dependencies
+	brew bundle install --file=$MY_ZDOTDIR/Brewfile
 
 	print_message "Installing Brewfile finished" $?
 }
@@ -208,7 +176,7 @@ install_lisp() {
 link_file() {
 	SOURCE_FILE=$1
 	DEST_PATH=$2
-	
+
 	print_message "Linking $SOURCE_FILE file to $DEST_PATH" -1
 	if [[ ! -f $DEST_PATH ]]; then
 		ln -s $SOURCE_FILE $DEST_PATH
@@ -238,6 +206,17 @@ install_others() {
 
 	# symlink karabiner configuration file
 	link_file $MY_ZDOTDIR/karabiner $HOME/.config
+
+	# create python venv
+	if [[ ! -d $MY_ZDOTDIR/py3nvim ]]; then
+		print_message "Creating python venv" -1
+		python -m venv $MY_ZDOTDIR/py3nvim
+		source $MY_ZDOTDIR/py3nvim/bin/activate
+		pip install -r $MY_ZDOTDIR/python/requirements.txt
+		print_message "Python venv created" $?
+	else
+		print_message "Python venv already exists" -2
+	fi
 }
 
 config_asdf() {
@@ -282,8 +261,8 @@ init_config() {
 
 # init
 () {
-	# clone my zdotdir repository
-	clone_repo abalamilla/zdotdir $CONFIG_DIR
+# clone my zdotdir repository
+clone_repo abalamilla/zdotdir $CONFIG_DIR
 
 	# setup initial configuration
 	init_config
