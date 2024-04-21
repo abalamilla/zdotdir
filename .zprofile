@@ -54,3 +54,6 @@ export DOCKER_BUILDKIT=1
 
 # asdf config
 export ASDF_CONFIG_FILE=$ZDOTDIR/.asdfrc
+
+# lazygit
+export LG_CONFIG_FILE=$ZDOTDIR/lazygit/config.yml
