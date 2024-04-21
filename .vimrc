@@ -22,7 +22,10 @@ else
 	color sorbet         " sets color schema
 endif
 
-if !(&diff)
+if (&diff)
+	" set wrap for vimdiff
+	au VimEnter * execute 'windo set wrap'
+else
 	let data_dir = has('nvim') ? stdpath('data') . '/site' : '~/.vim'
 	if empty(glob(data_dir . '/autoload/plug.vim'))
 		silent execute '!curl -fLo '.data_dir.'/autoload/plug.vim --create-dirs  https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
@@ -30,26 +33,27 @@ if !(&diff)
 	endif
 
 	call plug#begin('$HOME/.vim/plugged')
-		Plug 'sheerun/vim-polyglot'
-		Plug 'junegunn/fzf'
-		Plug 'junegunn/fzf.vim'
-		Plug 'ludovicchabant/vim-gutentags'
-		Plug 'vim-autoformat/vim-autoformat'
-		Plug 'vim-airline/vim-airline'
-		Plug 'vim-airline/vim-airline-themes'
-		Plug 'github/copilot.vim'
-		Plug 'tpope/vim-fugitive'
-		Plug 'jparise/vim-graphql'
+	Plug 'sheerun/vim-polyglot'
+	Plug 'junegunn/fzf'
+	Plug 'junegunn/fzf.vim'
+	Plug 'ludovicchabant/vim-gutentags'
+	Plug 'vim-autoformat/vim-autoformat'
+	Plug 'vim-airline/vim-airline'
+	Plug 'vim-airline/vim-airline-themes'
+	Plug 'github/copilot.vim'
+	Plug 'tpope/vim-fugitive'
+	Plug 'jparise/vim-graphql'
+	Plug 'voldikss/vim-floaterm'
 
-		if has('nvim')
-			Plug 'nvim-tree/nvim-web-devicons'
-			Plug 'nvim-tree/nvim-tree.lua'
-			Plug 'f-person/git-blame.nvim'
-		else
-			Plug 'sillybun/vim-repl'
-			Plug 'preservim/nerdtree'
-			Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug'] }
-		endif
+	if has('nvim')
+		Plug 'nvim-tree/nvim-web-devicons'
+		Plug 'nvim-tree/nvim-tree.lua'
+		Plug 'f-person/git-blame.nvim'
+	else
+		Plug 'sillybun/vim-repl'
+		Plug 'preservim/nerdtree'
+		Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug'] }
+	endif
 	call plug#end()
 
 	let g:airline_theme='angr'
@@ -131,5 +135,6 @@ inoremap <Down>  <Nop>
 inoremap <Left>  <Nop>
 inoremap <Right> <Nop>
 
-" set wrap for vimdiff
-au VimEnter * if &diff | execute 'windo set wrap' | endif
+" lazygit
+nnoremap <leader>lg :FloatermNew --width=100 --height=100 lazygit<CR>
+
