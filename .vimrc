@@ -138,6 +138,4 @@ inoremap <Down>  <Nop>
 inoremap <Left>  <Nop>
 inoremap <Right> <Nop>
 
-" lazygit
-nnoremap <leader>lg :FloatermNew --width=100 --height=100 lazygit<CR>
 
