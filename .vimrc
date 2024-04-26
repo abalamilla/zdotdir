@@ -32,6 +32,8 @@ else
 		au VimEnter * PlugInstall --sync | source $MYVIMRC
 	endif
 	
+	au BufRead,BufNewFile k setfiletype=kcl
+
 	call plug#begin('$HOME/.vim/plugged')
 	Plug 'sheerun/vim-polyglot'
 	Plug 'junegunn/fzf'
@@ -49,6 +51,7 @@ else
 		Plug 'nvim-tree/nvim-web-devicons'
 		Plug 'nvim-tree/nvim-tree.lua'
 		Plug 'lewis6991/gitsigns.nvim'
+		Plug 'kcl-lang/vim-kcl', { 'for': 'kcl'}
 	else
 		Plug 'sillybun/vim-repl'
 		Plug 'preservim/nerdtree'
