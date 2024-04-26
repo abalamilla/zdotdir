@@ -29,9 +29,9 @@ else
 	let data_dir = has('nvim') ? stdpath('data') . '/site' : '~/.vim'
 	if empty(glob(data_dir . '/autoload/plug.vim'))
 		silent execute '!curl -fLo '.data_dir.'/autoload/plug.vim --create-dirs  https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
-		autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+		au VimEnter * PlugInstall --sync | source $MYVIMRC
 	endif
-
+	
 	call plug#begin('$HOME/.vim/plugged')
 	Plug 'sheerun/vim-polyglot'
 	Plug 'junegunn/fzf'
@@ -48,7 +48,7 @@ else
 	if has('nvim')
 		Plug 'nvim-tree/nvim-web-devicons'
 		Plug 'nvim-tree/nvim-tree.lua'
-		Plug 'f-person/git-blame.nvim'
+		Plug 'lewis6991/gitsigns.nvim'
 	else
 		Plug 'sillybun/vim-repl'
 		Plug 'preservim/nerdtree'
@@ -83,7 +83,7 @@ else
 
 	if has('nvim')
 		lua require 'nvim-tree'.setup()
-		lua require('gitblame')
+		lua require('gitsigns').setup({ current_line_blame = true })
 
 		au VimEnter * NvimTreeToggle
 
