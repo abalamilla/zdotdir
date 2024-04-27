@@ -52,6 +52,8 @@ else
 		Plug 'kcl-lang/vim-kcl', { 'for': 'kcl'}
 		Plug 'rose-pine/neovim', { 'as': 'rose-pine' }
 		Plug 'aserowy/tmux.nvim'
+		Plug 'nvim-lua/plenary.nvim'
+		Plug 'nvim-telescope/telescope.nvim'
 	else
 		Plug 'sillybun/vim-repl'
 		Plug 'preservim/nerdtree'
