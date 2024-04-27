@@ -38,8 +38,6 @@ else
 	Plug 'junegunn/fzf.vim'
 	Plug 'ludovicchabant/vim-gutentags'
 	Plug 'vim-autoformat/vim-autoformat'
-	Plug 'vim-airline/vim-airline'
-	Plug 'vim-airline/vim-airline-themes'
 	Plug 'github/copilot.vim'
 	Plug 'tpope/vim-fugitive'
 	Plug 'jparise/vim-graphql'
@@ -54,15 +52,15 @@ else
 		Plug 'aserowy/tmux.nvim'
 		Plug 'nvim-lua/plenary.nvim'
 		Plug 'nvim-telescope/telescope.nvim'
+		Plug 'freddiehaddad/feline.nvim'
 	else
 		Plug 'sillybun/vim-repl'
 		Plug 'preservim/nerdtree'
 		Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug'] }
+		Plug 'vim-airline/vim-airline'
+		Plug 'vim-airline/vim-airline-themes'
 	endif
 	call plug#end()
-
-	let g:airline_theme='angr'
-	let g:airline_powerline_fonts = 1
 
 	" vim-repl
 	let g:repl_program = {
@@ -94,6 +92,9 @@ else
 
 		lua require('tmux').setup()
 
+		lua require('feline').setup()
+		lua require('feline').winbar.setup()
+
 		au VimEnter * NvimTreeToggle
 
 		" nvim-tree
@@ -113,6 +114,10 @@ else
 		let g:NERDTreeShowHidden=1
 		let g:NERDTreeShowLineNumbers=1
 		au VimEnter * NERDTree
+
+		let g:airline_theme='angr'
+		let g:airline_powerline_fonts = 1
+
 	endif
 
 endif
