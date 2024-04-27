@@ -16,9 +16,7 @@ set shiftwidth=4    " change tab width
 set tabstop=4       " tab equal 4 spaces
 
 "set bg=dark         " set backgrouond color to dark
-if has('nvim')
-	colorscheme habamax
-else
+if ! has('nvim')
 	color sorbet         " sets color schema
 endif
 
@@ -31,7 +29,7 @@ else
 		silent execute '!curl -fLo '.data_dir.'/autoload/plug.vim --create-dirs  https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
 		au VimEnter * PlugInstall --sync | source $MYVIMRC
 	endif
-	
+
 	au BufRead,BufNewFile k setfiletype=kcl
 
 	call plug#begin('$HOME/.vim/plugged')
@@ -52,6 +50,8 @@ else
 		Plug 'nvim-tree/nvim-tree.lua'
 		Plug 'lewis6991/gitsigns.nvim'
 		Plug 'kcl-lang/vim-kcl', { 'for': 'kcl'}
+		Plug 'rose-pine/neovim', { 'as': 'rose-pine' }
+		Plug 'aserowy/tmux.nvim'
 	else
 		Plug 'sillybun/vim-repl'
 		Plug 'preservim/nerdtree'
@@ -87,6 +87,10 @@ else
 	if has('nvim')
 		lua require 'nvim-tree'.setup()
 		lua require('gitsigns').setup({ current_line_blame = true })
+		lua require('rose-pine').setup({ variant = 'main' })
+		colorscheme rose-pine
+
+		lua require('tmux').setup()
 
 		au VimEnter * NvimTreeToggle
 
