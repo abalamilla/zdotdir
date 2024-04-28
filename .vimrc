@@ -23,7 +23,7 @@ endif
 if (&diff)
 	" set wrap for vimdiff
 	au VimEnter * execute 'windo set wrap'
-else
+elseif has('vim')
 	let data_dir = has('nvim') ? stdpath('data') . '/site' : '~/.vim'
 	if empty(glob(data_dir . '/autoload/plug.vim'))
 		silent execute '!curl -fLo '.data_dir.'/autoload/plug.vim --create-dirs  https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
@@ -149,4 +149,7 @@ inoremap <Down>  <Nop>
 inoremap <Left>  <Nop>
 inoremap <Right> <Nop>
 
-
+" require init.lua
+if has('nvim')
+	luafile $ZDOTDIR/nvim/init.lua
+endif
