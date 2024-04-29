@@ -119,6 +119,13 @@ elseif has('vim')
 		let g:airline_powerline_fonts = 1
 
 	endif
+	
+	" open files window
+	nnoremap <silent> <leader>f :Files<CR>
+	" open Git files window
+	nnoremap <silent> <leader>g :GFiles<CR>
+	" show buffers
+	nnoremap <silent> <leader>b :Buffers<CR>
 
 endif
 
@@ -126,13 +133,6 @@ endif
 " mapping to the escape key
 nnoremap <silent><esc><esc> :noh<esc>
 "nnoremap <esc>^[ <esc>^[
-
-" open files window
-nnoremap <silent> <leader>f :Files<CR>
-" open Git files window
-nnoremap <silent> <leader>g :GFiles<CR>
-" show buffers
-nnoremap <silent> <leader>b :Buffers<CR>
 
 " buffer navigation
 nnoremap <silent> <C-h> :bp<CR>
