@@ -16,7 +16,7 @@ return {
 			"lua_ls",
 			"taplo",
 			"terraformls",
-
+			"markdown_oxide",
 		}
 
 		mason.setup {}
