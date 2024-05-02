@@ -2,8 +2,9 @@ return {
 	"neovim/nvim-lspconfig",
 	config = function()
 		local lspconfig = require("lspconfig")
+		local util = require("lspconfig.util")
+		local configs = require("lspconfig.configs")
 
-		--lspconfig.kcl.setup {}
 		lspconfig.pyright.setup {}
 		lspconfig.yamlls.setup {}
 		lspconfig.helm_ls.setup {}
@@ -13,7 +14,19 @@ return {
 		lspconfig.lua_ls.setup {}
 		lspconfig.taplo.setup {}
 		lspconfig.terraformls.setup {}
+		lspconfig.markdown_oxide.setup {}
 
+		if not configs.kcl then
+			configs.kcl = {
+				default_config = {
+					cmd = { "kcl-language-server" },
+					filetypes = { "kcl" },
+					root_dir = util.root_pattern(".git"),
+				},
+			}
+		end
+
+		lspconfig.kcl.setup {}
 	end,
 }
 
