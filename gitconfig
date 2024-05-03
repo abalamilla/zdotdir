@@ -5,89 +5,14 @@
     path = ~/.config/zdotdir/gitconfig-office
 
 [core]
-	autocrlf = false
 	excludesfile = ~/.gitignore_global
 	whitespace = trailing-space,cr-at-eol
 	editor = nvim
 
-[color]
-    ui = true
-[color "branch"]
-    current = yellow bold ul
-    local = cyan
-    remote = magenta
-[color "status"]
-    added = yellow
-    changed = green
-    untracked = magenta
-[color "diff"]
-    meta = yellow
-    frag = magenta
-    old = red
-    new = green
-    whitespace = red reverse
-
 [alias]
-    s = status -sb
-
-    a = add
-    ap = add -p                        # pick lines to add
-
-    b = branch
-    ba = branch -a
-    bt = branch --track
-
-    c = commit -v
-    ca = commit -v -a
-    caa = commit -v -a --amend
-    cam = commit -v --amend
-    co = checkout
-    cob = checkout -b
-    remotes = remote -v
-    tags = show-ref --tags
-
-    d = diff
-    dc = diff --cached
-    dcw = diff --cached -w
-    dw = diff -w
-
-    heads = show-ref --heads
-
-    fo = fetch --prune origin
-
-    lbr = shortlog -sn --since='12 weeks'
-    leaderboard = shortlog -sn
-    overview = log --all --pretty=format:'%Cred%h %d%Creset %s %Cblue(%ar by %an)' --no-merges --since='2 weeks'
-    recap = log --all --oneline --no-merges --author=git@jlinder.com
-    recent = for-each-ref --count=10 --sort=-committerdate refs/heads/ --format="%(refname:short)"
-
-    ld = log -p --color --graph
-    lg = log --graph --pretty=format:'%C(magenta)%h %C(green)%d%Creset %s %C(blue bold dim)(%ar - %an)'
-    lga = log --graph --pretty=format:'%C(magenta)%h %C(green)%d%Creset %s %C(blue bold dim)(%ar - %an)' --branches
-    ll = log --name-status --color --graph
-
-    pf = push --force-with-lease
-    pff = pull --ff-only
-    pfom = pull --ff-only origin master
-    pll = pull --rebase
-
-    rollback = reset --hard HEAD~1     # erase last commit and related file edits (destructive!)
-    uncommit = reset --soft HEAD^      # erase last commit but keeps related file edits
-    unstage = reset HEAD
 	root = rev-parse --show-toplevel
 [filter "lfs"]
-  clean = git-lfs clean -- %f
-  smudge = git-lfs smudge -- %f
-  process = git-lfs filter-process
   required = true
-[difftool "sourcetree"]
-	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
-	path = 
-[mergetool "sourcetree"]
-	cmd = /Applications/Sourcetree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
-	trustExitCode = true
-[commit]
-	template = $HOME/.stCommitMsg
 [diff]
 	tool = nvimdiff
 [merge]
@@ -95,7 +20,5 @@
 [credential]
 	helper = 
 	helper = /usr/local/share/gcm-core/git-credential-manager
-[credential "https://dev.azure.com"]
-	useHttpPath = true
 [push]
 	autoSetupRemote = true
