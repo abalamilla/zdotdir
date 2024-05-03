@@ -13,12 +13,16 @@ return {
 	config = function()
 		require("nvim-tree").setup({
 			disable_netrw = true,
-			hijack_netrw = true,
+			hijack_unnamed_buffer_when_opening = true,
 			respect_buf_cwd = true,
 			view = {
 				cursorline = true,
 				number = true,
 				relativenumber = true,
+				centralize_selection = true,
+			},
+			renderer = {
+				full_name = true,
 			},
 			filters = {
 				git_ignored = false,
