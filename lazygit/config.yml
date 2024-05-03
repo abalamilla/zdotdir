@@ -3,3 +3,7 @@ git:
     signOff: true
   pull:
     mode: rebase
+os:
+  editPreset: nvim
+quitOnTopLevelReturn: true
+promptToReturnFromSubprocess: false
