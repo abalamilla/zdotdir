@@ -11,7 +11,10 @@ return {
 		{ "<leader>n", ":NvimTreeFindFile<CR>", "NvimTreeFindFile" },
 	},
 	config = function()
-		require("nvim-tree").setup({
+		local nvimtree = require("nvim-tree")
+		local api = require("nvim-tree.api")
+
+		nvimtree.setup({
 			disable_netrw = true,
 			hijack_unnamed_buffer_when_opening = true,
 			respect_buf_cwd = true,
@@ -38,7 +41,7 @@ return {
 		})
 
 		local function open_nvim_tree()
-			require("nvim-tree.api").tree.open()
+			api.tree.open()
 		end
 
 		-- open nvim-tree on startup
