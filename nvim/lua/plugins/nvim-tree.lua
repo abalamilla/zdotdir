@@ -14,6 +14,12 @@ return {
 		local nvimtree = require("nvim-tree")
 		local api = require("nvim-tree.api")
 
+		local function label(path)
+			path = path:gsub(os.getenv("HOME"), "~", 1)
+			return path:gsub('([a-zA-Z])[a-zA-Z0-9]+', '%1') ..
+				(path:match('[a-zA-Z]([a-z0-9]*)$' or ''))
+		end
+
 		nvimtree.setup({
 			disable_netrw = true,
 			hijack_unnamed_buffer_when_opening = true,
@@ -26,6 +32,8 @@ return {
 			},
 			renderer = {
 				full_name = true,
+				root_folder_label = label,
+				group_empty = label,
 			},
 			filters = {
 				git_ignored = false,
