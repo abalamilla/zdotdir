@@ -5,10 +5,10 @@
     path = ~/.config/zdotdir/gitconfig-office
 
 [core]
-  autocrlf = false
+	autocrlf = false
 	excludesfile = ~/.gitignore_global
-  whitespace = trailing-space,cr-at-eol
-	editor = vim
+	whitespace = trailing-space,cr-at-eol
+	editor = nvim
 
 [color]
     ui = true
