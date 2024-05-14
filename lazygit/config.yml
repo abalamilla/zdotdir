@@ -1,8 +1,6 @@
 git:
   commit:
     signOff: true
-  pull:
-    mode: rebase
 os:
   editPreset: nvim
 quitOnTopLevelReturn: true
