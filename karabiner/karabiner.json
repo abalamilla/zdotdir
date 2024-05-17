@@ -20,9 +20,9 @@
                     {
                         "manipulators": [
                             {
-                                "description": "Change delete_forward to command+control+option+shift.",
+                                "description": "Change caps_lock to command+control+option+shift.",
                                 "from": {
-                                    "key_code": "delete_forward",
+                                    "key_code": "caps_lock",
                                     "modifiers": {
                                         "optional": [
                                             "any"
@@ -235,7 +235,7 @@
                         "product_id": 0,
                         "vendor_id": 0
                     },
-                    "ignore": true,
+                    "ignore": false,
                     "manipulate_caps_lock_led": true,
                     "mouse_flip_horizontal_wheel": false,
                     "mouse_flip_vertical_wheel": false,
