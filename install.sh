@@ -222,11 +222,18 @@ install_others() {
 config_asdf() {
 	print_message "Configuring asdf" -1
 
-	asdf plugin add nodejs
+	asdf plugin add bun
+	asdf plugin add dotnet
+	asdf plugin add golang
+	asdf plugin add gradle
 	asdf plugin add java
-	asdf plugin add scala
-	asdf plugin add python
+	asdf plugin add kubebuilder
 	asdf plugin add maven
+	asdf plugin add nodejs
+	asdf plugin add python
+	asdf plugin add rust
+	asdf plugin add scala
+
 
 	# install tools
 	asdf install
