@@ -14,6 +14,7 @@ set ai              " copies identation from current line
 set si              " smart indent
 set shiftwidth=4    " change tab width
 set tabstop=4       " tab equal 4 spaces
+set backupcopy=yes  " backup file
 
 "set bg=dark         " set backgrouond color to dark
 if ! has('nvim')
@@ -148,6 +149,9 @@ inoremap <Up>    <Nop>
 inoremap <Down>  <Nop>
 inoremap <Left>  <Nop>
 inoremap <Right> <Nop>
+
+" map <C-s> to save
+noremap <C-s> :w<CR>
 
 " require init.lua
 if has('nvim')
