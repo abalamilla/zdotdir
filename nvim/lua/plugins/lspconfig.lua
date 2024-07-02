@@ -15,6 +15,7 @@ return {
 		lspconfig.taplo.setup {}
 		lspconfig.terraformls.setup {}
 		lspconfig.markdown_oxide.setup {}
+		lspconfig.gopls.setup {}
 
 		if not configs.kcl then
 			configs.kcl = {
