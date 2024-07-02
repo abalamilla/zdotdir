@@ -15,6 +15,7 @@ return {
 				"vim",
 				"vimdoc",
 				"rust",
+				"ruby",
 			},
 			highlight = {
 				enable = true,
