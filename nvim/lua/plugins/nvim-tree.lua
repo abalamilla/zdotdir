@@ -27,7 +27,6 @@ return {
 		nvimtree.setup({
 			disable_netrw = true,
 			hijack_unnamed_buffer_when_opening = true,
-			respect_buf_cwd = true,
 			view = {
 				cursorline = true,
 				number = true,
@@ -36,8 +35,6 @@ return {
 			},
 			renderer = {
 				full_name = true,
-				root_folder_label = label,
-				group_empty = label,
 			},
 			filters = {
 				git_ignored = false,
