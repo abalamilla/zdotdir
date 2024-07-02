@@ -8,4 +8,3 @@ vim.opt.rtp:prepend(vim.fn.expand("$ZDOTDIR/nvim"))
 
 require("config.lazy")
 
-vim.api.nvim_create_autocmd({ "VimEnter" }, { command = "Neotree source=filesystem position=current reveal=true" })

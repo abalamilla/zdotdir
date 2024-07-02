@@ -7,6 +7,8 @@ return {
 		"MunifTanjim/nui.nvim",
 		"3rd/image.nvim",
 	},
+	lazy = false,
+	priority = 1000,
 	config = function()
 		local neotree = require("neo-tree")
 
@@ -30,6 +32,8 @@ return {
 				}
 			}
 		}
+
+		vim.cmd([[:Neotree source=filesystem position=current reveal=true toggle]])
 	end,
 	keys = {
 		{ "<leader>ef", ":Neotree source=filesystem position=current reveal=true toggle<CR>", { noremap = true } },
