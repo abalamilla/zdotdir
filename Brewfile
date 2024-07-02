@@ -92,3 +92,4 @@ cask "microsoft-edge"
 cask "nosql-workbench"
 cask "session-manager-plugin"
 
+# vim:ft=ruby
