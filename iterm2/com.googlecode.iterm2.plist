@@ -8,10 +8,6 @@
 	<true/>
 	<key>BracketedPasteMode</key>
 	<true/>
-	<key>Coprocess MRU</key>
-	<array>
-		<string>clear</string>
-	</array>
 	<key>Custom Color Presets</key>
 	<dict>
 		<key>rose-pine</key>
@@ -377,6 +373,8 @@
 	<false/>
 	<key>HotkeyMigratedFromSingleToMulti</key>
 	<true/>
+	<key>IRMemory</key>
+	<integer>4</integer>
 	<key>Mark Alert Action</key>
 	<string>Post Notification</string>
 	<key>New Bookmarks</key>
@@ -1592,6 +1590,8 @@
 			<string>No</string>
 			<key>Custom Directory</key>
 			<string>Recycle</string>
+			<key>Custom Locale</key>
+			<string>en_US.UTF-8</string>
 			<key>Default Bookmark</key>
 			<string>No</string>
 			<key>Description</key>
@@ -1737,6 +1737,8 @@
 			</dict>
 			<key>Send Code When Idle</key>
 			<false/>
+			<key>Set Local Environment Vars</key>
+			<integer>2</integer>
 			<key>Shortcut</key>
 			<string></string>
 			<key>Show Status Bar</key>
