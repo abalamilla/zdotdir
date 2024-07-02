@@ -16,6 +16,11 @@ return {
 			window = {
 				position = "current",
 			},
+			filesystem = {
+				filtered_items = {
+					hide_dotfiles = false,
+				}
+			},
 			source_selector = {
 				winbar = true,
 			},
