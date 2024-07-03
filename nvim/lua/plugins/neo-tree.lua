@@ -55,8 +55,6 @@ return {
 		vim.cmd([[:Neotree source=filesystem position=current reveal=true toggle]])
 	end,
 	keys = {
-		{ "<leader>ef", ":Neotree source=filesystem position=current reveal=true toggle<CR>", { noremap = true } },
-		{ "<leader>eb", ":Neotree source=buffers position=current reveal=true toggle<CR>", { noremap = true } },
-		{ "<leader>eg", ":Neotree source=git_status position=current reveal=true toggle<CR>", { noremap = true } },
+		{ "<leader>e", ":Neotree source=filesystem position=current reveal=true toggle<CR>", { noremap = true } },
 	},
 }
