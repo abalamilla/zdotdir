@@ -1,8 +1,8 @@
 -- BEGIN
 
 -- automatic hammerspoon config reload
-function reloadConfig(files)
-	doReload = false
+function ReloadConfig(files)
+	local doReload = false
 	for _, file in pairs(files) do
 		if file:sub(-4) == ".lua" then
 			doReload = true
@@ -13,11 +13,11 @@ function reloadConfig(files)
 	end
 end
 
-configFile = os.getenv("HOME") .. "/.hammerspoon/"
-myWatcher = hs.pathwatcher.new(configFile, reloadConfig):start()
+local configFile = os.getenv("HOME") .. "/.hammerspoon/"
+MyWatcher = hs.pathwatcher.new(configFile, ReloadConfig):start()
 hs.alert.show("Config loaded!")
 
-function applicationWatcher(appName, eventType, appObject)
+function ApplicationWatcher(appName, eventType, appObject)
 	if eventType == hs.application.watcher.activated then
 		if appName == "Finder" then
 			-- Bring all Finder windows forward when one gets activated
@@ -26,24 +26,24 @@ function applicationWatcher(appName, eventType, appObject)
 	end
 end
 
-appWatcher = hs.application.watcher.new(applicationWatcher)
+local appWatcher = hs.application.watcher.new(ApplicationWatcher)
 appWatcher:start()
 
-function toggleMute()
+function ToggleMute()
 	local teams = hs.application.find("com.microsoft.teams2")
-	if not (teams == null) then
+	if not (teams == nil) then
 		hs.eventtap.keyStroke({ "cmd", "shift" }, "m", 0, teams)
 	end
 end
 
-function typePasteboardContet()
+function TypePasteboardContet()
 	hs.eventtap.keyStrokes(hs.pasteboard.getContents())
 end
 
 local hyper = { "cmd", "alt", "ctrl", "shift" }
 
-hs.hotkey.bind(hyper, "1", toggleMute)
-hs.hotkey.bind(hyper, "v", typePasteboardContet)
+hs.hotkey.bind(hyper, "1", ToggleMute)
+hs.hotkey.bind(hyper, "v", TypePasteboardContet)
 
 hs.loadSpoon("SpoonInstall")
 
@@ -57,11 +57,11 @@ spoon.SpoonInstall:andUse("AppLauncher", {
 	},
 })
 
-function appID(app)
+function AppID(app)
 	return hs.application.infoForBundlePath(app)["CFBundleIdentifier"]
 end
 
-chromeBrowser = appID("/Applications/Google Chrome.app")
+local chromeBrowser = AppID("/Applications/Google Chrome.app")
 -- safariBrowser = appID("/Applications/Safari.app")
 
 DefaultBrowser = chromeBrowser
@@ -80,24 +80,24 @@ spoon.SpoonInstall:andUse("URLDispatcher", {
 })
 
 -- keychain search, copy and paste
-function keychainItemToPasteboard()
-	currentApp = hs.application.frontmostApplication()
+function KeychainItemToPasteboard()
+	local currentApp = hs.application.frontmostApplication()
 
 	hs.focus()
-	button, text = hs.dialog.textPrompt("key", "text", "", "Ok", "Cancel", true)
+	local button, text = hs.dialog.textPrompt("key", "text", "", "Ok", "Cancel", true)
 
 	-- logname = os.getenv("LOGNAME")
-	command = "security find-generic-password -w -a " .. text .. " | /usr/local/bin/pbcopy-plus"
+	local command = "security find-generic-password -w -a " .. text .. " | /usr/local/bin/pbcopy-plus"
 
 	os.execute(command)
 
 	currentApp:activate()
 end
 
-hs.hotkey.bind(hyper, "k", keychainItemToPasteboard)
+hs.hotkey.bind(hyper, "k", KeychainItemToPasteboard)
 
 -- battery notification
-function batteryCallback()
+function BatteryCallback()
 	if hs.battery.isCharged() then
 		hs.notify
 			.new(nil, {
@@ -121,7 +121,7 @@ function batteryCallback()
 	end
 end
 
-batteryWatcher = hs.battery.watcher.new(batteryCallback):start()
+local batteryWatcher = hs.battery.watcher.new(BatteryCallback):start()
 
 spoon.SpoonInstall:andUse("WindowHalfsAndThirds", {
 	config = {
@@ -150,4 +150,5 @@ spoon.SpoonInstall:andUse("KSheet", {
 		toggle = { hyper, "0" },
 	},
 })
+
 -- END
