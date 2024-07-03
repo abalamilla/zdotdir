@@ -8,9 +8,10 @@ return {
 			"nvim-telescope/telescope-fzf-native.nvim",
 		},
 		keys = {
-			{ "<leader>f", "<cmd>Telescope find_files<cr>" },
-			{ "<leader>b", "<cmd>Telescope buffers<cr>" },
-			{ "<leader>g", "<cmd>Telescope live_grep<cr>" },
+			{ "<leader>tf", "<cmd>Telescope find_files<cr>" },
+			{ "<leader>tb", "<cmd>Telescope buffers<cr>" },
+			{ "<leader>tg", "<cmd>Telescope live_grep<cr>" },
+			{ "<leader>tw", "<cmd>Telescope grep_string<cr>" },
 		},
 		config = function()
 			local telescope = require("telescope")
