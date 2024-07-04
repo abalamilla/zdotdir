@@ -20,6 +20,7 @@ return {
 				"markdown_oxide",
 				"gopls",
 				"rust_analyzer",
+				"jdtls",
 			}
 
 			mason.setup({})
@@ -49,6 +50,7 @@ return {
 			lspconfig.markdown_oxide.setup({ capabilities = capabilities })
 			lspconfig.gopls.setup({ capabilities = capabilities })
 			lspconfig.rust_analyzer.setup({ capabilities = capabilities })
+			lspconfig.jdtls.setup({ capabilities = capabilities })
 
 			if not configs.kcl then
 				configs.kcl = {
