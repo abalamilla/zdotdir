@@ -12,6 +12,8 @@ return {
 			{ "<leader>tb", "<cmd>Telescope buffers<cr>" },
 			{ "<leader>tg", "<cmd>Telescope live_grep<cr>" },
 			{ "<leader>tw", "<cmd>Telescope grep_string<cr>" },
+			{ "<leader>ty", "<cmd>Telescope neoclip<cr>" },
+			{ "<leader>tr", "<cmd>Telescope registers<cr>" },
 		},
 		config = function()
 			local telescope = require("telescope")
@@ -66,5 +68,15 @@ return {
 			}
 			require("telescope").load_extension("ui-select")
 		end,
-	}
+	},
+	{
+		"AckslD/nvim-neoclip.lua",
+		dependencies = {
+			"nvim-telescope/telescope.nvim",
+		},
+		config = function()
+			require("neoclip").setup()
+			require("telescope").load_extension("neoclip")
+		end
+	},
 }
