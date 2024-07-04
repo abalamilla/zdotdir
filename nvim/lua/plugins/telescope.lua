@@ -20,9 +20,10 @@ return {
 
 			telescope.setup {
 				defaults = {
+					layout_strategy = "vertical",
 					layout_config = {
 						horizontal = {
-							preview_cutoff = 0,
+							preview_width = 0.6,
 						},
 					},
 					vimgrep_arguments = {
