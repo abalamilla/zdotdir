@@ -18,7 +18,7 @@ return {
 		config = function()
 			local telescope = require("telescope")
 
-			telescope.setup {
+			telescope.setup({
 				defaults = {
 					layout_strategy = "vertical",
 					layout_config = {
@@ -42,15 +42,24 @@ return {
 					find_files = {
 						hidden = true,
 					},
-				}
-			}
+				},
+			})
+
+			vim.api.nvim_create_autocmd("User", {
+				pattern = "TelescopePreviewerLoaded",
+				callback = function()
+					vim.wo.number = true
+					vim.wo.cursorline = true
+					vim.wo.wrap = true
+				end,
+			})
 		end,
 	},
 	{
 		"nvim-telescope/telescope-fzf-native.nvim",
-		build = 'make',
+		build = "make",
 		config = function()
-			require('telescope').load_extension('fzf')
+			require("telescope").load_extension("fzf")
 		end,
 	},
 	{
@@ -60,13 +69,13 @@ return {
 		},
 		config = function()
 			-- This is your opts table
-			require("telescope").setup {
+			require("telescope").setup({
 				extensions = {
 					["ui-select"] = {
-						require("telescope.themes").get_dropdown {}
-					}
-				}
-			}
+						require("telescope.themes").get_dropdown({}),
+					},
+				},
+			})
 			require("telescope").load_extension("ui-select")
 		end,
 	},
@@ -78,6 +87,6 @@ return {
 		config = function()
 			require("neoclip").setup()
 			require("telescope").load_extension("neoclip")
-		end
+		end,
 	},
 }
