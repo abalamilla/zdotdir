@@ -64,6 +64,8 @@ if [[ -z $region ]]; then
     usage
     return 1
   fi
+else
+  aws configure set region $region --profile $profile
 fi
 
 # get aws credentials from clipboard
