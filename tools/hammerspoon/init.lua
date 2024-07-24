@@ -84,7 +84,7 @@ function KeychainItemToPasteboard()
 	local currentApp = hs.application.frontmostApplication()
 
 	hs.focus()
-	local button, text = hs.dialog.textPrompt("key", "text", "", "Ok", "Cancel", true)
+	local _, text = hs.dialog.textPrompt("key", "text", "", "Ok", "Cancel", true)
 
 	-- logname = os.getenv("LOGNAME")
 	local command = "security find-generic-password -w -a " .. text .. " | /usr/local/bin/pbcopy-plus"
@@ -121,7 +121,7 @@ function BatteryCallback()
 	end
 end
 
-local batteryWatcher = hs.battery.watcher.new(BatteryCallback):start()
+hs.battery.watcher.new(BatteryCallback):start()
 
 spoon.SpoonInstall:andUse("WindowHalfsAndThirds", {
 	config = {
