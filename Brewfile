@@ -1,5 +1,4 @@
 tap "homebrew/cask-fonts"
-tap "microsoft/git"
 
 brew "asdf"
 brew "autojump"
