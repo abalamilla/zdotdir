@@ -233,6 +233,8 @@ config_asdf() {
 	asdf plugin add python
 	asdf plugin add rust
 	asdf plugin add scala
+	asdf plugin add clj-kondo
+	asdf plugin add cljstyle
 
 
 	# install tools

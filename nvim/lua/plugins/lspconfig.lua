@@ -21,7 +21,8 @@ return {
 				"gopls",
 				"rust_analyzer",
 				"jdtls",
-			}
+				"clojure_lsp",
+}
 
 			mason.setup({})
 
@@ -51,6 +52,7 @@ return {
 			lspconfig.gopls.setup({ capabilities = capabilities })
 			lspconfig.rust_analyzer.setup({ capabilities = capabilities })
 			lspconfig.jdtls.setup({ capabilities = capabilities })
+			lspconfig.clojure_lsp.setup({ capabilities = capabilities })
 
 			if not configs.kcl then
 				configs.kcl = {
