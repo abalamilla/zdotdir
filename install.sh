@@ -217,6 +217,9 @@ install_others() {
 	else
 		print_message "Python venv already exists" -2
 	fi
+
+	# link aerospace config file
+	link_file $MY_ZDOTDIR/aerospace $HOME/.config/aerospace
 }
 
 config_asdf() {
