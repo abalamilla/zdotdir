@@ -1,4 +1,5 @@
 -- BEGIN
+local hyper = { "cmd", "alt", "ctrl", "shift" }
 
 -- automatic hammerspoon config reload
 function ReloadConfig(files)
@@ -14,7 +15,11 @@ function ReloadConfig(files)
 end
 
 local configFile = os.getenv("HOME") .. "/.hammerspoon/"
-MyWatcher = hs.pathwatcher.new(configFile, ReloadConfig):start()
+hs.pathwatcher.new(configFile, ReloadConfig):start()
+hs.hotkey.bind(hyper, "r", function()
+	ReloadConfig(configFile)
+	hs.alert.show("Config reloaded!")
+end)
 hs.alert.show("Config loaded!")
 
 function ApplicationWatcher(appName, eventType, appObject)
@@ -39,8 +44,6 @@ end
 function TypePasteboardContet()
 	hs.eventtap.keyStrokes(hs.pasteboard.getContents())
 end
-
-local hyper = { "cmd", "alt", "ctrl", "shift" }
 
 hs.hotkey.bind(hyper, "1", ToggleMute)
 hs.hotkey.bind(hyper, "v", TypePasteboardContet)
