@@ -12,8 +12,8 @@ set showcmd         " show incomplete commands
 set lbr             " line wrap
 set ai              " copies identation from current line
 set si              " smart indent
-set shiftwidth=4    " change tab width
-set tabstop=4       " tab equal 4 spaces
+set shiftwidth=2    " change tab width
+set tabstop=2       " tab equal 4 spaces
 set backupcopy=yes  " backup file
 
 "set bg=dark         " set backgrouond color to dark
