@@ -57,3 +57,6 @@ export ASDF_CONFIG_FILE=$ZDOTDIR/.asdfrc
 
 # lazygit
 export LG_CONFIG_FILE=$ZDOTDIR/lazygit/config.yml
+
+# yazi
+export YAZI_CONFIG_HOME=$ZDOTDIR/tools/yazi
