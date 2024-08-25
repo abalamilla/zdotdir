@@ -10,22 +10,18 @@ return {
 	lazy = false,
 	priority = 1000,
 	config = function()
-		vim.fn.sign_define("DiagnosticSignError",
-        {text = " ", texthl = "DiagnosticSignError"})
-      vim.fn.sign_define("DiagnosticSignWarn",
-        {text = " ", texthl = "DiagnosticSignWarn"})
-      vim.fn.sign_define("DiagnosticSignInfo",
-        {text = " ", texthl = "DiagnosticSignInfo"})
-      vim.fn.sign_define("DiagnosticSignHint",
-        {text = "󰌵", texthl = "DiagnosticSignHint"})
+		vim.fn.sign_define("DiagnosticSignError", { text = " ", texthl = "DiagnosticSignError" })
+		vim.fn.sign_define("DiagnosticSignWarn", { text = " ", texthl = "DiagnosticSignWarn" })
+		vim.fn.sign_define("DiagnosticSignInfo", { text = " ", texthl = "DiagnosticSignInfo" })
+		vim.fn.sign_define("DiagnosticSignHint", { text = "󰌵", texthl = "DiagnosticSignHint" })
 
 		local neotree = require("neo-tree")
 
-		neotree.setup {
+		neotree.setup({
 			default_component_configs = {
 				indent = {
-					with_expanders = true
-				}
+					with_expanders = true,
+				},
 			},
 			window = {
 				position = "current",
@@ -33,7 +29,7 @@ return {
 			filesystem = {
 				filtered_items = {
 					hide_dotfiles = false,
-				}
+				},
 			},
 			source_selector = {
 				winbar = true,
@@ -42,15 +38,15 @@ return {
 				{
 					event = "neo_tree_buffer_enter",
 					handler = function()
-						vim.cmd [[
+						vim.cmd([[
 							setlocal number
 							setlocal relativenumber
 							setlocal cursorline
-							]]
+							]])
 					end,
-				}
-			}
-		}
+				},
+			},
+		})
 
 		vim.cmd([[:Neotree source=filesystem position=current reveal=true toggle]])
 	end,
