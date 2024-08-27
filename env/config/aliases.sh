@@ -49,4 +49,3 @@ alias zdotdir='cd ${ZDOTDIR:-HOME}'
 
 # tmux
 alias tmux='tmux -f $ZDOTDIR/tmux.conf'
-alias cs=clear
