@@ -3743,7 +3743,7 @@
         "macOS": "13.6"
       },
       "sonoma": {
-        "HOMEBREW_VERSION": "4.3.18-88-g0ac568b",
+        "HOMEBREW_VERSION": "4.3.18-90-g7b067dc",
         "HOMEBREW_PREFIX": "/usr/local",
         "Homebrew/homebrew-core": "api",
         "CLT": "15.3.0.0.1.1708646388",
