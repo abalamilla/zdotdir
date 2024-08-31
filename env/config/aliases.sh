@@ -45,8 +45,5 @@ alias gcs='gh copilot suggest'
 alias gce='gh copilot explain'
 
 # zdotdir
-alias zdotdir='cd ${ZDOTDIR:-HOME}'
-
-# tmux
-alias tmux='tmux -f $ZDOTDIR/tmux.conf'
+alias zdotdir='cd ${ZDOTDIR:-$HOME}/zdotdir'
 

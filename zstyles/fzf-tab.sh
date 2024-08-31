@@ -19,6 +19,6 @@ zstyle ':completion:*' menu no
 # preview directory's content with eza when completing cd
 zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza -1 --color=always $realpath'
 
-export LESSOPEN='| $ZDOTDIR/.lessfilter %s'
+export LESSOPEN='| $HOME/.lessfilter %s'
 export LESS='-r'
 
