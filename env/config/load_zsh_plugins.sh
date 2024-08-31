@@ -1,7 +1,7 @@
 #!/bin/zsh
 
 () {
-    PLUGIN_PATHS=($ZDOTDIR/plugins/*)
+    PLUGIN_PATHS=($HOME/zdotdir/plugins/*)
 
     for p in $PLUGIN_PATHS; do 
         DIR_NAME="$(awk -F '/' '{print $NF}' <<< $p)"

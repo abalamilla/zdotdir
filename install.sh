@@ -2,11 +2,9 @@
 
 BRANCH_NAME=${1:-main}
 
-CONFIG_DIR=~/.config
-MY_ZDOTDIR=$CONFIG_DIR/zdotdir
+MY_ZDOTDIR=$HOME/zdotdir
 ZDOTDIR_PLUGINS="$MY_ZDOTDIR/plugins"
 UTILS_PATH=$MY_ZDOTDIR/utils
-BACKUPS_PATH=$MY_ZDOTDIR/backups
 ZDOTDIR_THEMES=$MY_ZDOTDIR/themes
 
 print_message() {
@@ -58,13 +56,6 @@ install_sh() {
 	fi
 
 	print_message "Finished processing $COMMAND installation" $?
-}
-
-backup_and_set_zdotdir() {
-	BACKUP_NAME="$(backup_name "zshenv")"
-	backup_file ~/.zshenv $BACKUPS_PATH $BACKUP_NAME
-
-	set_zdotdir "$MY_ZDOTDIR"
 }
 
 load_scripts() {
@@ -195,17 +186,9 @@ configure_docker_buildx() {
 
 install_others() {
 	install_lisp lisp
-	link_file $MY_ZDOTDIR/gitconfig $HOME/.gitconfig
-
-	HAMMERSPOON_PATH=$HOME/.hammerspoon
-	[[ ! -d $HAMMERSPOON_PATH ]] && mkdir -p $HAMMERSPOON_PATH || print_message "Directory $HAMMERSPOON_PATH already exists." -2
-	link_file $MY_ZDOTDIR/tools/hammerspoon/init.lua $HAMMERSPOON_PATH/init.lua
 
 	# symlink docker buildx
 	configure_docker_buildx
-
-	# symlink karabiner configuration file
-	link_file $MY_ZDOTDIR/karabiner $HOME/.config
 
 	# create python venv
 	if [[ ! -d $MY_ZDOTDIR/py3nvim ]]; then
@@ -217,12 +200,6 @@ install_others() {
 	else
 		print_message "Python venv already exists" -2
 	fi
-
-	# link aerospace config file
-	link_file $MY_ZDOTDIR/aerospace $HOME/.config/aerospace
-
-	# link kitty config file
-	link_file $MY_ZDOTDIR/tools/kitty $HOME/.config/kitty
 }
 
 config_asdf() {
@@ -246,9 +223,6 @@ config_asdf() {
 
 	# install tools
 	asdf install
-
-	# link .tool-versions to home directory
-	link_file $MY_ZDOTDIR/.tool-versions $HOME/.tool-versions
 
 	# load asdf
 	source "$(brew --prefix asdf)/libexec/asdf.sh"
@@ -278,7 +252,7 @@ init_config() {
 # init
 () {
 # clone my zdotdir repository
-clone_repo abalamilla/zdotdir $CONFIG_DIR
+clone_repo abalamilla/zdotdir $HOME
 
 	# setup initial configuration
 	init_config
@@ -292,8 +266,7 @@ clone_repo abalamilla/zdotdir $CONFIG_DIR
 	install_apps
 	install_others
 
-	print_message "Installing zdotdir environment..." -1
-	[[ -z "${ZDOTDIR}" || $ZDOTDIR != $MY_ZDOTDIR ]] && backup_and_set_zdotdir || print_message "ZDOTDIR is already configured." -2
+	stow config -t ~
 
 	print_message "Finish! Enjoy your new environment."
 }

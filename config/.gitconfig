@@ -1,8 +1,8 @@
 [include]
-    path = ~/.config/zdotdir/gitconfig-personal
+    path = ~/zdotdir/gitconfig-personal
 
 [includeIf "hasconfig:remote.*.url:git@gitlab.*.*:*/**"]
-    path = ~/.config/zdotdir/gitconfig-office
+    path = ~/zdotdir/gitconfig-office
 
 [core]
 	excludesfile = ~/.gitignore_global
