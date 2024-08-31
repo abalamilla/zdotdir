@@ -44,23 +44,11 @@ elseif has('vim')
 	Plug 'jparise/vim-graphql'
 	Plug 'voldikss/vim-floaterm'
 
-	if has('nvim')
-		Plug 'nvim-tree/nvim-web-devicons'
-		Plug 'nvim-tree/nvim-tree.lua'
-		Plug 'lewis6991/gitsigns.nvim'
-		Plug 'kcl-lang/vim-kcl', { 'for': 'kcl'}
-		Plug 'rose-pine/neovim', { 'as': 'rose-pine' }
-		Plug 'aserowy/tmux.nvim'
-		Plug 'nvim-lua/plenary.nvim'
-		Plug 'nvim-telescope/telescope.nvim'
-		Plug 'freddiehaddad/feline.nvim'
-	else
-		Plug 'sillybun/vim-repl'
-		Plug 'preservim/nerdtree'
-		Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug'] }
-		Plug 'vim-airline/vim-airline'
-		Plug 'vim-airline/vim-airline-themes'
-	endif
+	Plug 'sillybun/vim-repl'
+	Plug 'preservim/nerdtree'
+	Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug'] }
+	Plug 'vim-airline/vim-airline'
+	Plug 'vim-airline/vim-airline-themes'
 	call plug#end()
 
 	" vim-repl
@@ -85,41 +73,18 @@ elseif has('vim')
 	" copilot maps
 	imap <C-L> <Plug>(copilot-accept-word)
 
-	if has('nvim')
-		lua require 'nvim-tree'.setup()
-		lua require('gitsigns').setup({ current_line_blame = true })
-		lua require('rose-pine').setup({ variant = 'main' })
-		colorscheme rose-pine
+	" Nerdtree
+	nnoremap <leader>n :NERDTreeFocus<CR>
+	nnoremap <C-n> :NERDTree<CR>
+	nnoremap <C-t> :NERDTreeToggle<CR>
+	nnoremap <C-f> :NERDTreeFind<CR>
 
-		lua require('tmux').setup()
+	let g:NERDTreeShowHidden=1
+	let g:NERDTreeShowLineNumbers=1
+	au VimEnter * NERDTree
 
-		lua require('feline').setup()
-		lua require('feline').winbar.setup()
-
-		au VimEnter * NvimTreeToggle
-
-		" nvim-tree
-		nnoremap <leader>e :NvimTreeToggle<CR>
-		nnoremap <C-f> :NvimTreeFindFile<CR>
-		nnoremap <C-n> :NvimTreeRefresh<CR>
-
-		" python
-		let g:python3_host_prog = '$ZDOTDIR/py3nvim/bin/python'
-	else
-		" Nerdtree
-		nnoremap <leader>n :NERDTreeFocus<CR>
-		nnoremap <C-n> :NERDTree<CR>
-		nnoremap <C-t> :NERDTreeToggle<CR>
-		nnoremap <C-f> :NERDTreeFind<CR>
-
-		let g:NERDTreeShowHidden=1
-		let g:NERDTreeShowLineNumbers=1
-		au VimEnter * NERDTree
-
-		let g:airline_theme='angr'
-		let g:airline_powerline_fonts = 1
-
-	endif
+	let g:airline_theme='angr'
+	let g:airline_powerline_fonts = 1
 	
 	" open files window
 	nnoremap <silent> <leader>f :Files<CR>
@@ -150,10 +115,3 @@ inoremap <Down>  <Nop>
 inoremap <Left>  <Nop>
 inoremap <Right> <Nop>
 
-" map <C-s> to save
-noremap <C-s> :w<CR>
-
-" require init.lua
-if has('nvim')
-	luafile $ZDOTDIR/nvim/init.lua
-endif
