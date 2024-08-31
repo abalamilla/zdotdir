@@ -11,5 +11,5 @@ Brewfile.lock.json
 gitconfig-office
 .zsh_sessions
 .DS_Store
-py3nvim
+.venv
 karabiner/automatic_backups

@@ -32,9 +32,9 @@ vim.api.nvim_set_keymap("i", "<left>", "<nop>", { noremap = true, silent = true 
 vim.api.nvim_set_keymap("i", "<right>", "<nop>", { noremap = true, silent = true })
 
 -- add python venv
-local py3nvim = vim.fn.expand("$HOME/zdotdir/py3nvim/bin/python")
-vim.g.python_host_prog = py3nvim
-vim.g.python3_host_prog = py3nvim
+local venv = vim.fn.expand("$HOME/zdotdir/.venv/bin/python")
+vim.g.python_host_prog = venv
+vim.g.python3_host_prog = venv
 
 require("config.lazy")
 

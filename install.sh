@@ -191,11 +191,11 @@ install_others() {
 	configure_docker_buildx
 
 	# create python venv
-	if [[ ! -d $MY_ZDOTDIR/py3nvim ]]; then
+	if [[ ! -d $MY_ZDOTDIR/.venv ]]; then
 		print_message "Creating python venv" -1
-		python -m venv $MY_ZDOTDIR/py3nvim
-		source $MY_ZDOTDIR/py3nvim/bin/activate
-		pip install -r $MY_ZDOTDIR/python/requirements.txt
+		python -m venv $MY_ZDOTDIR/.venv
+		source $MY_ZDOTDIR/.venv/bin/activate
+		pip install -r $MY_ZDOTDIR/requirements.txt
 		print_message "Python venv created" $?
 	else
 		print_message "Python venv already exists" -2
