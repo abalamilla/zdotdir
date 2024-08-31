@@ -220,12 +220,16 @@ install_others() {
 
 	# link aerospace config file
 	link_file $MY_ZDOTDIR/aerospace $HOME/.config/aerospace
+
+	# link kitty config file
+	link_file $MY_ZDOTDIR/tools/kitty $HOME/.config/kitty
 }
 
 config_asdf() {
 	print_message "Configuring asdf" -1
 
 	asdf plugin add bun
+	asdf plugin add coursier
 	asdf plugin add dotnet
 	asdf plugin add golang
 	asdf plugin add gradle
