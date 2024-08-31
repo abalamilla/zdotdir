@@ -11,3 +11,5 @@ fi
 for fp ($^fpath/*(.N,@)) autoload -Uz $fp
 
 autoload -U compinit && compinit
+
+eval "$(zoxide init zsh)"
