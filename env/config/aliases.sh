@@ -49,3 +49,6 @@ alias zdotdir='cd ${ZDOTDIR:-HOME}'
 
 # tmux
 alias tmux='tmux -f $ZDOTDIR/tmux.conf'
+
+# nvim
+alias nvim='nvim --listen /tmp/nvim-server.pipe'

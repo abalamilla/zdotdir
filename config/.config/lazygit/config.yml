@@ -3,5 +3,6 @@ git:
     signOff: true
 os:
   editPreset: nvim
+  editCommandTemplate: '{{editor}} --server /tmp/nvim-server.pipe --remote-tab "$(pwd)/{{filename}}"'
 quitOnTopLevelReturn: true
 promptToReturnFromSubprocess: false
