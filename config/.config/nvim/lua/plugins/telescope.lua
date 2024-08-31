@@ -14,6 +14,8 @@ return {
 			{ "<leader>tw", "<cmd>Telescope grep_string<cr>" },
 			{ "<leader>ty", "<cmd>Telescope neoclip<cr>" },
 			{ "<leader>tr", "<cmd>Telescope registers<cr>" },
+			{ "<leader>tq", "<cmd>Telescope quickfix<cr>" },
+			{ "<leader>tQ", "<cmd>Telescope quickfixhistory<cr>" },
 		},
 		config = function()
 			local telescope = require("telescope")
