@@ -1,7 +1,6 @@
 tap "homebrew/cask-fonts"
 
 brew "asdf"
-brew "autojump"
 brew "awscli"
 brew "aws-cdk"
 brew "cfn-lint"

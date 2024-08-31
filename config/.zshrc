@@ -17,7 +17,6 @@ source $MY_INITIAL_CONFIGURATION
 # zsh glob expansion
 # . only files
 # N sets the NULL_GLOB option for the current pattern
-# @ symlinks (required for autojump)
 # https://zsh.sourceforge.io/Doc/Release/Expansion.html
 # ------👇🏼----------👇🏼----
 for f ($^SOURCE_PATHS(.N,@)) ssource $f

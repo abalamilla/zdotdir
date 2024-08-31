@@ -18,8 +18,6 @@ export MY_ZTYLES_PATH=($MY_CONFIG_PATH/zstyles/*)
 export MY_ENV_PATH=($MY_CONFIG_PATH/env/config/*)
 export ZSH_THEME=$MY_CONFIG_PATH/themes/powerlevel10k/powerlevel10k.zsh-theme
 export HB_CNF_HANDLER="$(brew --repository)/Library/Taps/homebrew/homebrew-command-not-found/handler.sh"
-export AUTOJUMP_SH="$(brew --repository)/etc/autojump.sh"
-export AUTOJUMP_SH_x86="/usr/local/etc/profile.d/autojump.sh"
 export NIX_DAEMON_PATH="/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh"
 export ASDF_SH="$(brew --prefix asdf)/libexec/asdf.sh"
 export ASDF_SET_JAVA_HOME="$HOME/.asdf/plugins/java/set-java-home.zsh"
@@ -33,7 +31,6 @@ SOURCE_PATHS=(
   $MY_ENV_PATH            # environment path
   $ZSH_THEME
   $HB_CNF_HANDLER
-  $AUTOJUMP_SH
   $AUTOJUMP_SH_x86
   $NIX_DAEMON_PATH
   $OFFICE_PROFILE
