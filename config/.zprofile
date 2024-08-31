@@ -41,10 +41,6 @@ SOURCE_PATHS=(
   $ASDF_SET_JAVA_HOME
 )
 
-# move .vimrc
-export MYVIMRC=$MY_CONFIG_PATH/.vimrc
-export VIMINIT="source $MYVIMRC"
-
 export EDITOR=nvim
 
 export ZDOTFILES_DEBUG=0
