@@ -1,96 +1,92 @@
 # current aws credentials format is: export AWS_ACCESS_KEY_ID=VALUE && export AWS_SECRET_ACCESS_KEY=VALUE && export AWS_SESSION_TOKEN=VALUE
 
-# get profile and region from arguments
-local profile
-local region
-
 function usage() {
-  echo "usage: awsenv [--profile <profile>] [--region <region>]\n"
-  echo "example: awsenv --profile default --region us-east-1"
-  echo "example: awsenv -p default -r us-east-1"
-  echo "example: awsenv -p default"
-  echo "example: awsenv -r us-east-1\n"
-  echo "credentials must be in clipboard if profile parameter is set"
+	printf "usage: awsenv [--profile <profile>] [--region <region>]\n"
+	echo "example: awsenv --profile default --region us-east-1"
+	echo "example: awsenv -p default -r us-east-1"
+	echo "example: awsenv -p default"
+	printf "example: awsenv -r us-east-1\n"
+	echo "credentials must be in clipboard if profile parameter is set"
 }
 
 # loop through arguments
 while [[ $# -gt 0 ]]; do
-  key="$1"
+	key="$1"
 
-  case $key in
-    -p|--profile)
-      profile="$2"
-      shift 2
-      ;;
-    -r|--region)
-      region="$2"
-      shift 2
-      ;;
-    *)
-      usage
-      return 1
-      ;;
-  esac
+	case $key in
+	-p | --profile)
+		profile="$2"
+		shift 2
+		;;
+	-r | --region)
+		region="$2"
+		shift 2
+		;;
+	*)
+		usage
+		return 1
+		;;
+	esac
 done
 
 # show usage in case profile or region are not set
 if [[ -z $profile ]] && [[ -z $region ]]; then
-  usage
-  return 1
+	usage
+	return 1
 fi
 
 # only update region if profile is not provided
 if [[ -z $profile ]]; then
-  profile=$AWS_PROFILE
+	profile=$AWS_PROFILE
 
-  if [[ -z $profile ]]; then
-    echo "profile not set"
-    echo "please specify profile parameter\n"
-    usage
-    return 1
-  fi
+	if [[ -z $profile ]]; then
+		echo "profile not set"
+		printf "please specify profile parameter\n"
+		usage
+		return 1
+	fi
 
-  aws configure set region $region --profile $profile
-  return $?
+	aws configure set region "$region" --profile "$profile"
+	return $?
 fi
 
 # set region to current profile region if not set
 if [[ -z $region ]]; then
-  region=$(aws configure get region --profile $profile 2>/dev/null)
+	region=$(aws configure get region --profile "$profile" 2>/dev/null)
 
-  if [[ -z $region ]]; then
-    echo "profile $profile does not exist"
-    echo "please specify region parameter\n"
-    usage
-    return 1
-  fi
+	if [[ -z $region ]]; then
+		echo "profile $profile does not exist"
+		printf "please specify region parameter\n"
+		usage
+		return 1
+	fi
 else
-  aws configure set region $region --profile $profile
+	aws configure set region "$region" --profile "$profile"
 fi
 
 # get aws credentials from clipboard
 aws_credentials=$(pbpaste)
 
 # verify clipboard for aws credentials
-if [[ $aws_credentials != *"AWS"*  ]]; then
-  echo "aws credentials not found in clipboard"
-  return 1
+if [[ $aws_credentials != *"AWS"* ]]; then
+	echo "aws credentials not found in clipboard"
+	return 1
 fi
 
 # parse aws credentials from clipboard
-aws_credentials=$(echo $aws_credentials | sed 's/export//g' | sed 's/&&/\n/g' | sed 's/ //g' | sed 's/=/ /g')
+aws_credentials=$(echo "$aws_credentials" | sed 's/export//g' | sed 's/&&/\n/g' | sed 's/ //g' | sed 's/=/ /g')
 
 # run aws config set to save credentials
 while read -r line; do
-  # key to lower case
-  KEY=$(echo $line | awk '{print $1}' | tr '[:upper:]' '[:lower:]')
-  VALUE=$(echo $line | awk '{print $2}')
+	# key to lower case
+	KEY=$(echo "$line" | awk '{print $1}' | tr '[:upper:]' '[:lower:]')
+	VALUE=$(echo "$line" | awk '{print $2}')
 
-  aws configure set $KEY $VALUE --profile $profile --region $region
-done <<< "$aws_credentials"
+	aws configure set "$KEY" "$VALUE" --profile "$profile" --region "$region"
+done <<<"$aws_credentials"
 
 # persisting the profile
-sed -i '' "s/AWS_PROFILE=.*/AWS_PROFILE=$profile/g" $OFFICE_PROFILE
+sed -i '' "s/AWS_PROFILE=.*/AWS_PROFILE=$profile/g" "$OFFICE_PROFILE"
 
 # setting the profile for the current shell
 export AWS_PROFILE=$profile
