@@ -251,8 +251,10 @@ init_config() {
 
 # init
 () {
-# clone my zdotdir repository
-clone_repo abalamilla/zdotdir $HOME
+	print_message "Starting installation" -1
+
+	# clone my zdotdir repository
+	clone_repo abalamilla/zdotdir $HOME
 
 	# setup initial configuration
 	init_config
