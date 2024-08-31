@@ -77,12 +77,6 @@ fzf vim plugin with multiple predefined commands and mappings like:
 
 You can find more in [junegunn/fzf.vim](https://github.com/junegunn/fzf.vim) repo.
 
-### vim-prettier
-
-Prettier plugin to format javascript, typescript, less, scss, css, json, graphql and markdown files
-
-You can find more in [prettier/vim-prettier](https://github.com/prettier/vim-prettier) repo.
-
 ### vim-gutentags
 
 This plugin manage tags files for vim, useful to navigate code within vim
