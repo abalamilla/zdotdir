@@ -4,9 +4,10 @@ return {
 		require("gitsigns").setup({
 			current_line_blame = true,
 		})
-
-		vim.keymap.set("n", "<leader>gp", ":Gitsigns preview_hunk<CR>", {})
-		vim.keymap.set("n", "<leader>gn", ":Gitsigns next_hunk<CR>", {})
-		vim.keymap.set("n", "<leader>dr", ":Gitsigns reset_hunk<CR>", {})
 	end,
+	keys = {
+		{ "<leader>gp", ":Gitsigns preview_hunk<CR>", desc = "Gitsigns preview_hunk" },
+		{ "<leader>gn", ":Gitsigns next_hunk<CR>",    desc = "Gitsigns next_hunk" },
+		{ "<leader>dr", ":Gitsigns reset_hunk<CR>",   desc = "Gitsigns reset_hunk" },
+	},
 }
