@@ -7,7 +7,7 @@ return {
 			sources = {
 				null_ls.builtins.formatting.stylua,
 				null_ls.builtins.formatting.prettier,
-				null_ls.builtins.formatting.shfmt,
+				null_ls.builtins.formatting.shfmt.with({ filetypes = { "sh", "zsh" } }),
 				null_ls.builtins.formatting.cljstyle,
 
 				-- null_ls.builtins.diagnostics.eslint_d,

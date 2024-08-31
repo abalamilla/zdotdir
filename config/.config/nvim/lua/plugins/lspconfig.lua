@@ -44,7 +44,7 @@ return {
 			lspconfig.helm_ls.setup({ capabilities = capabilities })
 			lspconfig.jsonls.setup({ capabilities = capabilities })
 			lspconfig.tsserver.setup({ capabilities = capabilities })
-			lspconfig.bashls.setup({ capabilities = capabilities })
+			lspconfig.bashls.setup({ capabilities = capabilities, filetypes = { "sh", "zsh" } })
 			lspconfig.lua_ls.setup({ capabilities = capabilities })
 			lspconfig.taplo.setup({ capabilities = capabilities })
 			lspconfig.terraformls.setup({ capabilities = capabilities })
@@ -64,18 +64,18 @@ return {
 				}
 			end
 
-			lspconfig.kcl.setup({})
+			lspconfig.kcl.setup({ capabilities = capabilities })
 		end,
 		keys = {
-			{ "K", ":lua vim.lsp.buf.hover()<CR>", "Hover" },
-			{ "gd", ":lua vim.lsp.buf.definition()<CR>", "Definition" },
-			{ "gD", ":lua vim.lsp.buf.declaration()<CR>", "Declaration" },
-			{ "gr", ":lua vim.lsp.buf.references()<CR>", "References" },
-			{ "gi", ":lua vim.lsp.buf.implementation()<CR>", "Implementation" },
-			{ "gs", ":lua vim.lsp.buf.signature_help()<CR>", "Signature Help" },
-			{ "gt", ":lua vim.lsp.buf.type_definition()<CR>", "Type Definition" },
-			{ "gR", ":lua vim.lsp.buf.rename()<CR>", "Rename" },
-			{ "<leader>wa", ":lua vim.lsp.buf.add_workspace_folder()<CR>", "Add Workspace Folder" },
+			{ "K",          ":lua vim.lsp.buf.hover()<CR>",                   "Hover" },
+			{ "gd",         ":lua vim.lsp.buf.definition()<CR>",              "Definition" },
+			{ "gD",         ":lua vim.lsp.buf.declaration()<CR>",             "Declaration" },
+			{ "gr",         ":lua vim.lsp.buf.references()<CR>",              "References" },
+			{ "gi",         ":lua vim.lsp.buf.implementation()<CR>",          "Implementation" },
+			{ "gs",         ":lua vim.lsp.buf.signature_help()<CR>",          "Signature Help" },
+			{ "gt",         ":lua vim.lsp.buf.type_definition()<CR>",         "Type Definition" },
+			{ "gR",         ":lua vim.lsp.buf.rename()<CR>",                  "Rename" },
+			{ "<leader>wa", ":lua vim.lsp.buf.add_workspace_folder()<CR>",    "Add Workspace Folder" },
 			{ "<leader>wr", ":lua vim.lsp.buf.remove_workspace_folder()<CR>", "Remove Workspace Folder" },
 			{
 				"<leader>wl",
