@@ -6,7 +6,7 @@ if [ -z "$profile" ]; then
 fi
 
 # persisting the profile
-sed -i '' "s/AWS_PROFILE=.*/AWS_PROFILE=$profile/g" $OFFICE_PROFILE
+sed -i '' "s/AWS_PROFILE=.*/AWS_PROFILE=$profile/g" "$OFFICE_PROFILE"
 
 # setting the profile for the current shell
 export AWS_PROFILE=$profile

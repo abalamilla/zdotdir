@@ -1,6 +1,6 @@
 CURRENT_DIR=$(pwd)
-CURRENT_TRACK=$(basename $(dirname $CURRENT_DIR))
-CURRENT_EXERCISE=$(basename $CURRENT_DIR)
+CURRENT_TRACK="$(basename "$(dirname "$CURRENT_DIR")")"
+CURRENT_EXERCISE="$(basename "$CURRENT_DIR")"
 EXERCISM_DIR=$(exercism workspace)
 TEST_RUNNER_DIR="$EXERCISM_DIR/$CURRENT_TRACK/$CURRENT_TRACK-test-runner"
 GITHUB_REPO="https://github.com/exercism/$CURRENT_TRACK-test-runner.git"
@@ -8,50 +8,50 @@ RUN_TEST_SCRIPT="./bin/run-in-docker.sh"
 
 # switch case to current track
 case $CURRENT_TRACK in
-  "python")
-    TEST_EXERCISE_DIR="./$CURRENT_EXERCISE"
-    OUTPUT_DIR="./output/$CURRENT_EXERCISE"
+"python")
+	TEST_EXERCISE_DIR="./$CURRENT_EXERCISE"
+	OUTPUT_DIR="./output/$CURRENT_EXERCISE"
 
-    echo "Python: Renaming test file for current exercise..."
-    CURRENT_EXERCISE_FNAME=${CURRENT_EXERCISE//-/_}
-    mv $CURRENT_DIR/*_test.py "${CURRENT_DIR}/${CURRENT_EXERCISE_FNAME}_test.py"
-    echo "Current track is Python..."
-    ;;
-  "javascript")
-    RUN_TEST_SCRIPT="./run-in-docker.sh"
-    TEST_EXERCISE_DIR="./$CURRENT_EXERCISE"
-    OUTPUT_DIR="./output/$CURRENT_EXERCISE"
-    ;;
-  "pharo-smalltalk")
-    TEST_EXERCISE_DIR="./$CURRENT_EXERCISE"
-    OUTPUT_DIR="./output/$CURRENT_EXERCISE"
-    ;;
-  "crystal")
-    TEST_EXERCISE_DIR="$TEST_RUNNER_DIR/$CURRENT_EXERCISE"
-    OUTPUT_DIR="$TEST_RUNNER_DIR/output/$CURRENT_EXERCISE"
+	echo "Python: Renaming test file for current exercise..."
+	CURRENT_EXERCISE_FNAME=${CURRENT_EXERCISE//-/_}
+	mv "$CURRENT_DIR"/*_test.py "${CURRENT_DIR}/${CURRENT_EXERCISE_FNAME}_test.py"
+	echo "Current track is Python..."
+	;;
+"javascript")
+	RUN_TEST_SCRIPT="./run-in-docker.sh"
+	TEST_EXERCISE_DIR="./$CURRENT_EXERCISE"
+	OUTPUT_DIR="./output/$CURRENT_EXERCISE"
+	;;
+"pharo-smalltalk")
+	TEST_EXERCISE_DIR="./$CURRENT_EXERCISE"
+	OUTPUT_DIR="./output/$CURRENT_EXERCISE"
+	;;
+"crystal")
+	TEST_EXERCISE_DIR="$TEST_RUNNER_DIR/$CURRENT_EXERCISE"
+	OUTPUT_DIR="$TEST_RUNNER_DIR/output/$CURRENT_EXERCISE"
 
-    mv $CURRENT_DIR/spec/*_spec.cr $CURRENT_DIR/spec/modified_test_spec.cr
-    ;;
-  *)
-    TEST_EXERCISE_DIR="$TEST_RUNNER_DIR/$CURRENT_EXERCISE"
-    OUTPUT_DIR="$TEST_RUNNER_DIR/output/$CURRENT_EXERCISE"
-    ;;
+	mv "$CURRENT_DIR"/spec/*_spec.cr "$CURRENT_DIR"/spec/modified_test_spec.cr
+	;;
+*)
+	TEST_EXERCISE_DIR="$TEST_RUNNER_DIR/$CURRENT_EXERCISE"
+	OUTPUT_DIR="$TEST_RUNNER_DIR/output/$CURRENT_EXERCISE"
+	;;
 esac
 
 # verify if test runner directory exists
 if [ ! -d "$TEST_RUNNER_DIR" ]; then
-  echo "Test runner directory does not exist. Cloning..."
-  git clone $GITHUB_REPO $TEST_RUNNER_DIR
+	echo "Test runner directory does not exist. Cloning..."
+	git clone "$GITHUB_REPO" "$TEST_RUNNER_DIR"
 fi
 
 # change to test runner directory
 echo "Changing to test runner directory..."
-cd "$TEST_RUNNER_DIR"
+cd "$TEST_RUNNER_DIR" || exit
 
 # verify if current exercise directory exists remove if it does and copy new one
 if [ -d "$TEST_RUNNER_DIR/$CURRENT_EXERCISE" ]; then
-  echo "Removing current exercise directory..."
-  rm -rf "$TEST_RUNNER_DIR/$CURRENT_EXERCISE"
+	echo "Removing current exercise directory..."
+	rm -rf "${TEST_RUNNER_DIR:?}/$CURRENT_EXERCISE"
 fi
 
 echo "Copying current exercise directory..."
@@ -59,17 +59,17 @@ cp -r "$CURRENT_DIR" "$TEST_RUNNER_DIR/$CURRENT_EXERCISE"
 
 # create exercise output directory if it does not exist
 if [ ! -d "$OUTPUT_DIR" ]; then
-  echo "Creating output directory..."
-  mkdir -p "$OUTPUT_DIR"
+	echo "Creating output directory..."
+	mkdir -p "$OUTPUT_DIR"
 fi
 
 # trap to clean up test runner directory remove test exercise directory and output directory
 # and get back to current directory
 function cleanup {
-  echo "Cleaning up..."
-  rm -rf "$TEST_RUNNER_DIR/$CURRENT_EXERCISE"
-  rm -rf "$OUTPUT_DIR"
-  cd "$CURRENT_DIR"
+	echo "Cleaning up..."
+	rm -rf "${TEST_RUNNER_DIR:?}/$CURRENT_EXERCISE"
+	rm -rf "$OUTPUT_DIR"
+	cd "$CURRENT_DIR" || exit
 }
 trap cleanup EXIT
 

@@ -7,7 +7,6 @@ for arg in $@; do
 done
 
 # return the query
-echo $query
+echo "$query"
 
 # vim:ft=zsh
-

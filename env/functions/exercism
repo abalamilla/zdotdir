@@ -1,6 +1,3 @@
-
-# auto change dir
-local out
 # readarray -t out < <(command exercism "$@")
 out=("${(@f)$(command exercism "$@")}")
 printf '%s\n' "${out[@]}"
