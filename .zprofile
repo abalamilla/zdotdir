@@ -45,7 +45,7 @@ SOURCE_PATHS=(
 export MYVIMRC=$ZDOTDIR/.vimrc
 export VIMINIT="source $MYVIMRC"
 
-export EDITOR=vim
+export EDITOR=nvim
 
 export ZDOTFILES_DEBUG=0
 
