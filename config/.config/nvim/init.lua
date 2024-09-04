@@ -16,6 +16,7 @@ vim.o.smartindent = true
 vim.o.shiftwidth = 2
 vim.o.tabstop = 2
 vim.o.backupcopy = "yes"
+vim.o.clipboard = "unnamedplus"
 
 -- clear highlighting on esc in normal mode
 vim.api.nvim_set_keymap("n", "<esc>", ":noh<cr>", { noremap = true, silent = true })
