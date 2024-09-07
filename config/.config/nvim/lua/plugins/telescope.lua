@@ -16,6 +16,8 @@ return {
 			{ "<leader>tr", "<cmd>Telescope registers<cr>" },
 			{ "<leader>tq", "<cmd>Telescope quickfix<cr>" },
 			{ "<leader>tQ", "<cmd>Telescope quickfixhistory<cr>" },
+			{ "<leader>tk", "<cmd>Telescope keymaps<cr>" },
+			{ "<leader>tt", "<cmd>Telescope treesitter<cr>" },
 		},
 		config = function()
 			local telescope = require("telescope")
