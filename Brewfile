@@ -1,4 +1,5 @@
 tap "homebrew/cask-fonts"
+tap "hashicorp/tap"
 
 brew "asdf"
 brew "awscli"
@@ -26,6 +27,7 @@ brew "git-extras"
 brew "git-lfs"
 brew "gnupg"
 brew "gpg1"
+brew "hashicorp/tap/vault"
 brew "kubectl"
 brew "kubectx"
 brew "lazygit"
