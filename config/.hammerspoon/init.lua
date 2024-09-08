@@ -35,7 +35,7 @@ local appWatcher = hs.application.watcher.new(ApplicationWatcher)
 appWatcher:start()
 
 function ToggleMute()
-	local teams = hs.application.find("com.microsoft.teams")
+	local teams = hs.application.find("com.microsoft.teams2")
 	if not (teams == nil) then
 		hs.eventtap.keyStroke({ "cmd", "shift" }, "m", 0, teams)
 	end
