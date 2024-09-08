@@ -1,6 +1,6 @@
 {
-    "diagnostics.globals": [
-        "hs",
-        "spoon"
-    ]
+  "diagnostics.globals": [
+    "hs",
+    "spoon"
+  ]
 }
