@@ -5,16 +5,16 @@ setup() {
 }
 
 teardown() {
-  rm -f $FAKE_FILE 
-  rm -Rf $FAKE_DIR
+  rm -f "$FAKE_FILE"
+  rm -Rf "$FAKE_DIR"
 }
 
 backup_file() {
-  . $HOME/.config/zdotdir/utils/functions/backup_file $@
+  . "$HOME/zdotdir/utils/functions/backup_file" "$@"
 }
 
 print_message() {
-  echo $1
+  echo "$1"
 }
 
 @test 'Print backup_file usage' {
@@ -32,14 +32,14 @@ print_message() {
 }
 
 @test 'User without write permission on dest path' {
-  run backup_file $FAKE_FILE "/"
+  run backup_file "$FAKE_FILE" "/"
 
   [[ "${status}" == 1 ]]
   [[ "${output}" == "Current user do not have write permissions over /." ]]
 }
 
 @test 'Backup a file' {
-  run backup_file $FAKE_FILE $FAKE_DIR "my_backup.bkp"
+  run backup_file "$FAKE_FILE" "$FAKE_DIR" "my_backup.bkp"
 
   [[ "${status}" == 0 ]]
   [[ -f "$FAKE_DIR/my_backup.bkp" ]]

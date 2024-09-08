@@ -71,4 +71,3 @@ awsenv() {
   [[ "${status}" == 0 ]]
   [[ "${output}" =~ "aws default profile set to my-profile. Reload other shells to apply changes." ]]
 }
-
