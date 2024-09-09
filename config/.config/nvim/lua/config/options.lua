@@ -20,3 +20,6 @@ g.python3_host_prog = venv
 
 -- LazyVim options
 g.root_spec = { "cwd" }
+
+-- LazyVim auto format
+vim.g.autoformat = false
