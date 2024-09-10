@@ -43,7 +43,7 @@ You can find more in [zsh-history-substring-search](https://github.com/zsh-users
 
 ### zsh-completions
 
-By default Zsh already have some completions, but for those that are still missing `zsh-completions` is the choosen one
+By default Zsh already have some completions, but for those that are still missing `zsh-completions` is the chosen one
 
 You can find more in [zsh-completions](https://github.com/zsh-users/zsh-completions) repo.
 
