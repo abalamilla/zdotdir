@@ -1,5 +1,7 @@
 #!/usr/bin/env zsh
 
+set -e
+
 BRANCH_NAME=${1:-main}
 
 MY_ZDOTDIR=$HOME/zdotdir
