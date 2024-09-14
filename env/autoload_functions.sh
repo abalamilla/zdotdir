@@ -12,4 +12,6 @@ for fp ($^fpath/*(.N,@)) autoload -Uz $fp
 
 autoload -U compinit && compinit
 
-eval "$(zoxide init zsh)"
+if [[ -x "$(command -v zoxide)" ]] then
+  eval "$(zoxide init zsh)"
+fi
