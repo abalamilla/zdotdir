@@ -24,3 +24,5 @@
 	autoSetupRemote = true
 [pull]
 	rebase = true
+[credential "https://dev.azure.com"]
+	useHttpPath = true
