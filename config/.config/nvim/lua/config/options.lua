@@ -23,3 +23,6 @@ g.root_spec = { "cwd" }
 
 -- LazyVim auto format
 vim.g.autoformat = false
+
+-- lazygit config
+vim.g.lazygit_config = false
