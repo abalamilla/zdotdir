@@ -9,3 +9,4 @@ cljstyle 0.16.626
 coursier 2.1.9
 shfmt 3.9.0
 rust 1.81.0
+terraform 1.5.2
