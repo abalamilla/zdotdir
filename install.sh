@@ -218,7 +218,9 @@ config_asdf() {
 	asdf plugin add nodejs
 	asdf plugin add python
 	asdf plugin add rust
+	asdf plugin add terraform
 	asdf plugin add scala
+	asdf plugin add shfmt
 	asdf plugin add clj-kondo
 	asdf plugin add cljstyle
 
@@ -246,9 +248,6 @@ init_config() {
 
 	# load zdotdir scripts
 	load_scripts
-
-	# install and configure asdf
-	install_asdf
 }
 
 # init
@@ -267,10 +266,13 @@ init_config() {
 	# install brewfile
 	install_brewfile
 
+	stow config -t ~
+
+	# install and configure asdf
+	install_asdf
+
 	install_apps
 	install_others
-
-	stow config -t ~
 
 	print_message "Finish! Enjoy your new environment."
 }
