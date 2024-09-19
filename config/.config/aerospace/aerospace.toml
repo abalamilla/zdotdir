@@ -176,5 +176,9 @@ if.app-id = 'com.kovidgoyal.kitty'
 run = 'move-node-to-workspace T'
 
 [[on-window-detected]]
+if.app-id = 'net.kovidgoyal.kitty'
+run = 'move-node-to-workspace T'
+
+[[on-window-detected]]
 if.app-id = 'com.apple.Music'
 run = 'move-node-to-workspace M'
