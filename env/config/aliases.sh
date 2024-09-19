@@ -39,6 +39,7 @@ alias grst='git restore'
 alias gf='git fetch --all'
 alias gclean='git clean -f -d -x'
 alias glog='git log --stat'
+alias gc='git clone'
 
 # GitHub CLI alias
 alias gcs='gh copilot suggest'
