@@ -18,6 +18,7 @@ return {
       filtered_items = {
         hide_dotfiles = false,
       },
+      hijack_netrw_behavior = "open_current",
       bind_to_cwd = true,
     },
     source_selector = {
