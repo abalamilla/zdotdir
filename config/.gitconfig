@@ -26,3 +26,5 @@
 	rebase = true
 [credential "https://dev.azure.com"]
 	useHttpPath = true
+[commit]
+  gpgsign = true
