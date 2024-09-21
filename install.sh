@@ -207,23 +207,23 @@ install_others() {
 config_asdf() {
 	print_message "Configuring asdf" -1
 
-	asdf plugin add bun
-	asdf plugin add coursier
-	asdf plugin add dotnet
-	asdf plugin add golang
-	asdf plugin add gradle
-	asdf plugin add java
-	asdf plugin add kubebuilder
-	asdf plugin add maven
-	asdf plugin add nodejs
-	asdf plugin add python
-	asdf plugin add rust
-	asdf plugin add terraform
-	asdf plugin add scala
-	asdf plugin add shfmt
-	asdf plugin add clj-kondo
-	asdf plugin add cljstyle
-
+  asdf plugin add aws-sam-cli
+  asdf plugin add bun
+  asdf plugin add clj-kondo
+  asdf plugin add cljstyle
+  asdf plugin add coursier
+  asdf plugin add dotnet
+  asdf plugin add golang
+  asdf plugin add gradle
+  asdf plugin add java
+  asdf plugin add kubebuilder
+  asdf plugin add maven
+  asdf plugin add nodejs
+  asdf plugin add python
+  asdf plugin add rust
+  asdf plugin add scala
+  asdf plugin add shfmt
+  asdf plugin add terraform
 
 	# install tools
 	asdf install
