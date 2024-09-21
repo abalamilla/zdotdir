@@ -131,7 +131,7 @@ load_homebrew() {
 
 install_apps() {
 	APPS=(
-		"https://nixos.org/nix/install"::"nix-shell"
+		# "https://nixos.org/nix/install"::"nix-shell"
 	)
 
 	for a in $APPS; do
