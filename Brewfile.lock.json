@@ -573,40 +573,40 @@
         }
       },
       "docker": {
-        "version": "27.3.0",
+        "version": "27.3.1",
         "bottle": {
           "rebuild": 0,
           "root_url": "https://ghcr.io/v2/homebrew/core",
           "files": {
             "arm64_sequoia": {
               "cellar": ":any_skip_relocation",
-              "url": "https://ghcr.io/v2/homebrew/core/docker/blobs/sha256:a06bcd8bb70ca5f5d08af1e99adeebffa6c53b4f27ae05207f08420278c2f4ff",
-              "sha256": "a06bcd8bb70ca5f5d08af1e99adeebffa6c53b4f27ae05207f08420278c2f4ff"
+              "url": "https://ghcr.io/v2/homebrew/core/docker/blobs/sha256:dcd25100f823e80d665ce0bed51fe5016a4839669cb8bbfbb2e5be0e26dcc545",
+              "sha256": "dcd25100f823e80d665ce0bed51fe5016a4839669cb8bbfbb2e5be0e26dcc545"
             },
             "arm64_sonoma": {
               "cellar": ":any_skip_relocation",
-              "url": "https://ghcr.io/v2/homebrew/core/docker/blobs/sha256:a06bcd8bb70ca5f5d08af1e99adeebffa6c53b4f27ae05207f08420278c2f4ff",
-              "sha256": "a06bcd8bb70ca5f5d08af1e99adeebffa6c53b4f27ae05207f08420278c2f4ff"
+              "url": "https://ghcr.io/v2/homebrew/core/docker/blobs/sha256:dcd25100f823e80d665ce0bed51fe5016a4839669cb8bbfbb2e5be0e26dcc545",
+              "sha256": "dcd25100f823e80d665ce0bed51fe5016a4839669cb8bbfbb2e5be0e26dcc545"
             },
             "arm64_ventura": {
               "cellar": ":any_skip_relocation",
-              "url": "https://ghcr.io/v2/homebrew/core/docker/blobs/sha256:a06bcd8bb70ca5f5d08af1e99adeebffa6c53b4f27ae05207f08420278c2f4ff",
-              "sha256": "a06bcd8bb70ca5f5d08af1e99adeebffa6c53b4f27ae05207f08420278c2f4ff"
+              "url": "https://ghcr.io/v2/homebrew/core/docker/blobs/sha256:dcd25100f823e80d665ce0bed51fe5016a4839669cb8bbfbb2e5be0e26dcc545",
+              "sha256": "dcd25100f823e80d665ce0bed51fe5016a4839669cb8bbfbb2e5be0e26dcc545"
             },
             "sonoma": {
               "cellar": ":any_skip_relocation",
-              "url": "https://ghcr.io/v2/homebrew/core/docker/blobs/sha256:dd9e13bd4d71a932fbe0112949af14a41839110eb74b315ecca97df3b41673f6",
-              "sha256": "dd9e13bd4d71a932fbe0112949af14a41839110eb74b315ecca97df3b41673f6"
+              "url": "https://ghcr.io/v2/homebrew/core/docker/blobs/sha256:d1ce47ef4f6ad9f17ac563ff39524beee77ad1b2baab58a4d4cac62b56367ce6",
+              "sha256": "d1ce47ef4f6ad9f17ac563ff39524beee77ad1b2baab58a4d4cac62b56367ce6"
             },
             "ventura": {
               "cellar": ":any_skip_relocation",
-              "url": "https://ghcr.io/v2/homebrew/core/docker/blobs/sha256:dd9e13bd4d71a932fbe0112949af14a41839110eb74b315ecca97df3b41673f6",
-              "sha256": "dd9e13bd4d71a932fbe0112949af14a41839110eb74b315ecca97df3b41673f6"
+              "url": "https://ghcr.io/v2/homebrew/core/docker/blobs/sha256:d1ce47ef4f6ad9f17ac563ff39524beee77ad1b2baab58a4d4cac62b56367ce6",
+              "sha256": "d1ce47ef4f6ad9f17ac563ff39524beee77ad1b2baab58a4d4cac62b56367ce6"
             },
             "x86_64_linux": {
               "cellar": ":any_skip_relocation",
-              "url": "https://ghcr.io/v2/homebrew/core/docker/blobs/sha256:d7b7266e6946e190e4b60b8ec58dd2a6170cd3afe0fd48408712403644861ec9",
-              "sha256": "d7b7266e6946e190e4b60b8ec58dd2a6170cd3afe0fd48408712403644861ec9"
+              "url": "https://ghcr.io/v2/homebrew/core/docker/blobs/sha256:4f9af7f20c3d2b82d2146ffa6e1a524edfe8afc28251e4ed2dcbee01fe13f855",
+              "sha256": "4f9af7f20c3d2b82d2146ffa6e1a524edfe8afc28251e4ed2dcbee01fe13f855"
             }
           }
         }
@@ -3982,12 +3982,12 @@
         "macOS": "13.6"
       },
       "sonoma": {
-        "HOMEBREW_VERSION": "4.3.23-45-g3b649d1",
+        "HOMEBREW_VERSION": "4.3.23-56-g9160445",
         "HOMEBREW_PREFIX": "/usr/local",
         "Homebrew/homebrew-core": "api",
         "CLT": "15.3.0.0.1.1708646388",
-        "Xcode": "15.3",
-        "macOS": "14.4.1"
+        "Xcode": "15.4",
+        "macOS": "14.6.1"
       },
       "sequoia": {
         "HOMEBREW_VERSION": "4.3.23-53-g29c22e0",
