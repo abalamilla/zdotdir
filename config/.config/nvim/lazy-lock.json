@@ -86,5 +86,6 @@
   "vim-kitty-navigator": { "branch": "master", "commit": "20abf8613aa228a5def1ae02cd9da0f2d210352a" },
   "vimwiki": { "branch": "dev", "commit": "705ad1e0dded0e3b7ff5fac78547ab67c9d39bdf" },
   "which-key.nvim": { "branch": "main", "commit": "fb070344402cfc662299d9914f5546d840a22126" },
+  "yanky.nvim": { "branch": "main", "commit": "73215b77d22ebb179cef98e7e1235825431d10e4" },
   "yazi.nvim": { "branch": "main", "commit": "1f8bcc422956e347d2fe5e2f1e323d45130ae399" }
 }
