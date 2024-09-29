@@ -17,7 +17,7 @@ case $CURRENT_TRACK in
 	mv "$CURRENT_DIR"/*_test.py "${CURRENT_DIR}/${CURRENT_EXERCISE_FNAME}_test.py"
 	echo "Current track is Python..."
 	;;
-"javascript")
+"javascript"|"typescript")
 	RUN_TEST_SCRIPT="./run-in-docker.sh"
 	TEST_EXERCISE_DIR="./$CURRENT_EXERCISE"
 	OUTPUT_DIR="./output/$CURRENT_EXERCISE"
