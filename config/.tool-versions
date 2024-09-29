@@ -1,4 +1,4 @@
-nodejs 20.8.1
+nodejs 22.9.0
 java corretto-22.0.1.8.1
 scala 2.13.9
 python 3.12.2
