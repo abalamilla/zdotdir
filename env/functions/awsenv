@@ -6,7 +6,6 @@ function usage() {
 	echo "example: awsenv -p default -r us-east-1"
 	echo "example: awsenv -p default"
 	printf "example: awsenv -r us-east-1\n"
-	echo "credentials must be in clipboard if profile parameter is set"
 }
 
 # loop through arguments
@@ -68,22 +67,21 @@ fi
 aws_credentials=$(pbpaste)
 
 # verify clipboard for aws credentials
-if [[ $aws_credentials != *"AWS"* ]]; then
-	echo "aws credentials not found in clipboard"
-	return 1
+if [[ $aws_credentials == *"AWS"* ]]; then
+  # parse aws credentials from clipboard
+  aws_credentials=$(echo "$aws_credentials" | sed 's/export//g' | sed 's/&&/\n/g' | sed 's/ //g' | sed 's/=/ /g')
+
+  # run aws config set to save credentials
+  while read -r line; do
+    # key to lower case
+    KEY=$(echo "$line" | awk '{print $1}' | tr '[:upper:]' '[:lower:]')
+    VALUE=$(echo "$line" | awk '{print $2}')
+
+    aws configure set "$KEY" "$VALUE" --profile "$profile" --region "$region"
+  done <<<"$aws_credentials"
+else
+  echo "aws credentials not found in clipboard, configuring aws profile without credentials"
 fi
-
-# parse aws credentials from clipboard
-aws_credentials=$(echo "$aws_credentials" | sed 's/export//g' | sed 's/&&/\n/g' | sed 's/ //g' | sed 's/=/ /g')
-
-# run aws config set to save credentials
-while read -r line; do
-	# key to lower case
-	KEY=$(echo "$line" | awk '{print $1}' | tr '[:upper:]' '[:lower:]')
-	VALUE=$(echo "$line" | awk '{print $2}')
-
-	aws configure set "$KEY" "$VALUE" --profile "$profile" --region "$region"
-done <<<"$aws_credentials"
 
 # persisting the profile
 sed -i '' "s/AWS_PROFILE=.*/AWS_PROFILE=$profile/g" "$OFFICE_PROFILE"
@@ -91,6 +89,6 @@ sed -i '' "s/AWS_PROFILE=.*/AWS_PROFILE=$profile/g" "$OFFICE_PROFILE"
 # setting the profile for the current shell
 export AWS_PROFILE=$profile
 
-echo "aws default profile set to $profile. Reload other shells to apply changes."
+echo "aws default profile set to $profile."
 
 # vim:ft=zsh
