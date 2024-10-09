@@ -1,10 +1,11 @@
 # current aws credentials format is: export AWS_ACCESS_KEY_ID=VALUE && export AWS_SECRET_ACCESS_KEY=VALUE && export AWS_SESSION_TOKEN=VALUE
 
 function usage() {
-	printf "usage: awsenv [--profile <profile>] [--region <region>]\n"
+	printf "usage: awsenv [--profile <profile>] [--region <region>] [--shell]\n"
 	echo "example: awsenv --profile default --region us-east-1"
 	echo "example: awsenv -p default -r us-east-1"
 	echo "example: awsenv -p default"
+  echo "example: awsenv -s -p default"
 	printf "example: awsenv -r us-east-1\n"
 }
 
@@ -20,6 +21,9 @@ while [[ $# -gt 0 ]]; do
 	-r | --region)
 		region="$2"
 		shift 2
+		;;
+	-s | --shell)
+		shell="true"
 		;;
 	*)
 		usage
@@ -83,8 +87,10 @@ else
   echo "aws credentials not found in clipboard, configuring aws profile without credentials"
 fi
 
-# persisting the profile
-sed -i '' "s/AWS_PROFILE=.*/AWS_PROFILE=$profile/g" "$OFFICE_PROFILE"
+if [[ -n $shell ]]; then
+  # persisting the profile
+  sed -i '' "s/AWS_PROFILE=.*/AWS_PROFILE=$profile/g" "$OFFICE_PROFILE"
+fi
 
 # setting the profile for the current shell
 export AWS_PROFILE=$profile
