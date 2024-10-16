@@ -3,4 +3,8 @@ on = "y"
 run = ['''
 	sh -c 'echo "$@" | pbcopy '
 ''', "yank"]
+[[manager.prepend_keymap]]
+on   = [ "c", "a" ]
+run  = "plugin compress"
+desc = "Archive selected files"
 
