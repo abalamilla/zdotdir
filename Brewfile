@@ -1,6 +1,7 @@
 tap "homebrew/cask-fonts"
 tap "hashicorp/tap"
 
+brew "7-zip"
 brew "asdf"
 brew "awscli"
 brew "aws-cdk"
