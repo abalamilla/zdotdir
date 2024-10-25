@@ -1,0 +1,39 @@
+GIT_URL=$1
+# git@gitlab.cj.dev:attribution/promo-code-service.git
+GROUP=$(echo $GIT_URL | cut -d':' -f2 | cut -d'/' -f1)
+REPONAME=$(echo $GIT_URL | cut -d':' -f2 | cut -d'/' -f2 | cut -d'.' -f1)
+
+echo "CD to $CJGITLAB"
+cd $CJGITLAB
+
+if [ ! -d $GROUP ]; then
+  echo "Creating group $GROUP"
+  mkdir $GROUP
+
+  echo "CD to $GROUP"
+  cd $GROUP
+
+  echo "Cloning $GIT_URL"
+  git clone
+else
+  echo "Local group $GROUP exists"
+  echo "CD to $GROUP"
+  cd $GROUP
+fi
+
+if [ ! -d $REPONAME ]; then
+  echo "Cloning $GIT_URL"
+  git clone $GIT_URL
+
+  echo "CD to $REPONAME"
+  cd $REPONAME
+else
+  echo "Local repo $REPONAME exists"
+  cd $REPONAME
+
+  echo "Pulling latest"
+  git pull
+fi
+
+
+# vim:ft=zsh
