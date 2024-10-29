@@ -48,3 +48,8 @@ alias gce='gh copilot explain'
 # zdotdir
 alias zdotdir='cd ${ZDOTDIR:-$HOME}/zdotdir'
 
+# kubernetes
+alias k='kubectl'
+alias kg='kubectl get'
+alias kctx='kubectx'
+
