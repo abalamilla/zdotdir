@@ -53,3 +53,4 @@ alias k='kubectl'
 alias kg='kubectl get'
 alias kctx='kubectx'
 
+alias go-reshim='asdf reshim golang && export GOROOT="$(asdf where golang)/go/"'
