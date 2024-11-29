@@ -29,3 +29,4 @@ SOURCE_PATHS=(
   $ASDF_SET_JAVA_HOME
 )
 
+eval $(thefuck --alias)
