@@ -188,3 +188,7 @@ run = 'move-node-to-workspace T'
 [[on-window-detected]]
 if.app-id = 'com.apple.Music'
 run = 'move-node-to-workspace M'
+
+[[on-window-detected]]
+if.app-id = 'com.apple.Preview'
+run = 'move-node-to-workspace P'
