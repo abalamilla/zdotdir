@@ -224,6 +224,8 @@ config_asdf() {
   asdf plugin add scala
   asdf plugin add shfmt
   asdf plugin add terraform
+  asdf plugin add argocd
+  asdf plugin add leiningen
 
 	# install tools
 	asdf install
