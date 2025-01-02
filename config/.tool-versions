@@ -4,7 +4,6 @@ scala 2.13.9
 python 3.12.2
 maven 3.3.9
 golang 1.23.3
-clj-kondo 2024.08.01
 cljstyle 0.16.626
 coursier 2.1.9
 shfmt 3.9.0
