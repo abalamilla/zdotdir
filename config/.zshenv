@@ -26,3 +26,7 @@ export LG_CONFIG_FILE=$HOME/.config/lazygit/config.yml
 
 # zoxide
 export _ZO_ECHO=1
+
+# gpg: signing failed: Inappropriate ioctl for device
+# https://github.com/keybase/keybase-issues/issues/2798
+export GPG_TTY=$(tty)
