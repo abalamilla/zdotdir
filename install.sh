@@ -157,7 +157,7 @@ link_file() {
 	DEST_PATH=$2
 
 	print_message "Linking $SOURCE_FILE file to $DEST_PATH" -1
-	if [[ ! -f $DEST_PATH ]]; then
+	if [[ ! -L $DEST_PATH ]]; then
 		ln -s $SOURCE_FILE $DEST_PATH
 	else
 		print_message "File $DEST_PATH already linked" -2
