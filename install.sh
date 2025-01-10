@@ -252,6 +252,16 @@ init_config() {
 	load_scripts
 }
 
+configure_macos() {
+  print_message "Expose groups apps" -1
+  # https://nikitabobko.github.io/AeroSpace/guide#a-note-on-mission-control
+  defaults write com.apple.dock expose-group-apps -bool true && killall Dock
+
+  print_message "Spans displays" -1
+  # https://nikitabobko.github.io/AeroSpace/guide#a-note-on-displays-have-separate-spaces
+  defaults write com.apple.spaces spans-displays -bool true && killall SystemUIServer
+}
+
 # init
 () {
 	print_message "Starting installation" -1
@@ -269,6 +279,8 @@ init_config() {
 	install_brewfile
 
 	stow config -t ~
+
+  configure_macos
 
 	# install and configure asdf
 	install_asdf
