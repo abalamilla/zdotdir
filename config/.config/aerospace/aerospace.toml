@@ -63,7 +63,7 @@ outer.right = 10
 # 'main' binding mode must be always presented
 # Fallback value (if you omit the key): mode.main.binding = {}
 [mode.main.binding]
-cmd-h = [] # Disable "hide application"
+cmd-h = []     # Disable "hide application"
 cmd-alt-h = [] # Disable "hide others"
 
 # All possible keys:
@@ -144,8 +144,8 @@ alt-shift-s = 'mode service'
 esc = ['reload-config', 'mode main']
 r = ['flatten-workspace-tree', 'mode main'] # reset layout
 f = [
-	'layout floating tiling',
-	'mode main',
+  'layout floating tiling',
+  'mode main',
 ] # Toggle between floating and tiling layout
 backspace = ['close-all-windows-but-current', 'mode main']
 
