@@ -152,20 +152,6 @@ install_brewfile() {
 	print_message "Installing Brewfile finished" $?
 }
 
-install_lisp() {
-	COMMAND=$1
-
-	if [[ ! -f ~/.quicklisp/setup.lisp ]]; then
-		curl -o /tmp/ql.lisp http://beta.quicklisp.org/quicklisp.lisp
-		sbcl --no-sysinit --no-userinit --load /tmp/ql.lisp \
-		   --eval '(quicklisp-quickstart:install :path "~/.quicklisp")' \
-		   --eval '(ql:add-to-init-file)' \
-		   --quit
-	else
-		print_message "$COMMAND is already installed" -2
-	fi
-}
-
 link_file() {
 	SOURCE_FILE=$1
 	DEST_PATH=$2
@@ -187,8 +173,6 @@ configure_docker_buildx() {
 }
 
 install_others() {
-	install_lisp lisp
-
 	# symlink docker buildx
 	configure_docker_buildx
 
