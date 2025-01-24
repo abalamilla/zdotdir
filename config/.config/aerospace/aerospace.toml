@@ -157,39 +157,39 @@ alt-shift-j = ['join-with down', 'mode main']
 alt-shift-k = ['join-with up', 'mode main']
 alt-shift-l = ['join-with right', 'mode main']
 
-# [[on-window-detected]]
-# if.app-id = 'com.microsoft.teams2'
-# run = 'move-node-to-workspace C'
+[[on-window-detected]]
+if.app-id = 'com.microsoft.teams2'
+run = 'move-node-to-workspace C'
 
-# [[on-window-detected]]
-# if.app-id = 'com.microsoft.Outlook'
-# run = 'move-node-to-workspace O'
+[[on-window-detected]]
+if.app-id = 'com.microsoft.Outlook'
+run = 'move-node-to-workspace O'
 
-# [[on-window-detected]]
-# if.app-id = 'com.tinyspeck.slackmacgap'
-# run = 'move-node-to-workspace C'
+[[on-window-detected]]
+if.app-id = 'com.tinyspeck.slackmacgap'
+run = 'move-node-to-workspace C'
 
-# [[on-window-detected]]
-# if.app-id = 'com.google.Chrome'
-# if.window-title-regex-substring = 'Picture in Picture'
-# run = 'layout floating'
-# check-further-callbacks = true
+[[on-window-detected]]
+if.app-id = 'com.google.Chrome'
+if.window-title-regex-substring = 'Picture in Picture'
+run = 'layout floating'
+check-further-callbacks = true
 
-# [[on-window-detected]]
-# if.app-id = 'com.google.Chrome'
-# run = 'move-node-to-workspace B'
+[[on-window-detected]]
+if.app-id = 'com.google.Chrome'
+run = 'move-node-to-workspace B'
 
-# [[on-window-detected]]
-# if.app-id = 'com.apple.iBooksX'
-# run = 'move-node-to-workspace T'
+[[on-window-detected]]
+if.app-id = 'com.apple.iBooksX'
+run = 'move-node-to-workspace T'
 
-# [[on-window-detected]]
-# if.app-id = 'net.kovidgoyal.kitty'
-# run = 'move-node-to-workspace T'
+[[on-window-detected]]
+if.app-id = 'net.kovidgoyal.kitty'
+run = 'move-node-to-workspace T'
 
-# [[on-window-detected]]
-# if.app-id = 'com.apple.Music'
-# run = 'move-node-to-workspace M'
+[[on-window-detected]]
+if.app-id = 'com.apple.Music'
+run = 'move-node-to-workspace M'
 
 [[on-window-detected]]
 if.app-id = 'com.apple.Preview'
