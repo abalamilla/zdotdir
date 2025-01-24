@@ -9,6 +9,12 @@ function usage() {
 	printf "example: awsenv -r us-east-1\n"
 }
 
+log() {
+  echo $(date +"%Y-%m-%d %H:%M:%S") INFO $1
+}
+
+log "starting awsenv"
+
 # loop through arguments
 while [[ $# -gt 0 ]]; do
 	key="$1"
@@ -32,18 +38,22 @@ while [[ $# -gt 0 ]]; do
 	esac
 done
 
+log "loop through arguments done"
+
 # show usage in case profile or region are not set
 if [[ -z $profile ]] && [[ -z $region ]]; then
 	usage
 	return 1
 fi
 
+log "show usage done"
+
 # only update region if profile is not provided
 if [[ -z $profile ]]; then
 	profile=$AWS_PROFILE
 
 	if [[ -z $profile ]]; then
-		echo "profile not set"
+		log "profile not set"
 		printf "please specify profile parameter\n"
 		usage
 		return 1
@@ -53,12 +63,14 @@ if [[ -z $profile ]]; then
 	return $?
 fi
 
+log "only update region done"
+
 # set region to current profile region if not set
 if [[ -z $region ]]; then
 	region=$(aws configure get region --profile "$profile" 2>/dev/null)
 
 	if [[ -z $region ]]; then
-		echo "profile $profile does not exist"
+		log "profile $profile does not exist"
 		printf "please specify region parameter\n"
 		usage
 		return 1
@@ -66,6 +78,8 @@ if [[ -z $region ]]; then
 else
 	aws configure set region "$region" --profile "$profile"
 fi
+
+log "set region to current profile region if not set done"
 
 # get aws credentials from clipboard
 aws_credentials=$(pbpaste)
@@ -76,25 +90,35 @@ if [[ $aws_credentials == *"AWS"* ]]; then
   aws_credentials=$(echo "$aws_credentials" | sed 's/export//g' | sed 's/&&/\n/g' | sed 's/ //g' | sed 's/=/ /g')
 
   # run aws config set to save credentials
+  aws_configure_commands=""
   while read -r line; do
     # key to lower case
     KEY=$(echo "$line" | awk '{print $1}' | tr '[:upper:]' '[:lower:]')
     VALUE=$(echo "$line" | awk '{print $2}')
 
     aws configure set "$KEY" "$VALUE" --profile "$profile" --region "$region"
+    aws_configure_commands+="aws configure set $KEY $VALUE --profile $profile --region $region; "
   done <<<"$aws_credentials"
+
+  log "aws credentials found in clipboard, configuring aws profile with credentials"
+
+  eval "$aws_configure_commands"
+
+  log "aws profile $profile configured with credentials."
 else
-  echo "aws credentials not found in clipboard, configuring aws profile without credentials"
+  log "aws credentials not found in clipboard, configuring aws profile without credentials"
 fi
 
 if [[ -n $shell ]]; then
   # persisting the profile
   sed -i '' "s/AWS_PROFILE=.*/AWS_PROFILE=$profile/g" "$OFFICE_PROFILE"
+
+  log "aws default profile set to $profile."
 fi
 
 # setting the profile for the current shell
 export AWS_PROFILE=$profile
 
-echo "aws default profile set to $profile."
+log "aws default profile set to $profile."
 
 # vim:ft=zsh
