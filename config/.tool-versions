@@ -12,3 +12,4 @@ terraform 1.5.2
 leiningen 2.11.2
 kubebuilder 4.3.0
 argocd 2.13.0
+helm 3.17.0
