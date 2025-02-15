@@ -26,7 +26,6 @@ return {
       sources = {
         explorer = {
           layout = { layout = { position = "right" } },
-          auto_close = true,
           on_change = function(picker)
             local cwd = picker:cwd()
             local actual_pwd = vim.fn.getcwd()
@@ -47,9 +46,6 @@ return {
         files = {
           hidden = true,
           follow = true,
-          filter = {
-            cwd = true,
-          },
         },
       },
     },
