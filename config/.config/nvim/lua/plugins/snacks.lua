@@ -22,6 +22,9 @@ return {
     explorer = {
       replace_netrw = true,
     },
+    scroll = {
+      enabled = false,
+    },
     picker = {
       sources = {
         explorer = {
