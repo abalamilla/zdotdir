@@ -12,3 +12,15 @@ vim.api.nvim_create_autocmd("User", {
   end,
 })
 
+-- clear existing autocmd from lazyvim
+vim.api.nvim_clear_autocmds({ group = "lazyvim_wrap_spell" })
+
+-- create custom autocmd
+-- wrap and check for spell in text filetypes
+local spell_filetypes = { "text", "plaintex", "typst", "gitcommit", "markdown", "vimwiki" }
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = spell_filetypes,
+  callback = function()
+    vim.opt_local.spell = true
+  end,
+})
