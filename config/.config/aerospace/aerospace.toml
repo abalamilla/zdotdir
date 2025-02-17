@@ -111,21 +111,21 @@ alt-shift-minus = 'resize smart -50'
 alt-shift-equal = 'resize smart +50'
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#workspace
-alt-w = 'workspace w'
-alt-f = 'workspace f'
+alt-w = 'workspace W'
+alt-f = 'workspace F'
 alt-b = 'workspace B'
 alt-c = 'workspace C'
-alt-m = 'workspace M'
+alt-m = 'workspace F'
 alt-o = 'workspace O'
 alt-p = 'workspace P'
 alt-t = 'workspace T'
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#move-node-to-workspace
-alt-shift-w = 'move-node-to-workspace w'
-alt-shift-f = 'move-node-to-workspace f'
+alt-shift-w = 'move-node-to-workspace W'
+alt-shift-f = 'move-node-to-workspace F'
 alt-shift-b = 'move-node-to-workspace B'
 alt-shift-c = 'move-node-to-workspace C'
-alt-shift-m = 'move-node-to-workspace M'
+alt-shift-m = 'move-node-to-workspace F'
 alt-shift-o = 'move-node-to-workspace O'
 alt-shift-p = 'move-node-to-workspace P'
 alt-shift-t = 'move-node-to-workspace T'
@@ -196,7 +196,7 @@ run = 'move-node-to-workspace T'
 [[on-window-detected]]
 if.app-id = 'com.apple.Music'
 if.during-aerospace-startup = true
-run = 'move-node-to-workspace M'
+run = 'move-node-to-workspace F'
 
 [[on-window-detected]]
 if.app-id = 'com.apple.Preview'
@@ -204,4 +204,4 @@ run = 'move-node-to-workspace P'
 
 [[on-window-detected]]
 if.app-id = 'io.zsa.keymapp'
-run = 'move-node-to-workspace 1'
+run = 'move-node-to-workspace W'
