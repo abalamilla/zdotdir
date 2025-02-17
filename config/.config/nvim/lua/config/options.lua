@@ -25,9 +25,6 @@ g.root_spec = { "cwd" }
 -- LazyVim auto format
 vim.g.autoformat = false
 
--- lazygit config
-vim.g.lazygit_config = false
-
 -- Snacks animations
 -- Set to `false` to globally disable all snacks animations
 vim.g.snacks_animate = false
