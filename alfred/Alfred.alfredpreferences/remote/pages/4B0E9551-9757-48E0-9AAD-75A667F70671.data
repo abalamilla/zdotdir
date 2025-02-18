@@ -75,17 +75,19 @@
 		<dict>
 			<key>actionconfig</key>
 			<dict>
+				<key>bundleid</key>
+				<string>com.displaylink.DisplayLinkUserAgent</string>
 				<key>path</key>
-				<string>/System/Applications/Contacts.app</string>
+				<string>/Applications/DisplayLink Manager.app</string>
 			</dict>
 			<key>actionuid</key>
 			<string>remote.alfred.launchfile</string>
 			<key>buttoniconid</key>
-			<string>A9ACBBDF-32F0-428C-AB0B-89A8E450B4DC</string>
+			<string>F2FAE59B-BBD4-4098-B166-B9188DC9AC67</string>
 			<key>buttonlabel</key>
-			<string>Contacts</string>
+			<string>DisplayLink Manager</string>
 			<key>itemuid</key>
-			<string>8A6B0830-6FCD-48D9-9303-85B59DB40EED</string>
+			<string>DEB9F2FE-C2F5-44F3-A10C-87F50F28677D</string>
 		</dict>
 		<dict>
 			<key>actionconfig</key>
@@ -318,17 +320,19 @@
 		<dict>
 			<key>actionconfig</key>
 			<dict>
+				<key>bundleid</key>
+				<string>com.displaylink.DisplayLinkUserAgent</string>
 				<key>path</key>
-				<string>/System/Applications/Contacts.app</string>
+				<string>/Applications/DisplayLink Manager.app</string>
 			</dict>
 			<key>actionuid</key>
 			<string>remote.alfred.launchfile</string>
 			<key>buttoniconid</key>
-			<string>A9ACBBDF-32F0-428C-AB0B-89A8E450B4DC</string>
+			<string>F2FAE59B-BBD4-4098-B166-B9188DC9AC67</string>
 			<key>buttonlabel</key>
-			<string>Contacts</string>
+			<string>DisplayLink Manager</string>
 			<key>itemuid</key>
-			<string>8A6B0830-6FCD-48D9-9303-85B59DB40EED</string>
+			<string>DEB9F2FE-C2F5-44F3-A10C-87F50F28677D</string>
 		</dict>
 		<dict>
 			<key>actionconfig</key>
