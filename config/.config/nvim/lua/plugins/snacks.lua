@@ -39,6 +39,7 @@ return {
             list = {
               wo = {
                 number = true,
+                relativenumber = true,
               },
             },
           },
