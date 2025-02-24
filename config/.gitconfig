@@ -32,3 +32,6 @@
 	useHttpPath = true
 [difftool]
 	prompt = false
+[mergetool]
+	prompt = false
+	keepBackup = false
