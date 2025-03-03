@@ -12,6 +12,7 @@ opt.wildmenu = true
 opt.showcmd = true
 opt.autoindent = true
 opt.wrap = true
+opt.clipboard = ""
 -- opt.virtualedit = "all"
 
 -- add python venv
