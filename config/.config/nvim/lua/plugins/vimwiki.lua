@@ -7,13 +7,13 @@ return {
 
     vim.g.vimwiki_list = {
       {
-        path = "~/vimwiki/ab/",
+        path = "~/vimwiki/pgd/",
         diary_frequency = "weekly",
       },
       {
-        path = "~/vimwiki/pgd/",
+        path = "~/vimwiki/ab/",
         diary_frequency = "weekly",
-      }
+      },
     }
   end,
 }
