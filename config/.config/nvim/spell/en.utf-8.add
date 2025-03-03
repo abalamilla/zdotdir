@@ -43,3 +43,7 @@ runtimes
 CRI
 k8s
 Kubelet's
+localhost
+hostname
+apiserver
+healthcheck
