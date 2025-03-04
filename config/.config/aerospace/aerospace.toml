@@ -159,17 +159,14 @@ alt-shift-l = ['join-with right', 'mode main']
 
 [[on-window-detected]]
 if.app-id = 'com.microsoft.teams2'
-if.during-aerospace-startup = true
 run = 'move-node-to-workspace C'
 
 [[on-window-detected]]
 if.app-id = 'com.microsoft.Outlook'
-if.during-aerospace-startup = true
 run = 'move-node-to-workspace O'
 
 [[on-window-detected]]
 if.app-id = 'com.tinyspeck.slackmacgap'
-if.during-aerospace-startup = true
 run = 'move-node-to-workspace C'
 
 [[on-window-detected]]
@@ -180,22 +177,18 @@ check-further-callbacks = true
 
 [[on-window-detected]]
 if.app-id = 'com.google.Chrome'
-if.during-aerospace-startup = true
 run = 'move-node-to-workspace B'
 
 [[on-window-detected]]
 if.app-id = 'com.apple.iBooksX'
-if.during-aerospace-startup = true
 run = 'move-node-to-workspace T'
 
 [[on-window-detected]]
 if.app-id = 'net.kovidgoyal.kitty'
-if.during-aerospace-startup = true
 run = 'move-node-to-workspace T'
 
 [[on-window-detected]]
 if.app-id = 'com.apple.Music'
-if.during-aerospace-startup = true
 run = 'move-node-to-workspace F'
 
 [[on-window-detected]]
