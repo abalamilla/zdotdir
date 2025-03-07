@@ -12,6 +12,8 @@ source $MY_INITIAL_CONFIGURATION
 for f ($^SOURCE_PATHS(.N,@)) ssource $f
 unset SOURCE_PATHS
 
+eval "$(oh-my-posh init zsh --config $HOME/.config/oh-my-posh/ab.omp.toml)"
+
 # zsh profiling disabled
 [[ "${ZDOTFILES_DEBUG:-0}" == 0 ]] || zprof
 
