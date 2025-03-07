@@ -83,9 +83,6 @@ clone_repos() {
 		[((INDEX++))]=(["repo"]="zsh-users/zsh-history-substring-search" ["dest"]=$ZDOTDIR_PLUGINS)
 		[((INDEX++))]=(["repo"]="zsh-users/zsh-completions" ["dest"]=$ZDOTDIR_PLUGINS)
 		[((INDEX++))]=(["repo"]="zsh-users/zsh-syntax-highlighting" ["dest"]=$ZDOTDIR_PLUGINS)
-
-		# themes
-		[((INDEX++))]=(["repo"]="romkatv/powerlevel10k" ["dest"]=$ZDOTDIR_THEMES ["options"]="--depth=1")
 	)
 
 	typeset -A CURRENT_REPO

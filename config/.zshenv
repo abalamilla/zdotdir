@@ -6,7 +6,6 @@ export MY_CONFIG_PATH=$HOME/zdotdir
 export MY_INITIAL_CONFIGURATION=$MY_CONFIG_PATH/env/autoload_functions.sh
 export MY_ZTYLES_PATH=($MY_CONFIG_PATH/zstyles/*)
 export MY_ENV_PATH=($MY_CONFIG_PATH/env/config/*)
-export ZSH_THEME=$MY_CONFIG_PATH/themes/powerlevel10k/powerlevel10k.zsh-theme
 
 # office profile - not under version control
 OFFICE_PROFILE=$MY_CONFIG_PATH/office_profile

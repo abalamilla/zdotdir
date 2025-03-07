@@ -17,7 +17,6 @@ The installation process will:
 -   Clone this repo into `$HOME/.config/zdotdir`
 -   Clone these [Zsh Plugins](#zsh-plugins)
 -   Clone these [Vim Plugins](#vim-plugins)
--   Clone [Powerlevel10k](#powerlevel10k)
 
 ## Zsh Plugins
 
@@ -132,11 +131,4 @@ Live preview Markdown changes in your web explorer
 You can find more in [iamcco/markdown-preview.nvim](https://github.com/iamcco/markdown-preview.nvim) repo.
 
 ## Zsh themes
-
-### powerlevel10k
-
-Zsh theme lightweight, fast and flexible
-
-You can find more in [romkatv/powerlevel10k](https://github.com/romkatv/powerlevel10k) repo.
-
 
