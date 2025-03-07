@@ -1,4 +1,5 @@
 tap "hashicorp/tap"
+tap "jandedobbeleer/oh-my-posh"
 
 brew "7-zip"
 brew "asdf"
@@ -28,6 +29,7 @@ brew "git-lfs"
 brew "gnupg"
 brew "gpg1"
 brew "hashicorp/tap/vault"
+brew "jandedobbeleer/oh-my-posh/oh-my-posh"
 brew "jdtls"
 brew "jq"
 brew "krew"
