@@ -2,65 +2,124 @@ version = 3
 final_space = true
 
 [palette]
-  blue = '#89B4FA'
-  closer = 'p:os'
-  lavender = '#B4BEFE'
-  os = '#ACB0BE'
-  pink = '#F5C2E7'
+blue = '#89B4FA'
+closer = 'p:os'
+lavender = '#B4BEFE'
+os = '#ACB0BE'
+pink = '#F5C2E7'
+orange = '#FF6900'
 
 [upgrade]
-  source = 'cdn'
-  interval = '168h'
-  auto = false
-  notice = false
+source = 'cdn'
+auto = false
+notice = true
 
 [[blocks]]
-  type = 'prompt'
-  alignment = 'left'
+type = 'prompt'
+alignment = 'left'
 
-  [[blocks.segments]]
-    template = '{{.Icon}} '
-    foreground = 'p:os'
-    type = 'os'
-    style = 'plain'
+[[blocks.segments]]
+# template = "<d>\u2553\u2574</d>"
+foreground = 'p:os'
+type = 'text'
+style = 'plain'
 
-  [[blocks.segments]]
-    template = '{{ .UserName }}@{{ .HostName }} '
-    foreground = 'p:blue'
-    type = 'session'
-    style = 'plain'
+[[blocks.segments]]
+template = ' {{ .Path }} '
+foreground = 'blue'
+type = 'path'
+style = 'powerline'
 
-  [[blocks.segments]]
-    template = '{{ .Path }} '
-    foreground = 'p:pink'
-    type = 'path'
-    style = 'plain'
+[blocks.segments.properties]
+folder_icon = '....'
+home_icon = '~'
+style = 'powerlevel'
 
-    [blocks.segments.properties]
-      folder_icon = '....'
-      home_icon = '~'
-      style = 'agnoster_short'
+[[blocks.segments]]
+type = "git"
+style = "plain"
+foreground = "green"
+template = "{{ .UpstreamIcon }}{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} <yellow> {{ .Working.String }}</>{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }}  {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }}  {{ .StashCount }}{{ end }}"
 
-  [[blocks.segments]]
-    template = '{{ .HEAD }} '
-    foreground = 'p:lavender'
-    type = 'git'
-    style = 'plain'
+[blocks.segments.properties]
+fetch_status = true
+fetch_upstream_icon = true
+source = "cli"
 
-    [blocks.segments.properties]
-      branch_icon = ' '
-      cherry_pick_icon = ' '
-      commit_icon = ' '
-      fetch_status = false
-      fetch_upstream_icon = false
-      merge_icon = ' '
-      no_commits_icon = ' '
-      rebase_icon = ' '
-      revert_icon = ' '
-      tag_icon = ' '
+[[blocks]]
+type = 'prompt'
+alignment = 'right'
+overflow = 'hidden'
 
-  [[blocks.segments]]
-    template = ''
-    foreground = 'p:closer'
-    type = 'text'
-    style = 'plain'
+[[blocks.segments]]
+type = "executiontime"
+style = "powerline"
+template = " took <#fefefe></> {{ .FormattedMs }} "
+
+[blocks.segments.properties]
+threshold = 500
+style = "austin"
+
+[[blocks.segments]]
+type = "time"
+style = "plain"
+foreground = "#007ACC"
+
+[blocks.segments.properties]
+time_format = "15:04:05"
+
+[[blocks.segments]]
+# template = "<d>\u2576\u2556</d> "
+foreground = 'p:os'
+type = 'text'
+style = 'plain'
+
+[[blocks]]
+type = 'prompt'
+alignment = 'left'
+newline = true
+
+[[blocks.segments]]
+# template = "<d>\u2559\u2574</d>"
+foreground = 'p:os'
+type = 'text'
+style = 'plain'
+
+[[blocks.segments]]
+template = "{{ if gt .Code 0 }} (ﾒ﹏ﾒ) {{end}}"
+foreground = 'p:os'
+foreground_templates = ["{{ if gt .Code 0 }}#ef5350{{ end }}"]
+type = 'status'
+style = 'plain'
+
+[blocks.segments.properties]
+always_enabled = true
+
+[[blocks]]
+type = 'rprompt'
+
+[[blocks.segments]]
+# template = "<d>\u2576\u255c</d> "
+foreground = 'p:os'
+type = 'text'
+style = 'plain'
+
+[[tooltips]]
+type = "kubectl"
+tips = ["kubectl", "k"]
+style = "plain"
+foreground = "purple"
+template = "\u2388 {{ base .Context}}{{if .Namespace}} :: {{.Namespace}}{{end}} "
+
+[[tooltips]]
+type = "aws"
+tips = ["aws", "terraform"]
+style = "plain"
+foreground = "green"
+foreground_templates = [
+  "{{ if matchP \".*-prod\" .Profile }}red{{end}}"
+]
+template = "  {{.Profile}}{{if .Region}}@{{.Region}}{{end}}"
+templates = [
+  "{{ if matchP \".*-prod\" .Profile }}(°ロ°) !  {{.Profile}}{{if .Region}}@{{.Region}}{{end}}{{end}}"
+]
