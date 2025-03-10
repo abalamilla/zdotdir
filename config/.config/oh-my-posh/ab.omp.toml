@@ -14,9 +14,15 @@ source = 'cdn'
 auto = false
 notice = true
 
+[transient_prompt]
+background = "transparent"
+foreground = "p:blue"
+template = "{{ .Segments.Time.CurrentDate | date .Segments.Time.Format }} {{if .Root }}(sudo){{end}}<#146AFF> "
+
 [[blocks]]
 type = 'prompt'
 alignment = 'left'
+newline = true
 
 [[blocks.segments]]
 # template = "<d>\u2553\u2574</d>"
@@ -106,7 +112,7 @@ style = 'plain'
 
 [[tooltips]]
 type = "kubectl"
-tips = ["kubectl", "k"]
+tips = ["kubectl", "k", "terraform"]
 style = "plain"
 foreground = "purple"
 template = "\u2388 {{ base .Context}}{{if .Namespace}} :: {{.Namespace}}{{end}} "
