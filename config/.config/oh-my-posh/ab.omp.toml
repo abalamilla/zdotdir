@@ -60,7 +60,7 @@ overflow = 'hidden'
 [[blocks.segments]]
 type = "executiontime"
 style = "powerline"
-template = " took <#fefefe></> {{ .FormattedMs }} "
+template = "<#fefefe></> {{ .FormattedMs }}"
 
 [blocks.segments.properties]
 threshold = 500
@@ -92,9 +92,12 @@ type = 'text'
 style = 'plain'
 
 [[blocks.segments]]
-template = "{{ if gt .Code 0 }} (ﾒ﹏ﾒ) {{end}}"
+templates_logic = "first_match"
+templates = [ 
+  "{{ if gt .Code 0 }}<red> (ﾒ﹏ﾒ) </>{{end}}",
+  "<green> </>"
+]
 foreground = 'p:os'
-foreground_templates = ["{{ if gt .Code 0 }}#ef5350{{ end }}"]
 type = 'status'
 style = 'plain'
 
@@ -122,10 +125,8 @@ type = "aws"
 tips = ["aws", "terraform"]
 style = "plain"
 foreground = "green"
-foreground_templates = [
-  "{{ if matchP \".*-prod\" .Profile }}red{{end}}"
-]
-template = "  {{.Profile}}{{if .Region}}@{{.Region}}{{end}}"
+templates_logic = "first_match"
 templates = [
-  "{{ if matchP \".*-prod\" .Profile }}(°ロ°) !  {{.Profile}}{{if .Region}}@{{.Region}}{{end}}{{end}}"
+  "{{ if matchP \".*-prod\" .Profile }}<red>(°ロ°) !  {{.Profile}}{{if .Region}}@{{.Region}}{{end}}</>{{end}}",
+  "  {{.Profile}}{{if .Region}}@{{.Region}}{{end}}"
 ]
