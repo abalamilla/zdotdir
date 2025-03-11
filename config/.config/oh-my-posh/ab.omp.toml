@@ -115,7 +115,7 @@ style = 'plain'
 
 [[tooltips]]
 type = "kubectl"
-tips = ["kubectl", "k", "terraform"]
+tips = ["kubectl", "k", "terraform", "k9s"]
 style = "plain"
 foreground = "purple"
 template = "\u2388 {{ base .Context}}{{if .Namespace}} :: {{.Namespace}}{{end}} "
