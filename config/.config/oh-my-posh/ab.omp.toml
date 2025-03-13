@@ -101,6 +101,12 @@ style = "plain"
 foreground = "#193549"
 template = " {{ .Full }} "
 
+[[blocks.segments]]
+type = "react"
+style = "plain"
+foreground = "#81a1c1"
+template = "  {{ .Full }} "
+
 [[tooltips]]
 type = "kubectl"
 tips = ["kubectl", "k", "terraform", "k9s"]
