@@ -118,6 +118,12 @@ style = "plain"
 foreground = "p:blue"
 template = "  {{ .Full }} "
 
+[[blocks.segments]]
+type = "java"
+style = "plain"
+foreground = "p:blue"
+template = "  {{ .Full }}"
+
 [[tooltips]]
 type = "kubectl"
 tips = ["kubectl", "k", "terraform", "k9s"]
