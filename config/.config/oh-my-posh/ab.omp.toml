@@ -136,6 +136,15 @@ style = "plain"
 foreground = "p:blue"
 template = "  {{ .Full }} "
 
+[[blocks.segments]]
+type = "python"
+style = "plain"
+foreground = "p:blue"
+template = "  {{ .Full }} "
+
+[blocks.segments.properties]
+display_mode = "context"
+
 [[tooltips]]
 type = "kubectl"
 tips = ["kubectl", "k", "terraform", "k9s"]
