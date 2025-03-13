@@ -207,6 +207,7 @@ config_asdf() {
   asdf plugin install nodejs
   asdf plugin install python
   asdf plugin install rust
+  asdf plugin install rust-analyzer
   asdf plugin install scala
   asdf plugin install shfmt
   asdf plugin install terraform
