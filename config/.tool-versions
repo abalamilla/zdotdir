@@ -5,6 +5,7 @@ coursier 2.1.9
 dotnet 9.0.201
 golang 1.24.1
 helm 3.17.1
+java corretto-21.0.6.7.1
 julia 1.11.4
 kubebuilder 4.5.1
 leiningen 2.11.2
