@@ -92,19 +92,18 @@ type = 'rprompt'
 [[blocks.segments]]
 type = "terraform"
 style = "plain"
-foreground = "#000000"
-background = "#ebcc34"
+foreground = "p:blue"
 
 [[blocks.segments]]
 type = "npm"
 style = "plain"
-foreground = "#193549"
+foreground = "p:blue"
 template = " {{ .Full }} "
 
 [[blocks.segments]]
 type = "react"
 style = "plain"
-foreground = "#81a1c1"
+foreground = "p:blue"
 template = "  {{ .Full }} "
 
 [[tooltips]]
