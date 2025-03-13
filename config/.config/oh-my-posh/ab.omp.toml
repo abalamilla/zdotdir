@@ -25,12 +25,6 @@ alignment = 'left'
 newline = true
 
 [[blocks.segments]]
-# template = "<d>\u2553\u2574</d>"
-foreground = 'p:os'
-type = 'text'
-style = 'plain'
-
-[[blocks.segments]]
 template = ' {{ .Path }} '
 foreground = 'blue'
 type = 'path'
@@ -74,22 +68,10 @@ foreground = "#007ACC"
 [blocks.segments.properties]
 time_format = "15:04:05"
 
-[[blocks.segments]]
-# template = "<d>\u2576\u2556</d> "
-foreground = 'p:os'
-type = 'text'
-style = 'plain'
-
 [[blocks]]
 type = 'prompt'
 alignment = 'left'
 newline = true
-
-[[blocks.segments]]
-# template = "<d>\u2559\u2574</d>"
-foreground = 'p:os'
-type = 'text'
-style = 'plain'
 
 [[blocks.segments]]
 templates_logic = "first_match"
@@ -108,10 +90,10 @@ always_enabled = true
 type = 'rprompt'
 
 [[blocks.segments]]
-# template = "<d>\u2576\u255c</d> "
-foreground = 'p:os'
-type = 'text'
-style = 'plain'
+type = "terraform"
+style = "plain"
+foreground = "#000000"
+background = "#ebcc34"
 
 [[tooltips]]
 type = "kubectl"
