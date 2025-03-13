@@ -145,6 +145,15 @@ template = "  {{ .Full }} "
 [blocks.segments.properties]
 display_mode = "context"
 
+[[blocks.segments]]
+type = "wakatime"
+style = "plain"
+foreground = "p:blue"
+
+[properties]
+url = "https://wakatime.com/api/v1/users/current/summaries?start=today&end=today&api_key={{ .Env.WAKATIME_API_KEY }}"
+http_timeout = 500
+
 [[tooltips]]
 type = "kubectl"
 tips = ["kubectl", "k", "terraform", "k9s"]
