@@ -95,6 +95,12 @@ style = "plain"
 foreground = "#000000"
 background = "#ebcc34"
 
+[[blocks.segments]]
+type = "npm"
+style = "plain"
+foreground = "#193549"
+template = " {{ .Full }} "
+
 [[tooltips]]
 type = "kubectl"
 tips = ["kubectl", "k", "terraform", "k9s"]
