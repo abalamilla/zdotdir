@@ -28,7 +28,7 @@ newline = true
 template = ' {{ .Path }} '
 foreground = 'blue'
 type = 'path'
-style = 'powerline'
+style = 'plain'
 
 [blocks.segments.properties]
 folder_icon = '....'
