@@ -49,3 +49,5 @@ apiserver
 healthcheck
 Ansible
 Ansible's
+kubeconfig
+ansible
