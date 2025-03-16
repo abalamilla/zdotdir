@@ -48,6 +48,9 @@ return {
           hidden = true,
           follow = true,
         },
+        grep = {
+          hidden = true,
+        },
       },
     },
   },
