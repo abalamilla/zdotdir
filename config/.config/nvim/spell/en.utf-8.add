@@ -78,3 +78,7 @@ VPC
 engexp
 otel
 fintech
+CNI
+CoreDNS
+ExternalDNS
+nginx
