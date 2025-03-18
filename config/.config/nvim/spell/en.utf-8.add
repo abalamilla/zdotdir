@@ -82,3 +82,4 @@ CNI
 CoreDNS
 ExternalDNS
 nginx
+NLB
