@@ -83,3 +83,4 @@ CoreDNS
 ExternalDNS
 nginx
 NLB
+OIDC
