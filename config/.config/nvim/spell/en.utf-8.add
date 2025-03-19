@@ -89,3 +89,4 @@ RBAC
 ClusterRoleBindings
 RoleBindings
 ConfigMap's
+webhooks
