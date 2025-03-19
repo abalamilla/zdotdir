@@ -84,3 +84,8 @@ ExternalDNS
 nginx
 NLB
 OIDC
+webhook
+RBAC
+ClusterRoleBindings
+RoleBindings
+ConfigMap's
