@@ -90,3 +90,7 @@ ClusterRoleBindings
 RoleBindings
 ConfigMap's
 webhooks
+iptables
+Falco
+CNCF
+Sonobuoy
