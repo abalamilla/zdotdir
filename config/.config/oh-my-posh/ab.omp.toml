@@ -150,6 +150,16 @@ type = "wakatime"
 style = "plain"
 foreground = "p:blue"
 
+[[blocks.segments]]
+type = "aws"
+style = "plain"
+foreground = "green"
+templates_logic = "first_match"
+templates = [
+  "{{ if matchP \".*-prod\" .Profile }}<red>(°ロ°) !  {{.Profile}}{{if .Region}}@{{.Region}}{{end}}</>{{end}}",
+  "  {{.Profile}}{{if .Region}}@{{.Region}}{{end}}"
+]
+
 [properties]
 url = "https://wakatime.com/api/v1/users/current/summaries?start=today&end=today&api_key={{ .Env.WAKATIME_API_KEY }}"
 http_timeout = 500
@@ -161,13 +171,3 @@ style = "plain"
 foreground = "purple"
 template = "\u2388 {{ base .Context}}{{if .Namespace}} :: {{.Namespace}}{{end}} "
 
-[[tooltips]]
-type = "aws"
-tips = ["aws", "terraform"]
-style = "plain"
-foreground = "green"
-templates_logic = "first_match"
-templates = [
-  "{{ if matchP \".*-prod\" .Profile }}<red>(°ロ°) !  {{.Profile}}{{if .Region}}@{{.Region}}{{end}}</>{{end}}",
-  "  {{.Profile}}{{if .Region}}@{{.Region}}{{end}}"
-]
