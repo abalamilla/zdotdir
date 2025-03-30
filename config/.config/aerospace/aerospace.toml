@@ -50,7 +50,7 @@ exec-on-workspace-change = [
 ]
 
 [exec.env-vars]
-PATH = '/usr/local/bin:${PATH}'
+PATH = '/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:${PATH}'
 
 # Gaps between windows (inner-*) and between monitor edges (outer-*).
 # Possible values:
