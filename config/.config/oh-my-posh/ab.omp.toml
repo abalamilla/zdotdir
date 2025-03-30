@@ -18,7 +18,7 @@ notice = true
 [transient_prompt]
 background = "transparent"
 foreground = "p:blue"
-template = "{{ .Segments.Time.CurrentDate | date .Segments.Time.Format }} {{if .Root }}(sudo){{end}}<#146AFF> "
+template = "{{ .Segments.Time.CurrentDate | date .Segments.Time.Format }}{{ if .Segments.Kubectl.Context }} {{ .Segments.Kubectl.Context }}{{ end }}{{ if .Segments.Aws.Profile }} {{ .Segments.Aws.Profile }}{{ end }} {{if .Root }}(sudo){{end}}<#146AFF> "
 
 [[blocks]]
 type = 'prompt'
