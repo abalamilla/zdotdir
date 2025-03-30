@@ -49,6 +49,9 @@ exec-on-workspace-change = [
   '${HOME}/.config/aerospace/on-ws-change.sh',
 ]
 
+[exec.env-vars]
+PATH = '/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:${PATH}'
+
 # Gaps between windows (inner-*) and between monitor edges (outer-*).
 # Possible values:
 # - Constant:     gaps.outer.top = 8
