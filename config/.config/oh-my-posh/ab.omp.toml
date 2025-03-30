@@ -8,6 +8,7 @@ lavender = '#B4BEFE'
 os = '#ACB0BE'
 pink = '#F5C2E7'
 orange = '#FF6900'
+purple = '#CBA6F7'
 
 [upgrade]
 source = 'cdn'
@@ -54,11 +55,23 @@ overflow = 'hidden'
 [[blocks.segments]]
 type = "executiontime"
 style = "powerline"
-template = "<#fefefe></> {{ .FormattedMs }}"
+foreground = "p:lavender"
+template = "  {{ .FormattedMs }} "
 
 [blocks.segments.properties]
 threshold = 500
 style = "austin"
+
+[[blocks.segments]]
+type = "kubectl"
+tips = ["kubectl", "k", "terraform", "k9s"]
+style = "plain"
+foreground = "p:purple"
+templates_logic = "first_match"
+templates = [
+  "{{ if matchP \".*-prod\" .Context }}<red>(°ロ°) ! {{.Context}}{{if .Namespace}} :: {{.Namespace}}{{end}}</>{{end}}",
+  "\u2388 {{ base .Context}}{{if .Namespace}} :: {{.Namespace}}{{end}} ",
+]
 
 [[blocks.segments]]
 type = "time"
@@ -75,10 +88,7 @@ newline = true
 
 [[blocks.segments]]
 templates_logic = "first_match"
-templates = [ 
-  "{{ if gt .Code 0 }}<red> (ﾒ﹏ﾒ) </>{{end}}",
-  "<green> </>"
-]
+templates = ["{{ if gt .Code 0 }}<red> (ﾒ﹏ﾒ) </>{{end}}", "<green> </>"]
 foreground = 'p:os'
 type = 'status'
 style = 'plain'
@@ -157,17 +167,9 @@ foreground = "green"
 templates_logic = "first_match"
 templates = [
   "{{ if matchP \".*-prod\" .Profile }}<red>(°ロ°) !  {{.Profile}}{{if .Region}}@{{.Region}}{{end}}</>{{end}}",
-  "  {{.Profile}}{{if .Region}}@{{.Region}}{{end}}"
+  "  {{.Profile}}{{if .Region}}@{{.Region}}{{end}}",
 ]
 
 [properties]
 url = "https://wakatime.com/api/v1/users/current/summaries?start=today&end=today&api_key={{ .Env.WAKATIME_API_KEY }}"
 http_timeout = 500
-
-[[tooltips]]
-type = "kubectl"
-tips = ["kubectl", "k", "terraform", "k9s"]
-style = "plain"
-foreground = "purple"
-template = "\u2388 {{ base .Context}}{{if .Namespace}} :: {{.Namespace}}{{end}} "
-
