@@ -7,7 +7,6 @@ setopt histreduceblanks
 setopt histignorespace
 setopt histignorealldups
 
-PATH="/Applications/IntelliJ IDEA.app/Contents/MacOS:$PATH"
 PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
 
 bindkey '^[[A' history-substring-search-up
