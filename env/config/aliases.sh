@@ -18,11 +18,6 @@ alias fgrep='fgrep --color=auto'
 alias timestamp='date +%s'
 alias uuid='uuidgen | tr "[:upper:]" "[:lower:]"'
 
-# IMPORTANT: if you are using oh-my-zsh do not source .zshrc
-# https://github.com/ohmyzsh/ohmyzsh/wiki/FAQ#how-do-i-reload-the-zshrc-file
-# best options are restart terminal, `exec zsh` or omz reload
-alias zshreload=". ${ZDOTDIR:-HOME}/.zshrc"
-
 # git alias
 alias gst='git status'
 alias ga='git add'
