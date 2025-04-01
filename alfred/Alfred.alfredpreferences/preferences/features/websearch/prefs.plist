@@ -4,6 +4,17 @@
 <dict>
 	<key>customSites</key>
 	<dict>
+		<key>00E9C675-6458-4A0C-B2DA-2659111C65C6</key>
+		<dict>
+			<key>enabled</key>
+			<true/>
+			<key>keyword</key>
+			<string>cjurl</string>
+			<key>text</key>
+			<string>CJ Url</string>
+			<key>url</key>
+			<string>http://cjurl.me/{query}</string>
+		</dict>
 		<key>92F42A7E-2179-4E8F-A22C-676318375731</key>
 		<dict>
 			<key>enabled</key>

@@ -4,8 +4,6 @@
 <dict>
 	<key>autoExpandMidString</key>
 	<true/>
-	<key>fastAppend</key>
-	<true/>
 	<key>hotkey</key>
 	<dict>
 		<key>key</key>
