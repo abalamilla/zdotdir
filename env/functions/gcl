@@ -1,5 +1,4 @@
 GIT_URL=$1
-# git@gitlab.cj.dev:attribution/promo-code-service.git
 GROUP=$(echo $GIT_URL | cut -d':' -f2 | cut -d'/' -f1)
 REPONAME=$(echo $GIT_URL | cut -d':' -f2 | cut -d'/' -f2 | cut -d'.' -f1)
 
