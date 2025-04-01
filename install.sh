@@ -188,29 +188,31 @@ install_others() {
 config_asdf() {
 	print_message "Configuring asdf" -1
 
-  asdf plugin add argocd
-  asdf plugin add aws-sam-cli
-  asdf plugin add awscli
-  asdf plugin add bun
-  asdf plugin add clj-kondo
-  asdf plugin add cljstyle
-  asdf plugin add coursier
-  asdf plugin add dotnet
-  asdf plugin add golang
-  asdf plugin add gradle
-  asdf plugin add helm
-  asdf plugin add java
-  asdf plugin add julia
-  asdf plugin add kubebuilder
-  asdf plugin add leiningen
-  asdf plugin add maven
-  asdf plugin add nodejs
-  asdf plugin add python
-  asdf plugin add rust
-  asdf plugin add rust-analyzer
-  asdf plugin add scala
-  asdf plugin add shfmt
-  asdf plugin add terraform
+  # asdf plugin list | awk '{print "asdf set " $1 " latest"}'
+  asdf set argocd latest
+  asdf set aws-sam-cli latest
+  asdf set awscli latest
+  asdf set bun latest
+  asdf set clj-kondo latest
+  asdf set cljstyle latest
+  asdf set coursier latest
+  asdf set dotnet latest
+  asdf set golang latest
+  asdf set gradle latest
+  asdf set helm latest
+  asdf set java latest
+  asdf set julia latest
+  asdf set kubebuilder latest
+  asdf set kuttl latest
+  asdf set leiningen latest
+  asdf set maven latest
+  asdf set nodejs latest
+  asdf set python latest
+  asdf set rust latest
+  asdf set rust-analyzer latest
+  asdf set scala latest
+  asdf set shfmt latest
+  asdf set terraform latest
 
 	# install tools
 	asdf install
