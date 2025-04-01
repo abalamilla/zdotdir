@@ -14,8 +14,8 @@ stow -D config
 
 # uninstall brew packages
 echo "Removing brew packages"
-brew remove --force $(brew list --formula)
-brew remove --force $(brew list)
+brew remove --force "$(brew list --formula)"
+brew remove --force "$(brew list)"
 
 # remove nvim folders
 echo "Removing nvim files"
