@@ -193,7 +193,6 @@ config_asdf() {
   asdf plugin add aws-sam-cli
   asdf plugin add awscli
   asdf plugin add bun
-  asdf plugin add clj-kondo
   asdf plugin add cljstyle
   asdf plugin add coursier
   asdf plugin add dotnet

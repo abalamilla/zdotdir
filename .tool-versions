@@ -1,7 +1,6 @@
 argocd 2.14.9
 awscli 2.25.11
 bun 1.2.8
-clj-kondo 2025.02.20
 cljstyle 0.17.642
 coursier 2.1.25-M1
 dotnet 9.0.202
