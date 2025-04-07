@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/usr/bin/env zsh
 # Bash
 if [[ "Darwin" == `uname` ]] ; then
     alias ls='ls -FG'
@@ -46,6 +46,8 @@ alias zdotdir='cd ${ZDOTDIR:-$HOME}/zdotdir'
 # kubernetes
 alias k='kubectl'
 alias kg='kubectl get'
-alias kctx='kubectx'
 
 alias go-reshim='asdf reshim golang && export GOROOT="$(asdf where golang)/go/"'
+
+# create a list of common typos
+alias ecit='exit'
