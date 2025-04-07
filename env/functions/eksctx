@@ -1,6 +1,7 @@
 CLUSTER=$1
 REGION=${2:-$REGION}
+ALIAS=${3:-$CLUSTER}
 
-aws eks update-kubeconfig --name $CLUSTER --region $REGION
+aws eks update-kubeconfig --name $CLUSTER --region $REGION --alias $ALIAS
 
 # vim:ft=zsh
