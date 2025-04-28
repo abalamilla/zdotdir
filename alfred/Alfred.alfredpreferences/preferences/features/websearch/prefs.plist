@@ -26,6 +26,17 @@
 			<key>url</key>
 			<string>http://search.t.cjpowered.com/#search/{query}</string>
 		</dict>
+		<key>F7278550-BA72-4532-818F-E91922BCA503</key>
+		<dict>
+			<key>enabled</key>
+			<true/>
+			<key>keyword</key>
+			<string>cjpad</string>
+			<key>text</key>
+			<string>cj pad</string>
+			<key>url</key>
+			<string>https://notes.cj.dev/{query}</string>
+		</dict>
 	</dict>
 </dict>
 </plist>
