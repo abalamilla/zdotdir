@@ -9,10 +9,14 @@ return {
       {
         path = "~/vimwiki/pgd/",
         diary_frequency = "weekly",
+        syntax = "markdown",
+        ext = "md",
       },
       {
         path = "~/vimwiki/ab/",
         diary_frequency = "weekly",
+        syntax = "markdown",
+        ext = "md",
       },
     }
   end,
