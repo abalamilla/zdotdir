@@ -11,7 +11,7 @@ kubebuilder 4.5.1
 leiningen 2.11.2
 maven 3.9.9
 nodejs 23.9.0
-python 3.13.2t
+python 3.13.2t 3.12.2
 rust 1.85.0
 rust-analyzer 2025-03-10
 scala 3.6.4
