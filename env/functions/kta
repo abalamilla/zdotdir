@@ -1,0 +1,46 @@
+#!/bin/bash
+
+# Generate a random filename
+RANDOM_FILENAME="/tmp/kta_script_$(openssl rand -hex 8).sh"
+
+# Start a new shell with the caffeinate and Teams functionality running in the background
+cat > "$RANDOM_FILENAME" << 'EOF'
+#!/bin/bash
+
+cleanup() {
+    echo "Cleaning up..."
+    killall caffeinate 2>/dev/null
+    killall osascript 2>/dev/null
+
+    # Get the script filename from the command line arguments
+    SCRIPT_PATH="$1"
+
+    # Remove the temporary script file
+    if [ -f "$SCRIPT_PATH" ]; then
+        rm -f "$SCRIPT_PATH"
+        echo "Removed temporary script file"
+    fi
+
+    exit 0
+}
+
+# Set up trap with the script path as an argument
+trap 'cleanup "$0"' SIGINT SIGTERM EXIT
+
+caffeinate -d &
+echo "Started caffeinate to prevent display sleep"
+echo "Press Ctrl+C to exit"
+
+while true; do
+    osascript -e 'tell application "Microsoft Teams" to activate'
+    osascript -e 'tell application "System Events" to keystroke "2" using {command down}'
+    sleep 300  # Refreshes every 5 minutes
+done
+EOF
+
+chmod +x "$RANDOM_FILENAME"
+
+# Open a new shell and run the script in it
+$SHELL -c "exec $SHELL -i -c '$RANDOM_FILENAME; exec \$SHELL -i'"
+
+# vim:ft=zsh
