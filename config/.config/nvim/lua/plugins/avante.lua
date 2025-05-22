@@ -12,7 +12,11 @@ return {
       timeout = 30000, -- Timeout in milliseconds
       temperature = 0,
       max_tokens = 20480,
+      max_completion_tokens = 8192
     },
+    selector = {
+      provider = "snacks"
+    }
   },
   -- if you want to build from source then do `make BUILD_FROM_SOURCE=true`
   build = "make",
