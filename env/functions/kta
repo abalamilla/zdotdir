@@ -41,6 +41,6 @@ EOF
 chmod +x "$RANDOM_FILENAME"
 
 # Open a new shell and run the script in it
-$SHELL -c "exec $SHELL -i -c '$RANDOM_FILENAME; exec \$SHELL -i'"
+$SHELL -c "exec $SHELL -i -c '$RANDOM_FILENAME'"
 
 # vim:ft=zsh
