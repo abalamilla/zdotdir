@@ -108,19 +108,16 @@ foreground = "p:blue"
 type = "npm"
 style = "plain"
 foreground = "p:blue"
-template = " {{ .Full }} "
 
 [[blocks.segments]]
 type = "react"
 style = "plain"
 foreground = "p:blue"
-template = "  {{ .Full }} "
 
 [[blocks.segments]]
 type = "yarn"
 style = "plain"
 foreground = "p:blue"
-template = " 󰄛 {{ .Full }} "
 
 [[blocks.segments]]
 type = "go"
@@ -144,13 +141,11 @@ template = "  {{ .Full }} "
 type = "node"
 style = "plain"
 foreground = "p:blue"
-template = "  {{ .Full }} "
 
 [[blocks.segments]]
 type = "python"
 style = "plain"
 foreground = "p:blue"
-template = "  {{ .Full }} "
 
 [blocks.segments.properties]
 display_mode = "context"
