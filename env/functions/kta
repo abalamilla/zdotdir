@@ -4,7 +4,7 @@
 RANDOM_FILENAME="/tmp/kta_script_$(openssl rand -hex 8).sh"
 
 # Start a new shell with the caffeinate and Teams functionality running in the background
-cat > "$RANDOM_FILENAME" << 'EOF'
+cat >"$RANDOM_FILENAME" <<'EOF'
 #!/bin/bash
 
 cleanup() {
@@ -32,8 +32,16 @@ echo "Started caffeinate to prevent display sleep"
 echo "Press Ctrl+C to exit"
 
 while true; do
+    # Get the current active application
+    CURRENT_APP=$(osascript -e 'tell application "System Events" to get name of first application process whose frontmost is true')
+
+    # Activate Teams and send keystroke
     osascript -e 'tell application "Microsoft Teams" to activate'
     osascript -e 'tell application "System Events" to keystroke "2" using {command down}'
+
+    # Return focus to the previous application
+    osascript -e "tell application \"$CURRENT_APP\" to activate"
+
     sleep 300  # Refreshes every 5 minutes
 done
 EOF
