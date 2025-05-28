@@ -7,7 +7,7 @@ setopt histreduceblanks
 setopt histignorespace
 setopt histignorealldups
 
-PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
+PATH="${KREW_ROOT:-$HOME/.krew}/bin:$HOME/.local/bin:$PATH"
 
 bindkey '^[[A' history-substring-search-up
 bindkey '^[[B' history-substring-search-down
