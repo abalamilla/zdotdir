@@ -215,3 +215,6 @@ run = 'move-node-to-workspace P'
 [[on-window-detected]]
 if.app-id = 'io.zsa.keymapp'
 run = 'move-node-to-workspace W'
+
+[workspace-to-monitor-force-assignment]
+F = 'built-in Retina Display'
