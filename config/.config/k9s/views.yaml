@@ -1,0 +1,9 @@
+views:
+  v1/pods:
+    # sortColumn: RESTARTS:desc   # Optional: set the default sort column
+    columns:
+      - STATUS
+
+  v1/nodes:
+    columns:
+      - NODEPOOL:.metadata.labels.karpenter\.sh/nodepool

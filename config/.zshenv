@@ -29,3 +29,6 @@ export _ZO_ECHO=1
 # gpg: signing failed: Inappropriate ioctl for device
 # https://github.com/keybase/keybase-issues/issues/2798
 export GPG_TTY=$(tty)
+
+# custom k9s config path
+export K9S_CONFIG_DIR=$HOME/.config/k9s
