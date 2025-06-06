@@ -17,3 +17,6 @@ config/.config/kitty/get_layout.py
 config/.config/kitty/pass_keys.py
 config/.config/yazi/plugins
 __pycache__
+config/.config/k9s/benchmarks
+config/.config/k9s/clusters
+config/.config/k9s/screen-dumps
