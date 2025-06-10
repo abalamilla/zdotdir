@@ -12,7 +12,7 @@ opt.wildmenu = true
 opt.showcmd = true
 opt.autoindent = true
 opt.wrap = true
--- opt.virtualedit = "all"
+opt.clipboard = ""
 
 -- add python venv
 local venv = vim.fn.expand("$HOME/zdotdir/.venv/bin/python")
