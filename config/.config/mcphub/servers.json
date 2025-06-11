@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "github.com/Flux159/mcp-server-kubernetes": {
+      "command": "npx",
+      "args": ["mcp-server-kubernetes"],
+      "description": "MCP Server for Kubernetes cluster management with kubectl and Helm support",
+      "env": {}
+    }
+  }
+}
