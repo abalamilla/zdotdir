@@ -5,6 +5,14 @@
       "args": ["mcp-server-kubernetes"],
       "description": "MCP Server for Kubernetes cluster management with kubectl and Helm support",
       "env": {}
+    },
+    "github.com/awslabs/mcp/tree/main/src/terraform-mcp-server": {
+      "command": "uvx",
+      "args": ["awslabs.terraform-mcp-server@latest"],
+      "description": "MCP server for Terraform on AWS best practices, infrastructure as code patterns, and security compliance with Checkov",
+      "env": {
+        "FASTMCP_LOG_LEVEL": "ERROR"
+      }
     }
   }
 }
