@@ -23,3 +23,4 @@ scala 3.6.4
 shfmt 3.11.0
 terraform 1.11.3
 k9s 0.50.6
+uv 0.7.12
