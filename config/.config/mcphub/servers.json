@@ -1,5 +1,17 @@
 {
   "mcpServers": {
+    "aws_cost_explorer": {
+      "command": "uv",
+      "args": [
+        "--directory",
+        "${HOME}/.mcphub/servers/aws-cost-explorer-mcp-server",
+        "run",
+        "server.py"
+      ],
+      "env": {
+        "MCP_TRANSPORT": "stdio"
+      }
+    },
     "github.com/Flux159/mcp-server-kubernetes": {
       "command": "npx",
       "args": ["mcp-server-kubernetes"],
