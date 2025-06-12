@@ -1,18 +1,15 @@
 {
   "nativeMCPServers": [],
   "mcpServers": {
-    "github.com/aarora79/aws-cost-explorer-mcp-server": {
+    "github.com/awslabs/mcp/tree/main/src/cost-explorer-mcp-server": {
       "args": [
-        "--directory",
-        "${HOME}/.mcphub/servers/aws-cost-explorer-mcp-server",
-        "run",
-        "server.py"
+        "awslabs.cost-explorer-mcp-server@latest"
       ],
       "env": {
         "AWS_PROFILE": "${AWS_PROFILE}",
         "MCP_TRANSPORT": "stdio"
       },
-      "command": "uv",
+      "command": "uvx",
       "description": "MCP server for getting AWS spend data via Cost Explorer and Amazon Bedrock usage"
     },
     "github.com/Flux159/mcp-server-kubernetes": {
