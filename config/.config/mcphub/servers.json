@@ -2,9 +2,7 @@
   "nativeMCPServers": [],
   "mcpServers": {
     "github.com/awslabs/mcp/tree/main/src/cost-explorer-mcp-server": {
-      "args": [
-        "awslabs.cost-explorer-mcp-server@latest"
-      ],
+      "args": ["awslabs.cost-explorer-mcp-server@latest"],
       "env": {
         "AWS_PROFILE": "${AWS_PROFILE}",
         "MCP_TRANSPORT": "stdio"
