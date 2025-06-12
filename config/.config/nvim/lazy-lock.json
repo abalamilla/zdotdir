@@ -34,7 +34,6 @@
   "mini.indentscope": { "branch": "main", "commit": "8af2569a7d7fd37300dfa760e44e71efbbf322fd" },
   "mini.pairs": { "branch": "main", "commit": "69864a2efb36c030877421634487fd90db1e4298" },
   "mini.pick": { "branch": "main", "commit": "c0d903f9ac61b61a7eaf4d8f87056d471fc7f1be" },
-  "mini.snippets": { "branch": "main", "commit": "6f0de3c3f97a8c015f99619f72edf9b2880b6886" },
   "mini.surround": { "branch": "main", "commit": "365f98d842face0876e95f05d6e48fbfcc08e351" },
   "neotest": { "branch": "master", "commit": "ef492755730e59e1d8122c461abbd086bee4c76b" },
   "neotest-golang": { "branch": "main", "commit": "0a0acff3cf9a0bf140c84ea9e66d818df7c2608f" },
