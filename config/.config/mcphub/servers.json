@@ -1,7 +1,7 @@
 {
   "nativeMCPServers": [],
   "mcpServers": {
-    "aws_cost_explorer": {
+    "github.com/aarora79/aws-cost-explorer-mcp-server": {
       "args": [
         "--directory",
         "${HOME}/.mcphub/servers/aws-cost-explorer-mcp-server",
@@ -9,6 +9,7 @@
         "server.py"
       ],
       "env": {
+        "AWS_PROFILE": "${AWS_PROFILE}",
         "MCP_TRANSPORT": "stdio"
       },
       "command": "uv",
@@ -20,7 +21,7 @@
       "command": "npx",
       "description": "MCP Server for Kubernetes cluster management with kubectl and Helm support"
     },
-    "mcp-atlassian": {
+    "github.com/sooperset/mcp-atlassian": {
       "args": [
         "mcp-atlassian",
         "--jira-url",
