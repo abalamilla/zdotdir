@@ -188,29 +188,57 @@ install_others() {
 config_asdf() {
 	print_message "Configuring asdf" -1
 
-  # asdf plugin list | awk '{print "asdf set " $1 " latest"}'
+  # asdf plugin list | awk '{print "asdf plugin add " $1 }'
   asdf plugin add argocd
   asdf plugin add aws-sam-cli
   asdf plugin add awscli
   asdf plugin add bun
+  asdf plugin add clj-kondo
   asdf plugin add cljstyle
+  asdf plugin add colima
   asdf plugin add coursier
+  asdf plugin add dive
   asdf plugin add dotnet
+  asdf plugin add eza
+  asdf plugin add fd
+  asdf plugin add fzf
+  asdf plugin add git
   asdf plugin add golang
   asdf plugin add gradle
   asdf plugin add helm
+  asdf plugin add imagemagick
   asdf plugin add java
+  asdf plugin add jq
   asdf plugin add julia
+  asdf plugin add k9s
+  asdf plugin add krew
   asdf plugin add kubebuilder
+  asdf plugin add kubectl
+  asdf plugin add kubectx
+  asdf plugin add kubeseal
+  asdf plugin add kuttl
+  asdf plugin add lazygit
   asdf plugin add leiningen
+  asdf plugin add lima
+  asdf plugin add markdownlint-cli2
   asdf plugin add maven
+  asdf plugin add neovim
   asdf plugin add nodejs
   asdf plugin add python
+  asdf plugin add ripgrep
   asdf plugin add rust
   asdf plugin add rust-analyzer
+  asdf plugin add sbt
   asdf plugin add scala
+  asdf plugin add shellcheck
   asdf plugin add shfmt
+  asdf plugin add task
   asdf plugin add terraform
+  asdf plugin add uv
+  asdf plugin add vault
+  asdf plugin add yarn
+  asdf plugin add yq
+  asdf plugin add zoxide
 
 	# install tools
 	asdf install
