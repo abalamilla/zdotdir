@@ -1,7 +1,7 @@
 {
+  "nativeMCPServers": [],
   "mcpServers": {
     "aws_cost_explorer": {
-      "command": "uv",
       "args": [
         "--directory",
         "${HOME}/.mcphub/servers/aws-cost-explorer-mcp-server",
@@ -10,21 +10,37 @@
       ],
       "env": {
         "MCP_TRANSPORT": "stdio"
-      }
+      },
+      "command": "uv",
+      "description": "MCP server for getting AWS spend data via Cost Explorer and Amazon Bedrock usage"
     },
     "github.com/Flux159/mcp-server-kubernetes": {
-      "command": "npx",
       "args": ["mcp-server-kubernetes"],
-      "description": "MCP Server for Kubernetes cluster management with kubectl and Helm support",
-      "env": {}
+      "env": [],
+      "command": "npx",
+      "description": "MCP Server for Kubernetes cluster management with kubectl and Helm support"
+    },
+    "mcp-atlassian": {
+      "args": [
+        "mcp-atlassian",
+        "--jira-url",
+        "${JIRA_URL}",
+        "--jira-username",
+        "${JIRA_USERNAME}",
+        "--jira-personal-token",
+        "${JIRA_API_TOKEN}"
+      ],
+      "disabled": false,
+      "command": "uvx",
+      "description": "MCP server for Atlassian products (Confluence and Jira)"
     },
     "github.com/awslabs/mcp/tree/main/src/terraform-mcp-server": {
-      "command": "uvx",
       "args": ["awslabs.terraform-mcp-server@latest"],
-      "description": "MCP server for Terraform on AWS best practices, infrastructure as code patterns, and security compliance with Checkov",
       "env": {
         "FASTMCP_LOG_LEVEL": "ERROR"
-      }
+      },
+      "command": "uvx",
+      "description": "MCP server for Terraform on AWS best practices, infrastructure as code patterns, and security compliance with Checkov"
     }
   }
 }
