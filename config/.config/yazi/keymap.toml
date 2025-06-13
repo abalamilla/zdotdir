@@ -1,10 +1,38 @@
-[[manager.prepend_keymap]]
+[[mgr.prepend_keymap]]
 on = "y"
 run = ['''
 	sh -c 'echo "$@" | pbcopy '
 ''', "yank"]
-[[manager.prepend_keymap]]
-on   = [ "c", "a" ]
-run  = "plugin compress"
+[[mgr.prepend_keymap]]
+on = ["c", "a", "a"]
+run = "plugin compress"
 desc = "Archive selected files"
 
+[[mgr.prepend_keymap]]
+on = ["c", "a", "p"]
+run = "plugin compress -p"
+desc = "Archive selected files (password)"
+
+[[mgr.prepend_keymap]]
+on = ["c", "a", "h"]
+run = "plugin compress -ph"
+desc = "Archive selected files (password+header)"
+
+[[mgr.prepend_keymap]]
+on = ["c", "a", "l"]
+run = "plugin compress -l"
+desc = "Archive selected files (compression level)"
+
+[[mgr.prepend_keymap]]
+on = ["c", "a", "u"]
+run = "plugin compress -phl"
+desc = "Archive selected files (password+header+level)"
+
+[[mgr.prepend_keymap]]
+on = ["g", "w", "r"]
+run = "cd $CJGITLAB"
+desc = "Go to gitlab"
+
+[[mgr.prepend_keymap]]
+on = ["g", "w", "a"]
+run = "cd $CJGITLAB/architects"
