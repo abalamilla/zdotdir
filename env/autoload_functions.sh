@@ -12,10 +12,3 @@ for fp ($^fpath/*(.N,@)) autoload -Uz $fp
 
 autoload -U compinit && compinit
 
-if [[ -x "$(command -v zoxide)" ]] then
-  eval "$(zoxide init zsh)"
-fi
-
-if [[ -x "$(command -v fzf)" ]] then
-  source <(fzf --zsh)
-fi
