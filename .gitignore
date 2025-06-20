@@ -13,8 +13,6 @@ gitconfig-office
 .DS_Store
 .venv
 karabiner/automatic_backups
-config/.config/kitty/get_layout.py
-config/.config/kitty/pass_keys.py
 config/.config/yazi/plugins
 __pycache__
 config/.config/k9s/benchmarks
