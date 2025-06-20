@@ -1,22 +1,18 @@
 {
-  "nativeMCPServers": [],
   "mcpServers": {
-    "github.com/awslabs/mcp/tree/main/src/cost-explorer-mcp-server": {
-      "args": ["awslabs.cost-explorer-mcp-server@latest"],
-      "env": {
-        "AWS_PROFILE": "${AWS_PROFILE}",
-        "MCP_TRANSPORT": "stdio"
-      },
-      "command": "uvx",
-      "description": "MCP server for getting AWS spend data via Cost Explorer and Amazon Bedrock usage"
-    },
-    "github.com/Flux159/mcp-server-kubernetes": {
-      "args": ["mcp-server-kubernetes"],
-      "env": [],
-      "command": "npx",
-      "description": "MCP Server for Kubernetes cluster management with kubectl and Helm support"
-    },
     "github.com/sooperset/mcp-atlassian": {
+      "disabled": false,
+      "disabled_tools": [
+        "jira_update_sprint",
+        "jira_transition_issue",
+        "jira_remove_issue_link",
+        "jira_link_to_epic",
+        "jira_delete_issue",
+        "jira_batch_create_versions",
+        "jira_create_sprint",
+        "jira_create_version"
+      ],
+      "command": "uvx",
       "args": [
         "mcp-atlassian",
         "--jira-url",
@@ -26,17 +22,58 @@
         "--jira-personal-token",
         "${JIRA_API_TOKEN}"
       ],
-      "disabled": false,
-      "command": "uvx",
       "description": "MCP server for Atlassian products (Confluence and Jira)"
     },
+    "github.com/awslabs/mcp/tree/main/src/cost-explorer-mcp-server": {
+      "command": "uvx",
+      "env": {
+        "MCP_TRANSPORT": "stdio",
+        "AWS_PROFILE": "${AWS_PROFILE}"
+      },
+      "args": [
+        "awslabs.cost-explorer-mcp-server@latest"
+      ],
+      "description": "MCP server for getting AWS spend data via Cost Explorer and Amazon Bedrock usage"
+    },
+    "k8sgpt": {
+      "command": "k8sgpt",
+      "args": [
+        "serve",
+        "--mcp"
+      ],
+      "disabled": false
+    },
+    "github.com/Flux159/mcp-server-kubernetes": {
+      "description": "MCP Server for Kubernetes cluster management with kubectl and Helm support",
+      "disabled_tools": [
+        "install_helm_chart",
+        "kubectl_delete",
+        "kubectl_patch",
+        "kubectl_rollout",
+        "uninstall_helm_chart",
+        "upgrade_helm_chart",
+        "cleanup"
+      ],
+      "command": "npx",
+      "args": [
+        "mcp-server-kubernetes"
+      ],
+      "env": [
+        
+      ]
+    },
     "github.com/awslabs/mcp/tree/main/src/terraform-mcp-server": {
-      "args": ["awslabs.terraform-mcp-server@latest"],
+      "command": "uvx",
       "env": {
         "FASTMCP_LOG_LEVEL": "ERROR"
       },
-      "command": "uvx",
+      "args": [
+        "awslabs.terraform-mcp-server@latest"
+      ],
       "description": "MCP server for Terraform on AWS best practices, infrastructure as code patterns, and security compliance with Checkov"
     }
-  }
+  },
+  "nativeMCPServers": [
+    
+  ]
 }
