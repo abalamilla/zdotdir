@@ -18,3 +18,5 @@ __pycache__
 config/.config/k9s/benchmarks
 config/.config/k9s/clusters
 config/.config/k9s/screen-dumps
+config/.gnupg/*
+!config/.gnupg/gpg-agent.conf
