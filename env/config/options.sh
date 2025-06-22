@@ -20,4 +20,15 @@ if [[ -x "$(command -v fzf)" ]] then
   source <(fzf --zsh)
 fi
 
-eval $(thefuck --alias)
+if [[ -x "$(command -v thefuck)" ]]; then
+  eval $(thefuck --alias)
+fi
+
+if [[ -x "$(command -v colima)" ]]; then
+  source <(colima completion zsh)
+fi
+
+# kubectl completion zsh
+if [[ -x "$(command -v kubectl)" ]]; then
+  source <(kubectl completion zsh)
+fi
