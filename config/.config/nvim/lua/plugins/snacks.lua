@@ -22,6 +22,7 @@ return {
     explorer = {
       replace_netrw = true,
     },
+    image = {},
     picker = {
       sources = {
         explorer = {
@@ -52,6 +53,19 @@ return {
           hidden = true,
         },
       },
+      files = {
+        ft = { "jpg", "jpeg", "png", "webp" },
+        confirm = function(self, item, _)
+          self:close()
+          require("img-clip").paste_image({}, "./" .. item.file) -- ./ is necessary for img-clip to recognize it as path
+        end,
+      },
+    },
+    statuscolumn = {
+      enabled = true,
+    },
+    words = {
+      enabled = true,
     },
   },
 }
