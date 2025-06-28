@@ -1,6 +1,7 @@
 CLUSTER=$1
 REGION=${2:-$REGION}
-ALIAS=${3:-$CLUSTER}
+CLUSTER_NAME=$(basename "$CLUSTER" | cut -d'/' -f2)
+ALIAS=${3:-$CLUSTER_NAME}
 
 aws eks update-kubeconfig --name $CLUSTER --region $REGION --alias $ALIAS
 
