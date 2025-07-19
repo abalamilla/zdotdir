@@ -165,7 +165,11 @@ link_file() {
 configure_docker_buildx() {
 	print_message "Configuring docker buildx" -1
 	mkdir -p ~/.docker/cli-plugins
-	link_file /usr/local/bin/docker-buildx ~/.docker/cli-plugins/docker-buildx
+	if [[ $(uname -m) == "arm64" ]]; then
+		link_file /opt/homebrew/bin/docker-buildx ~/.docker/cli-plugins/docker-buildx
+	else
+		link_file /usr/local/bin/docker-buildx ~/.docker/cli-plugins/docker-buildx
+	fi
 	print_message "Finished configuring docker buildx" $?
 }
 
