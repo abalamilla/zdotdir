@@ -1,9 +1,11 @@
+local utils = require("config.utils")
+
 return {
   "yetone/avante.nvim",
   event = "VeryLazy",
   version = false, -- Never set this value to "*"! Never!
   opts = {
-    provider = "copilot",
+    provider = utils.isWorkBox and "copilot" or "openai",
     providers = {
       copilot = {
         endpoint = "https://api.githubcopilot.com",
@@ -16,6 +18,9 @@ return {
           -- max_tokens = 204800,
           -- max_completion_tokens = 8192,
         },
+      },
+      openai = {
+        model = "gpt-4o-mini",
       },
     },
     selector = {
@@ -48,7 +53,7 @@ return {
     "hrsh7th/nvim-cmp", -- autocompletion for avante commands and mentions
     "ibhagwan/fzf-lua", -- for file_selector provider fzf
     "nvim-tree/nvim-web-devicons", -- or echasnovski/mini.icons
-    "zbirenbaum/copilot.lua", -- for providers='copilot'
+    { "zbirenbaum/copilot.lua", enabled = utils.isWorkBox and true or false }, -- for providers='copilot'
     {
       -- support for image pasting
       "HakonHarnes/img-clip.nvim",
