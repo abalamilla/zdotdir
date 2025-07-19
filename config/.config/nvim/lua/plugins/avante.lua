@@ -7,13 +7,13 @@ return {
     providers = {
       copilot = {
         endpoint = "https://api.githubcopilot.com",
-        model = "gpt-4.1",
+        model = "o4-mini",
         proxy = nil, -- [protocol://]host[:port] Use this proxy
         allow_insecure = false, -- Allow insecure server connections
         timeout = 30000, -- Timeout in milliseconds
         extra_request_body = {
           -- temperature = 0,
-          -- max_tokens = 20480,
+          -- max_tokens = 204800,
           -- max_completion_tokens = 8192,
         },
       },
@@ -81,7 +81,13 @@ return {
       },
       build = "npm install -g mcp-hub@latest", -- Installs `mcp-hub` node binary globally
       config = function()
-        require("mcphub").setup()
+        require("mcphub").setup({
+          extensions = {
+            avante = {
+              make_slash_commands = true, -- make /slash commands from MCP server prompts
+            },
+          },
+        })
       end,
     },
   },
