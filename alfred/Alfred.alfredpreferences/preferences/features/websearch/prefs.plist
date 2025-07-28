@@ -24,7 +24,7 @@
 			<key>text</key>
 			<string>CJ Search</string>
 			<key>url</key>
-			<string>http://search.t.cjpowered.com/#search/{query}</string>
+			<string>http://search.t.cjpowered.com/search?q={query}</string>
 		</dict>
 		<key>F7278550-BA72-4532-818F-E91922BCA503</key>
 		<dict>
