@@ -341,3 +341,6 @@ CKA
 CIDR
 LTS
 ReplicaSet
+rollout
+microservices
+microservice
