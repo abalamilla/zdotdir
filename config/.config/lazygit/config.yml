@@ -1,6 +1,7 @@
 gui:
   nerdFontsVersion: '3'
 git:
+  overrideGpg: true
   commit:
     signOff: true
 os:
