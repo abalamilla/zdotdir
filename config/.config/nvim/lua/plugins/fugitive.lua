@@ -1,12 +1,13 @@
 return {
   "tpope/vim-fugitive",
   keys = {
-    { "<leader>gc", ":Git commit<CR>", desc = "Fugitive commit" },
-    { "<leader>gp", ":Git push<CR>", desc = "Fugitive push" },
-    { "<leader>gl", ":Git pull<CR>", desc = "Fugitive pull" },
-    -- { "<leader>gd", ":Git diff<CR>", desc = "Fugitive diff" },
-    { "<leader>gb", ":Git blame<CR>", desc = "Fugitive blame" },
-    { "<leader>gm", ":Git move<CR>", desc = "Fugitive move" },
-    { "<leader>gD", ":Git delete<CR>", desc = "Fugitive delete" },
+    { "<leader>gfs", ":G<CR>", desc = "Fugitive status"},
+    { "<leader>gfc", ":Git commit<CR>", desc = "Fugitive commit" },
+    { "<leader>gfp", ":Git push<CR>", desc = "Fugitive push" },
+    { "<leader>gfl", ":Git pull<CR>", desc = "Fugitive -p pull" },
+    { "<leader>gfd", ":Gdiffstlit<CR>", desc = "Fugitive diff" },
+    { "<leader>gfb", ":Git blame<CR>", desc = "Fugitive blame" },
+    { "<leader>gfm", ":Git move<CR>", desc = "Fugitive move" },
+    { "<leader>gfD", ":Git delete<CR>", desc = "Fugitive delete" },
   },
 }
