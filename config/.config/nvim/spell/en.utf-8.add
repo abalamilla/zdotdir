@@ -344,3 +344,17 @@ ReplicaSet
 rollout
 microservices
 microservice
+StatefulSets
+Autoscaling
+HPA
+Autoscalers
+Base64
+rsa
+irsa
+env
+tls
+json
+Memcached
+matchLabels
+Kustomize
+yq
