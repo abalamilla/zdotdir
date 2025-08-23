@@ -42,3 +42,4 @@ yarn 1.22.22
 zoxide 0.9.8
 jq 1.8.0
 golangci-lint 2.3.1
+kustomize 5.7.1
