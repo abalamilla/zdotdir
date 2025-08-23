@@ -1,6 +1,8 @@
 # TODO: what is this?
 # . "/Users/abralami/.wasmedge/env"
 
+export XDG_RUNTIME_DIR="/tmp/"
+
 # VARS
 export MY_CONFIG_PATH=$HOME/zdotdir
 export MY_INITIAL_CONFIGURATION=$MY_CONFIG_PATH/env/autoload_functions.sh
