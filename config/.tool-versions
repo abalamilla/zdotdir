@@ -9,7 +9,7 @@ dotnet 9.0.201
 eza 0.21.3
 fd 10.2.0
 fzf 0.62.0
-golang 1.24.2
+golang 1.24.4
 helm 3.17.2
 java corretto-21.0.6.7.1
 julia 1.11.4
