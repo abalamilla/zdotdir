@@ -360,3 +360,11 @@ Kustomize
 yq
 kustomization
 Grafana
+ClusterIP
+TargetPort
+LoadBalancer
+NodePort
+O'Relly
+loopback
+IPC
+Corefile
