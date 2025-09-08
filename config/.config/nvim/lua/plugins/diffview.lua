@@ -2,6 +2,7 @@ local close_panel = { "n", "<esc>", "", { desc = "Close file panel" } }
 
 return {
   "sindrets/diffview.nvim",
+  dependencies = { "nvim-tree/nvim-web-devicons" },
   keys = {
     { "<leader>gdvc", ":DiffviewClose<CR>", desc = "Close Diffview" },
     { "<leader>gdvo", ":DiffviewOpen<CR>", desc = "Open Diffview" },
