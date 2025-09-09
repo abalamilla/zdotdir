@@ -6,9 +6,9 @@ return {
   opts = {
     terminal = {
       snacks_win_opts = {
-        position = "bottom",
-        height = 0.4,
-        width = 1.0,
+        position = "right",
+        height = 1.0,
+        width = 0.4,
         border = "single",
         keys = {
           {
