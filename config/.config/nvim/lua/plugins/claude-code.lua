@@ -6,10 +6,10 @@ return {
   opts = {
     terminal = {
       snacks_win_opts = {
-        position = "right",
-        height = 1.0,
-        width = 0.4,
-        border = "single",
+        position = "float",
+        width = 0.85,
+        height = 0.85,
+        border = "rounded",
         keys = {
           {
             toggle_key,
@@ -19,6 +19,14 @@ return {
             end,
             mode = "t",
             desc = "Focus previous window (Ctrl+,)",
+          },
+          {
+            "<Esc>",
+            function(self)
+              self:hide()
+            end,
+            mode = "t",
+            desc = "Hide (Alt+,)",
           },
         },
       },
