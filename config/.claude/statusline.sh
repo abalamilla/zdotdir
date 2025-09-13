@@ -29,41 +29,41 @@ current_time=$(date '+%H:%M:%S')
 
 # Function to estimate token usage from transcript
 get_token_stats() {
-    if [[ -f "$transcript_path" ]]; then
-        # Count approximate tokens (rough estimate: 1 token ≈ 4 characters)
-        total_chars=$(wc -c < "$transcript_path" 2>/dev/null || echo "0")
-        estimated_tokens=$((total_chars / 4))
-        
-        # Count messages
-        message_count=$(grep -c '"role":' "$transcript_path" 2>/dev/null || echo "0")
-        
-        echo "$estimated_tokens,$message_count"
-    else
-        echo "0,0"
-    fi
+	if [[ -f "$transcript_path" ]]; then
+		# Count approximate tokens (rough estimate: 1 token ≈ 4 characters)
+		total_chars=$(wc -c <"$transcript_path" 2>/dev/null || echo "0")
+		estimated_tokens=$((total_chars / 4))
+
+		# Count messages
+		message_count=$(grep -c '"role":' "$transcript_path" 2>/dev/null || echo "0")
+
+		echo "$estimated_tokens,$message_count"
+	else
+		echo "0,0"
+	fi
 }
 
 # Function to estimate cost based on model and tokens
 get_cost_estimate() {
-    local tokens=$1
-    local model=$2
-    local cost=0
-    
-    # AWS Bedrock cost estimates per 1M tokens (input costs only, as of August 2024)
-    case "$model" in
-        *"sonnet-4"*) cost_per_1m=15.00 ;;        # Claude Sonnet 4 - estimated
-        *"opus-4"*) cost_per_1m=15.00 ;;          # Claude Opus 4 - estimated  
-        *"sonnet-3-5"*) cost_per_1m=3.00 ;;       # Claude 3.5 Sonnet - estimated
-        *"sonnet-3-7"*) cost_per_1m=3.00 ;;       # Claude 3.7 Sonnet - estimated
-        *"haiku"*) cost_per_1m=1.63 ;;            # Claude 3/3.5 Haiku: $1.63 per 1M input tokens
-        *"opus"*) cost_per_1m=15.00 ;;            # Claude 3 Opus - estimated
-        *"nova-pro"*) cost_per_1m=0.75 ;;         # Amazon Nova Pro: $0.75 per 1M input tokens
-        *) cost_per_1m=3.00 ;;                    # Default estimate
-    esac
-    
-    # Calculate cost in dollars
-    cost=$(echo "scale=4; $tokens * $cost_per_1m / 1000000" | bc 2>/dev/null || echo "0.0000")
-    printf "%.4f" "$cost"
+	local tokens=$1
+	local model=$2
+	local cost=0
+
+	# AWS Bedrock cost estimates per 1M tokens (input costs only, as of August 2024)
+	case "$model" in
+	*"sonnet-4"*) cost_per_1m=15.00 ;;  # Claude Sonnet 4 - estimated
+	*"opus-4"*) cost_per_1m=15.00 ;;    # Claude Opus 4 - estimated
+	*"sonnet-3-5"*) cost_per_1m=3.00 ;; # Claude 3.5 Sonnet - estimated
+	*"sonnet-3-7"*) cost_per_1m=3.00 ;; # Claude 3.7 Sonnet - estimated
+	*"haiku"*) cost_per_1m=1.63 ;;      # Claude 3/3.5 Haiku: $1.63 per 1M input tokens
+	*"opus"*) cost_per_1m=15.00 ;;      # Claude 3 Opus - estimated
+	*"nova-pro"*) cost_per_1m=0.75 ;;   # Amazon Nova Pro: $0.75 per 1M input tokens
+	*) cost_per_1m=3.00 ;;              # Default estimate
+	esac
+
+	# Calculate cost in dollars
+	cost=$(echo "scale=4; $tokens * $cost_per_1m / 1000000" | bc 2>/dev/null || echo "0.0000")
+	printf "%.4f" "$cost"
 }
 
 # Get token statistics
@@ -77,39 +77,39 @@ cost_estimate=$(get_cost_estimate "$estimated_tokens" "$model_id")
 # Get git branch if in a git repo
 git_info=""
 if git rev-parse --git-dir >/dev/null 2>&1; then
-    branch=$(git branch --show-current 2>/dev/null)
-    if [[ -n "$branch" ]]; then
-        # Check for changes
-        if ! git diff --quiet 2>/dev/null || ! git diff --cached --quiet 2>/dev/null; then
-            git_info=" ${YELLOW}🔀 ${branch} ±${RESET}"
-        else
-            git_info=" ${GREEN}🌿 ${branch}${RESET}"
-        fi
-    fi
+	branch=$(git branch --show-current 2>/dev/null)
+	if [[ -n "$branch" ]]; then
+		# Check for changes
+		if ! git diff --quiet 2>/dev/null || ! git diff --cached --quiet 2>/dev/null; then
+			git_info=" ${YELLOW}🔀 ${branch} ±${RESET}"
+		else
+			git_info=" ${GREEN}🌿 ${branch}${RESET}"
+		fi
+	fi
 fi
 
 # Get kubectl context if available
 kubectl_info=""
 if command -v kubectl >/dev/null 2>&1; then
-    context=$(kubectl config current-context 2>/dev/null)
-    if [[ -n "$context" ]]; then
-        # Highlight production contexts
-        if [[ "$context" == *-prod* ]]; then
-            kubectl_info=" ${RED}⚠️  ⎈ ${context}${RESET}"
-        else
-            kubectl_info=" ${BLUE}⎈ $(basename "$context")${RESET}"
-        fi
-    fi
+	context=$(kubectl config current-context 2>/dev/null)
+	if [[ -n "$context" ]]; then
+		# Highlight production contexts
+		if [[ "$context" == *-prod* ]]; then
+			kubectl_info=" ${RED}⚠️  ⎈ ${context}${RESET}"
+		else
+			kubectl_info=" ${BLUE}⎈ $(basename "$context")${RESET}"
+		fi
+	fi
 fi
 
 # Get AWS profile if set
 aws_info=""
 if [[ -n "$AWS_PROFILE" ]]; then
-    if [[ "$AWS_PROFILE" == *-prod* ]]; then
-        aws_info=" ${RED}⚠️  ☁️ ${AWS_PROFILE}${RESET}"
-    else
-        aws_info=" ${CYAN}☁️ ${AWS_PROFILE}${RESET}"
-    fi
+	if [[ "$AWS_PROFILE" == *-prod* ]]; then
+		aws_info=" ${RED}⚠️  ☁️ ${AWS_PROFILE}${RESET}"
+	else
+		aws_info=" ${CYAN}☁️ ${AWS_PROFILE}${RESET}"
+	fi
 fi
 
 # Build the status line with colors and emojis
@@ -134,47 +134,47 @@ status_line+=" ${GRAY}|${RESET}"
 # Add model info with emoji
 model_emoji="🤖"
 case "$model_id" in
-    *"sonnet-4"*) model_emoji="🧠" ;;
-    *"sonnet-3-5"*) model_emoji="⚡" ;;
-    *"haiku"*) model_emoji="🌸" ;;
-    *"opus"*) model_emoji="👑" ;;
+*"sonnet-4"*) model_emoji="🧠" ;;
+*"sonnet-3-5"*) model_emoji="⚡" ;;
+*"haiku"*) model_emoji="🌸" ;;
+*"opus"*) model_emoji="👑" ;;
 esac
 status_line+=" ${PURPLE}${model_emoji} $model_name${RESET}"
 
 # Add output style if not default
 if [[ "$output_style" != "null" && "$output_style" != "default" ]]; then
-    status_line+=" ${DIM}($output_style)${RESET}"
+	status_line+=" ${DIM}($output_style)${RESET}"
 fi
 
 # Add token and cost information
 if [[ "$estimated_tokens" -gt 0 ]]; then
-    # Format tokens with K/M suffixes
-    if [[ "$estimated_tokens" -gt 1000000 ]]; then
-        token_display=$(echo "scale=1; $estimated_tokens / 1000000" | bc 2>/dev/null || echo "0")M
-    elif [[ "$estimated_tokens" -gt 1000 ]]; then
-        token_display=$(echo "scale=1; $estimated_tokens / 1000" | bc 2>/dev/null || echo "0")K
-    else
-        token_display="$estimated_tokens"
-    fi
-    
-    # Color code based on token usage
-    if [[ "$estimated_tokens" -gt 50000 ]]; then
-        token_color="$RED"
-    elif [[ "$estimated_tokens" -gt 20000 ]]; then
-        token_color="$YELLOW"
-    else
-        token_color="$GREEN"
-    fi
-    
-    status_line+=" ${GRAY}|${RESET} ${token_color}🎯 ${token_display}t${RESET}"
-    
-    # Add cost if significant
-    if (( $(echo "$cost_estimate > 0.01" | bc -l 2>/dev/null || echo "0") )); then
-        status_line+=" ${YELLOW}💰 \$${cost_estimate}${RESET}"
-    fi
-    
-    # Add message count
-    status_line+=" ${GRAY}💬 ${message_count}${RESET}"
+	# Format tokens with K/M suffixes
+	if [[ "$estimated_tokens" -gt 1000000 ]]; then
+		token_display=$(echo "scale=1; $estimated_tokens / 1000000" | bc 2>/dev/null || echo "0")M
+	elif [[ "$estimated_tokens" -gt 1000 ]]; then
+		token_display=$(echo "scale=1; $estimated_tokens / 1000" | bc 2>/dev/null || echo "0")K
+	else
+		token_display="$estimated_tokens"
+	fi
+
+	# Color code based on token usage
+	if [[ "$estimated_tokens" -gt 50000 ]]; then
+		token_color="$RED"
+	elif [[ "$estimated_tokens" -gt 20000 ]]; then
+		token_color="$YELLOW"
+	else
+		token_color="$GREEN"
+	fi
+
+	status_line+=" ${GRAY}|${RESET} ${token_color}🎯 ${token_display}t${RESET}"
+
+	# Add cost if significant
+	if (($(echo "$cost_estimate > 0.01" | bc -l 2>/dev/null || echo "0"))); then
+		status_line+=" ${YELLOW}💰 \$${cost_estimate}${RESET}"
+	fi
+
+	# Add message count
+	status_line+=" ${GRAY}💬 ${message_count}${RESET}"
 fi
 
 # Add session info (shortened)
