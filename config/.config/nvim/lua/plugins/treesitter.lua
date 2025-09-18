@@ -9,5 +9,6 @@ return {
       enable = true,
     },
     sync_install = false,
+    parser_install_dir = vim.fn.stdpath("data") .. "/treesitter",
   },
 }
