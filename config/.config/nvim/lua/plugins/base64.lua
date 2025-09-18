@@ -1,3 +1,3 @@
 return {
-  "christianrondeau/vim-base64"
+  "christianrondeau/vim-base64",
 }

@@ -1,3 +1,3 @@
 return {
-  "mattn/calendar-vim"
+  "mattn/calendar-vim",
 }

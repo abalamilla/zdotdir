@@ -1,3 +1,3 @@
 return {
-  "gyim/vim-boxdraw"
+  "gyim/vim-boxdraw",
 }

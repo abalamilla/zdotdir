@@ -2,5 +2,5 @@
 local isWorkBox = vim.fn.hostname():match("^WK")
 
 return {
-  isWorkBox
+  isWorkBox,
 }
