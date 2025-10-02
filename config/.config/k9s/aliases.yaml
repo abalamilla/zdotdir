@@ -7,3 +7,6 @@ aliases:
   ro: roles
   rb: rolebindings
   np: networkpolicies
+  spot: nodes karpenter.sh/capacity-type=spot
+  ondemand: nodes karpenter.sh/capacity-type=on-demand
+  karpenter: nodes karpenter.sh/nodepool

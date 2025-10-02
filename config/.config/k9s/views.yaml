@@ -6,4 +6,12 @@ views:
 
   v1/nodes:
     columns:
+      - NAME
+      - STATUS
+      - AGE
       - NODEPOOL:.metadata.labels.karpenter\.sh/nodepool
+      - CAPACITY-TYPE:.metadata.labels.karpenter\.sh/capacity-type
+      - INSTANCE-TYPE:.metadata.labels.node\.kubernetes\.io/instance-type
+      - ZONE:.metadata.labels.topology\.kubernetes\.io/zone
+      - CPU:.metadata.labels.karpenter\.k8s\.aws/instance-cpu
+      - MEMORY:.metadata.labels.karpenter\.k8s\.aws/instance-memory
