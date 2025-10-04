@@ -6,7 +6,7 @@ colima 0.8.1
 coursier 2.1.25-M1
 dive 0.13.1
 dotnet 9.0.201
-eza 0.21.3
+eza 0.23.1
 fd 10.2.0
 fzf 0.62.0
 golang 1.24.4
