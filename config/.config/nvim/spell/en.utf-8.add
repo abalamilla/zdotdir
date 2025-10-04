@@ -483,3 +483,10 @@ ResouceSink
 whitelisted
 png
 SDS
+whitelist
+mTLS
+backends
+whitelists
+Auth0
+JWT
+mTLS
