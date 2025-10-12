@@ -490,3 +490,9 @@ whitelists
 Auth0
 JWT
 mTLS
+HAProxy
+Prana
+Buoyant's
+Airbnb
+Salesforce
+cncf
