@@ -31,6 +31,9 @@ return {
         },
       },
     },
+    diff_opts = {
+      keep_terminal_focus = true,
+    },
   },
   keys = {
     { "<leader>a", nil, desc = "AI/Claude Code" },
