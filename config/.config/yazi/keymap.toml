@@ -31,8 +31,14 @@ desc = "Archive selected files (password+header+level)"
 [[mgr.prepend_keymap]]
 on = ["g", "w", "r"]
 run = "cd $CJGITLAB"
-desc = "Go to gitlab"
+desc = "Go to gitlab directory"
 
 [[mgr.prepend_keymap]]
 on = ["g", "w", "a"]
 run = "cd $CJGITLAB/architects"
+desc = "Go to architects directory"
+
+[[mgr.prepend_keymap]]
+on = ["p", "c"]
+run = "plugin save-clipboard-to-file"
+desc = "Paste clipboard content to file and hover after created"

@@ -3,5 +3,10 @@ use = "KKV9/compress"
 rev = "c264639"
 hash = "e17c11b605d989568a1d1741ca17c584"
 
+[[plugin.deps]]
+use = "boydaihungst/save-clipboard-to-file"
+rev = "40de82f"
+hash = "f79197930f23924827e81fa51a1413d0"
+
 [flavor]
 deps = []
