@@ -1,8 +1,9 @@
 [[mgr.prepend_keymap]]
 on = "y"
 run = ['''
-	sh -c 'echo "$@" | pbcopy '
+	sh -c 'echo "$@" | cb copy'
 ''', "yank"]
+desc = "Copy file paths to clipboard"
 [[mgr.prepend_keymap]]
 on = ["c", "a", "a"]
 run = "plugin compress"
@@ -42,3 +43,25 @@ desc = "Go to architects directory"
 on = ["p", "c"]
 run = "plugin save-clipboard-to-file"
 desc = "Paste clipboard content to file and hover after created"
+
+[[mgr.prepend_keymap]]
+on = "<C-y>"
+run = [
+  'shell -- for path in "$@"; do echo "file://$path"; done | cb copy',
+  "yank",
+]
+desc = "Copy file URLs to clipboard"
+
+[[mgr.prepend_keymap]]
+on = ["c", "c"]
+run = '''
+	sh -c 'cb copy "$@"'
+'''
+desc = "Copy files to clipboard"
+
+[[mgr.prepend_keymap]]
+on = ["c", "f"]
+run = '''
+	sh -c 'for path in "$@"; do cb copy < "$path"; done'
+'''
+desc = "Copy file contents to clipboard"
