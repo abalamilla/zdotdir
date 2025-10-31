@@ -43,7 +43,7 @@ return {
                 relativenumber = true,
               },
               keys = {
-                -- Send file to Claude Code
+                -- Send file(s) to Claude Code
                 ["<leader>as"] = {
                   function(self)
                     -- Get the picker from Snacks
@@ -63,9 +63,20 @@ return {
                     -- The result is an array with the actual picker at index 1
                     local picker = picker_result[1] or picker_result
 
-                    -- Get current item from picker.list
-                    local item = nil
-                    if picker.list then
+                    -- Collect items to send (either selected items or current item)
+                    local items = {}
+
+                    -- Check for selected items first
+                    if picker.list and picker.list.selected then
+                      -- Get all selected items
+                      for _, item in pairs(picker.list.selected) do
+                        table.insert(items, item)
+                      end
+                    end
+
+                    -- If no selected items, fall back to current item
+                    if #items == 0 and picker.list then
+                      local item = nil
                       -- Try _current property first
                       item = picker.list._current
 
@@ -73,36 +84,60 @@ return {
                       if not item and picker.list.cursor and picker.list.items then
                         item = picker.list.items[picker.list.cursor]
                       end
+
+                      if item then
+                        table.insert(items, item)
+                      end
                     end
 
-                    if not item then
-                      vim.notify("No item found", vim.log.levels.WARN)
+                    if #items == 0 then
+                      vim.notify("No items found", vim.log.levels.WARN)
                       return
                     end
 
-                    -- Get the file path (try multiple properties)
-                    local file_path = item.file or item._path or item.path
-                    if not file_path then
-                      vim.notify("No file path in item. Keys: " .. vim.inspect(vim.tbl_keys(item)), vim.log.levels.WARN)
-                      return
-                    end
-
-                    -- Skip directories
-                    if item.dir then
-                      vim.notify("Cannot add directory to Claude Code", vim.log.levels.WARN)
-                      return
-                    end
-
-                    -- Add the file to Claude Code using Lua API
+                    -- Load ClaudeCode plugin once
                     local ok_cc, claudecode = pcall(require, "claudecode")
-                    if ok_cc and claudecode.send_at_mention then
-                      claudecode.send_at_mention(file_path)
-                      vim.notify("Added to Claude Code: " .. vim.fn.fnamemodify(file_path, ":~:."), vim.log.levels.INFO)
-                    else
+                    if not ok_cc or not claudecode.send_at_mention then
                       vim.notify("ClaudeCode plugin not loaded", vim.log.levels.ERROR)
+                      return
+                    end
+
+                    -- Process each item
+                    local sent_files = {}
+                    local skipped_dirs = 0
+
+                    for _, item in ipairs(items) do
+                      -- Skip directories
+                      if item.dir then
+                        skipped_dirs = skipped_dirs + 1
+                      else
+                        -- Get the file path (try multiple properties)
+                        local file_path = item.file or item._path or item.path
+                        if file_path then
+                          claudecode.send_at_mention(file_path)
+                          table.insert(sent_files, vim.fn.fnamemodify(file_path, ":~:."))
+                        end
+                      end
+                    end
+
+                    -- Notify user of results
+                    if #sent_files > 0 then
+                      if #sent_files == 1 then
+                        vim.notify("Added to Claude Code: " .. sent_files[1], vim.log.levels.INFO)
+                      else
+                        vim.notify("Added " .. #sent_files .. " files to Claude Code", vim.log.levels.INFO)
+                      end
+                    end
+
+                    if skipped_dirs > 0 then
+                      vim.notify("Skipped " .. skipped_dirs .. " directories", vim.log.levels.WARN)
+                    end
+
+                    if #sent_files == 0 and skipped_dirs == 0 then
+                      vim.notify("No valid files to send", vim.log.levels.WARN)
                     end
                   end,
-                  desc = "Send to Claude Code",
+                  desc = "Send to Claude Code (supports multiple selections)",
                 },
               },
             },
