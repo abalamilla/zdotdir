@@ -35,12 +35,13 @@ newline = true
 template = ' {{ .Path }} '
 foreground = 'blue'
 type = 'path'
-style = 'plain'
 
 [blocks.segments.properties]
 folder_icon = '....'
 home_icon = '~'
-style = 'powerlevel'
+style = 'agnoster_short'
+folder_separator_icon = '/'
+max_depth = 3
 
 [[blocks.segments]]
 type = "git"
