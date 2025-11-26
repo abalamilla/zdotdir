@@ -108,68 +108,47 @@ type = 'rprompt'
 [[blocks.segments]]
 type = "terraform"
 style = "plain"
-foreground = "p:blue"
+foreground = "p:purple"
+tips = ["terraform", "tf", "tofu"]
 
 [[blocks.segments]]
-type = "npm"
+type = "aws"
 style = "plain"
-foreground = "p:blue"
-
-[[blocks.segments]]
-type = "react"
-style = "plain"
-foreground = "p:blue"
-
-[[blocks.segments]]
-type = "yarn"
-style = "plain"
-foreground = "p:blue"
-
-[[blocks.segments]]
-type = "go"
-style = "plain"
-foreground = "p:blue"
-template = "  {{ .Full }} "
-
-[[blocks.segments]]
-type = "java"
-style = "plain"
-foreground = "p:blue"
-template = "  {{ .Full }}"
-
-[[blocks.segments]]
-type = "julia"
-style = "plain"
-foreground = "p:blue"
-template = "  {{ .Full }} "
+foreground = "p:green"
+templates_logic = "first_match"
+templates = [
+  "{{ if matchP \".*-prod\" .Profile }}<red>(°ロ°) !  {{.Profile}}{{if .Region}}@{{.Region}}{{end}}</>{{end}}",
+  "  {{.Profile}}{{if .Region}}@{{.Region}}{{end}}",
+]
 
 [[blocks.segments]]
 type = "node"
 style = "plain"
-foreground = "p:blue"
+foreground = "p:aqua"
+tips = ["node", "npm", "yarn", "pnpm", "bun"]
 
 [[blocks.segments]]
 type = "python"
 style = "plain"
-foreground = "p:blue"
+foreground = "p:yellow"
+tips = ["python", "python3", "pip", "pip3", "poetry", "uv"]
 
 [blocks.segments.properties]
 display_mode = "context"
 
 [[blocks.segments]]
-type = "wakatime"
+type = "go"
 style = "plain"
 foreground = "p:blue"
+template = "  {{ .Full }} "
+tips = ["go", "gofmt"]
 
 [[blocks.segments]]
-type = "aws"
+type = "java"
 style = "plain"
-foreground = "green"
-templates_logic = "first_match"
-templates = [
-  "{{ if matchP \".*-prod\" .Profile }}<red>(°ロ°) !  {{.Profile}}{{if .Region}}@{{.Region}}{{end}}</>{{end}}",
-  "  {{.Profile}}{{if .Region}}@{{.Region}}{{end}}",
-]
+foreground = "p:orange"
+template = "  {{ .Full }}"
+tips = ["java", "javac", "mvn", "gradle"]
 
 [properties]
 url = "https://wakatime.com/api/v1/users/current/summaries?start=today&end=today&api_key={{ .Env.WAKATIME_API_KEY }}"
