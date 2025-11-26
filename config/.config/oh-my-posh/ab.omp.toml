@@ -33,7 +33,7 @@ newline = true
 
 [[blocks.segments]]
 template = ' {{ .Path }} '
-foreground = 'blue'
+foreground = 'p:blue'
 type = 'path'
 
 [blocks.segments.properties]
@@ -76,7 +76,7 @@ style = "plain"
 foreground = "p:purple"
 templates_logic = "first_match"
 templates = [
-  "{{ if matchP \".*-prod\" .Context }}<red>(°ロ°) ! {{.Context}}{{if .Namespace}} :: {{.Namespace}}{{end}}</>{{end}}",
+  "{{ if matchP \".*-prod\" .Context }}<p:red>(°ロ°) ! {{.Context}}{{if .Namespace}} :: {{.Namespace}}{{end}}</>{{end}}",
   "\u2388 {{ base .Context}}{{if .Namespace}} :: {{.Namespace}}{{end}} ",
 ]
 
@@ -95,7 +95,7 @@ newline = true
 
 [[blocks.segments]]
 templates_logic = "first_match"
-templates = ["{{ if gt .Code 0 }}<red> ✘ {{ .Code }}</>{{end}}", "<green> ✔</>"]
+templates = ["{{ if gt .Code 0 }}<p:red> ✘ {{ .Code }}</>{{end}}", "<p:green> ✔</>"]
 foreground = 'p:os'
 type = 'status'
 style = 'plain'
@@ -118,7 +118,7 @@ style = "plain"
 foreground = "p:green"
 templates_logic = "first_match"
 templates = [
-  "{{ if matchP \".*-prod\" .Profile }}<red>(°ロ°) !  {{.Profile}}{{if .Region}}@{{.Region}}{{end}}</>{{end}}",
+  "{{ if matchP \".*-prod\" .Profile }}<p:red>(°ロ°) !  {{.Profile}}{{if .Region}}@{{.Region}}{{end}}</>{{end}}",
   "  {{.Profile}}{{if .Region}}@{{.Region}}{{end}}",
 ]
 
