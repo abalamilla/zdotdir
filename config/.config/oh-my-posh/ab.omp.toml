@@ -2,13 +2,19 @@ version = 3
 final_space = true
 
 [palette]
-blue = '#89B4FA'
+# Gruvbox color palette
+blue = '#83a598'
 closer = 'p:os'
-lavender = '#B4BEFE'
-os = '#ACB0BE'
-pink = '#F5C2E7'
-orange = '#FF6900'
-purple = '#CBA6F7'
+lavender = '#d3869b'
+os = '#a89984'
+pink = '#d3869b'
+orange = '#fe8019'
+purple = '#b16286'
+aqua = '#8ec07c'
+yellow = '#fabd2f'
+green = '#b8bb26'
+red = '#fb4934'
+gray = '#928374'
 
 [upgrade]
 source = 'cdn'
@@ -18,7 +24,7 @@ notice = true
 [transient_prompt]
 background = "transparent"
 foreground = "p:blue"
-template = "{{ .Segments.Time.CurrentDate | date .Segments.Time.Format }}{{ if .Segments.Kubectl.Context }} {{ .Segments.Kubectl.Context }}{{ end }}{{ if .Segments.Aws.Profile }} {{ .Segments.Aws.Profile }}{{ end }} {{if .Root }}(sudo){{end}}<#146AFF> "
+template = "{{ .Segments.Time.CurrentDate | date .Segments.Time.Format }}{{ if .Segments.Kubectl.Context }} {{ .Segments.Kubectl.Context }}{{ end }}{{ if .Segments.Aws.Profile }} {{ .Segments.Aws.Profile }}{{ end }} {{if .Root }}(sudo){{end}}<p:blue> "
 
 [[blocks]]
 type = 'prompt'
@@ -76,7 +82,7 @@ templates = [
 [[blocks.segments]]
 type = "time"
 style = "plain"
-foreground = "#007ACC"
+foreground = "p:aqua"
 
 [blocks.segments.properties]
 time_format = "15:04:05"
