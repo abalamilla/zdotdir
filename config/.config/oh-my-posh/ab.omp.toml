@@ -24,7 +24,7 @@ notice = true
 [transient_prompt]
 background = "transparent"
 foreground = "p:blue"
-template = "{{ .Segments.Time.CurrentDate | date .Segments.Time.Format }}{{ if .Segments.Kubectl.Context }} {{ .Segments.Kubectl.Context }}{{ end }}{{ if .Segments.Aws.Profile }} {{ .Segments.Aws.Profile }}{{ end }} {{if .Root }}(sudo){{end}}<p:blue> "
+template = "{{ if .Segments.Kubectl.Context }}{{ if matchP \".*-prod\" .Segments.Kubectl.Context }}<p:red>⎈ {{ .Segments.Kubectl.Context }}</>{{ else }}<p:purple>⎈ {{ .Segments.Kubectl.Context }}</>{{ end }} {{ end }}{{ if .Segments.Aws.Profile }}{{ if matchP \".*-prod\" .Segments.Aws.Profile }}<p:red> {{ .Segments.Aws.Profile }}</>{{ else }}<p:green> {{ .Segments.Aws.Profile }}</>{{ end }} {{ end }}{{ if .Root }}<p:red> sudo</> {{ end }}<p:blue> "
 
 [[blocks]]
 type = 'prompt'
@@ -76,8 +76,8 @@ style = "plain"
 foreground = "p:purple"
 templates_logic = "first_match"
 templates = [
-  "{{ if matchP \".*-prod\" .Context }}<p:red>(°ロ°) ! {{.Context}}{{if .Namespace}} :: {{.Namespace}}{{end}}</>{{end}}",
-  "\u2388 {{ base .Context}}{{if .Namespace}} :: {{.Namespace}}{{end}} ",
+  "{{ if matchP \".*-prod\" .Context }}<p:red>⚠ {{ base .Context }}{{if .Namespace}}<p:orange>:{{.Namespace}}</>{{end}}</>{{end}}",
+  "⎈ {{ base .Context }}{{if .Namespace}}<p:aqua>:{{.Namespace}}</>{{end}} ",
 ]
 
 [[blocks.segments]]
@@ -118,8 +118,8 @@ style = "plain"
 foreground = "p:green"
 templates_logic = "first_match"
 templates = [
-  "{{ if matchP \".*-prod\" .Profile }}<p:red>(°ロ°) !  {{.Profile}}{{if .Region}}@{{.Region}}{{end}}</>{{end}}",
-  "  {{.Profile}}{{if .Region}}@{{.Region}}{{end}}",
+  "{{ if matchP \".*-Production\" .Profile }}<p:red>⚠  {{.Profile}}{{if .Region}}<p:orange>@{{.Region}}</>{{end}}</>{{end}}",
+  " {{.Profile}}{{if .Region}}<p:aqua>@{{.Region}}</>{{end}} ",
 ]
 
 [[blocks.segments]]
@@ -151,6 +151,3 @@ foreground = "p:orange"
 template = "  {{ .Full }}"
 tips = ["java", "javac", "mvn", "gradle"]
 
-[properties]
-url = "https://wakatime.com/api/v1/users/current/summaries?start=today&end=today&api_key={{ .Env.WAKATIME_API_KEY }}"
-http_timeout = 500
