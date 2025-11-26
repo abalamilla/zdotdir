@@ -1,8 +1,8 @@
 [[mgr.prepend_keymap]]
-on = "y"
-run = ['''
+on = ["c", "p"]
+run = '''
 	sh -c 'echo "$@" | cb copy'
-''', "yank"]
+'''
 desc = "Copy file paths to clipboard"
 [[mgr.prepend_keymap]]
 on = ["c", "a", "a"]
@@ -40,7 +40,7 @@ run = "cd $CJGITLAB/architects"
 desc = "Go to architects directory"
 
 [[mgr.prepend_keymap]]
-on = ["p", "c"]
+on = ["c", "v"]
 run = "plugin save-clipboard-to-file"
 desc = "Paste clipboard content to file and hover after created"
 
