@@ -95,7 +95,7 @@ newline = true
 
 [[blocks.segments]]
 templates_logic = "first_match"
-templates = ["{{ if gt .Code 0 }}<red> (ﾒ﹏ﾒ) </>{{end}}", "<green> </>"]
+templates = ["{{ if gt .Code 0 }}<red> ✘ {{ .Code }}</>{{end}}", "<green> ✔</>"]
 foreground = 'p:os'
 type = 'status'
 style = 'plain'
