@@ -1,16 +1,17 @@
 {
-  "awsAuthRefresh": "aws-access env architects",
+  "awsAuthRefresh": "awsenv architects",
   "env": {
     "ANTHROPIC_MODEL": "us.anthropic.claude-sonnet-4-5-20250929-v1:0",
-    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "us.anthropic.claude-3-haiku-20240307-v1:0",
+    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "anthropic.claude-haiku-4-5-20251001-v1:0",
     "AWS_REGION": "us-west-2",
     "AWS_PROFILE": "Architects_Development-Development",
     "CLAUDE_CODE_USE_BEDROCK": "1",
-    "CLAUDE_CODE_MAX_OUTPUT_TOKENS": "4096",
-    "MAX_THINKING_TOKENS": "1024"
+    "CLAUDE_CODE_MAX_OUTPUT_TOKENS": "8192",
+    "MAX_THINKING_TOKENS": "4096"
   },
   "statusLine": {
     "type": "command",
     "command": "bash ~/.claude/statusline.sh"
-  }
+  },
+  "alwaysThinkingEnabled": true
 }
