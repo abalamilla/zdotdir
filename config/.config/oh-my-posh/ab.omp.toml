@@ -46,8 +46,8 @@ max_depth = 3
 [[blocks.segments]]
 type = "git"
 style = "plain"
-foreground = "green"
-template = "{{ .UpstreamIcon }}{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} <yellow> {{ .Working.String }}</>{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }}  {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }}  {{ .StashCount }}{{ end }}"
+foreground = "p:green"
+template = " {{ .HEAD }}{{if .BranchStatus }} <p:yellow>{{ .BranchStatus }}</>{{end}}{{if .Working.Changed}} <p:orange>✚{{ .Working.String }}</>{{end}}{{if .Staging.Changed}} <p:aqua>✓{{ .Staging.String }}</>{{end}}{{if gt .StashCount 0}} <p:purple> {{ .StashCount }}</>{{end}}"
 
 [blocks.segments.properties]
 fetch_status = true
