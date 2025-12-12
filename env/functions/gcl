@@ -1,37 +1,55 @@
+# Validate input
+if [ -z "$1" ]; then
+  echo "Usage: gcl <git-url>"
+  return 1
+fi
+
 GIT_URL=$1
-GROUP=$(echo $GIT_URL | cut -d':' -f2 | cut -d'/' -f1)
-REPONAME=$(echo $GIT_URL | cut -d':' -f2 | cut -d'/' -f2 | cut -d'.' -f1)
+
+# Extract path after colon and strip .git suffix
+PATH_PART=$(echo "$GIT_URL" | cut -d':' -f2 | sed 's/\.git$//')
+
+# Get repo name (last path segment)
+REPONAME=$(echo "$PATH_PART" | rev | cut -d'/' -f1 | rev)
+
+# Get group path (all segments except last)
+GROUP=$(echo "$PATH_PART" | rev | cut -d'/' -f2- | rev)
 
 echo "CD to $CJGITLAB"
-cd $CJGITLAB
+cd "$CJGITLAB" || { echo "Error: Cannot cd to $CJGITLAB"; return 1; }
 
-if [ ! -d $GROUP ]; then
+if [ ! -d "$GROUP" ]; then
   echo "Creating group $GROUP"
-  mkdir $GROUP
+  mkdir -p "$GROUP"
 
   echo "CD to $GROUP"
-  cd $GROUP
+  cd "$GROUP" || { echo "Error: Cannot cd to $GROUP"; return 1; }
 
   echo "Cloning $GIT_URL"
-  git clone
+  git clone "$GIT_URL"
 else
   echo "Local group $GROUP exists"
   echo "CD to $GROUP"
-  cd $GROUP
+  cd "$GROUP" || { echo "Error: Cannot cd to $GROUP"; return 1; }
 fi
 
-if [ ! -d $REPONAME ]; then
+if [ ! -d "$REPONAME" ]; then
   echo "Cloning $GIT_URL"
-  git clone $GIT_URL
+  git clone "$GIT_URL"
 
   echo "CD to $REPONAME"
-  cd $REPONAME
+  cd "$REPONAME" || { echo "Error: Cannot cd to $REPONAME"; return 1; }
 else
   echo "Local repo $REPONAME exists"
-  cd $REPONAME
+  cd "$REPONAME" || { echo "Error: Cannot cd to $REPONAME"; return 1; }
 
-  echo "Pulling latest"
-  git pull
+  # Check if working tree is clean before pulling
+  if git diff-index --quiet HEAD -- 2>/dev/null; then
+    echo "Pulling latest"
+    git pull
+  else
+    echo "Skipping pull (uncommitted changes detected)"
+  fi
 fi
 
 
