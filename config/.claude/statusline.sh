@@ -27,10 +27,19 @@ transcript_path=$(echo "$input" | jq -r '.transcript_path')
 # Get current time
 current_time=$(date '+%H:%M:%S')
 
-# Function to estimate token usage from transcript
+# Function to get token usage from JSON or estimate from transcript
 get_token_stats() {
-	if [[ -f "$transcript_path" ]]; then
-		# Count approximate tokens (rough estimate: 1 token ≈ 4 characters)
+	# First try to get actual token usage from JSON input if available
+	actual_tokens=$(echo "$input" | jq -r '.token_usage.input_tokens // .conversation.token_count // empty' 2>/dev/null)
+	actual_messages=$(echo "$input" | jq -r '.conversation.message_count // empty' 2>/dev/null)
+
+	if [[ -n "$actual_tokens" && "$actual_tokens" != "null" ]]; then
+		# Use actual token count from JSON
+		estimated_tokens="$actual_tokens"
+		message_count="${actual_messages:-0}"
+		echo "$estimated_tokens,$message_count"
+	elif [[ -f "$transcript_path" ]]; then
+		# Fallback: Count approximate tokens (rough estimate: 1 token ≈ 4 characters)
 		total_chars=$(wc -c <"$transcript_path" 2>/dev/null || echo "0")
 		estimated_tokens=$((total_chars / 4))
 
