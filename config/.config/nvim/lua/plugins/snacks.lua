@@ -23,6 +23,14 @@ return {
       replace_netrw = true,
     },
     image = {},
+    zen = {
+      win = {
+        width = 0.6,
+        wo = {
+          scrolloff = 10, -- 10 lines gap at bottom (and top)
+        },
+      },
+    },
     picker = {
       sources = {
         explorer = {
