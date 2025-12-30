@@ -13,6 +13,7 @@ opt.showcmd = true
 opt.autoindent = true
 opt.wrap = true
 opt.clipboard = ""
+opt.colorcolumn = "80"
 
 -- add python venv
 local venv = vim.fn.expand("$HOME/zdotdir/.venv/bin/python")
