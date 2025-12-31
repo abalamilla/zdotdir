@@ -53,6 +53,36 @@ return {
         end, 100) -- 100ms delay
       end,
     })
+
+    -- Autocmd to fold frontmatter by default
+    vim.api.nvim_create_autocmd("BufReadPost", {
+      pattern = { "*/vimwiki/*.md", "*/vimwiki/*/*.md", "*/vimwiki/*/*/*.md" },
+      callback = function()
+        vim.defer_fn(function()
+          local buf = vim.api.nvim_get_current_buf()
+          if not vim.api.nvim_buf_is_valid(buf) then
+            return
+          end
+
+          -- Enable manual folding for this window
+          vim.wo.foldmethod = "manual"
+
+          local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
+
+          -- Check if file has frontmatter
+          if #lines > 0 and lines[1] == "---" then
+            -- Find end of frontmatter
+            for i = 2, math.min(#lines, 50) do -- Check first 50 lines max
+              if lines[i] == "---" then
+                -- Create a fold for the frontmatter (lines 1 to i)
+                vim.cmd(string.format("1,%dfold", i))
+                break
+              end
+            end
+          end
+        end, 150) -- Delay to ensure file is fully loaded
+      end,
+    })
   end,
   keys = {
     -- Navigation
@@ -99,8 +129,18 @@ return {
         vim.cmd('normal! "vy')
         local text = vim.fn.getreg("v")
 
-        -- Wrap in wiki link syntax
-        local link = "[[" .. text .. "]]"
+        -- Normalize the text to create the filename (same logic as note_id_func)
+        local normalized = text
+        normalized = normalized:gsub(":", "-") -- Replace : with -
+        normalized = normalized:gsub("%.", "-") -- Replace . with -
+        normalized = normalized:gsub(" ", "-") -- Replace spaces with -
+        normalized = normalized:gsub("@", "-") -- Replace @ with -
+        normalized = normalized:gsub("[^A-Za-z0-9%-_]", "") -- Remove special chars
+        normalized = normalized:gsub("%-+", "-") -- Collapse multiple hyphens
+        normalized = normalized:gsub("^%-+", ""):gsub("%-+$", "") -- Trim hyphens
+
+        -- Create wiki link with normalized filename and display text
+        local link = "[[" .. normalized .. "|" .. text .. "]]"
 
         -- Replace the selection with the link
         vim.fn.setreg("v", link)
