@@ -3,8 +3,8 @@ return {
   dependencies = {
     "nvim-treesitter/nvim-treesitter",
   },
-  ft = { "markdown", "vimwiki" },
+  ft = { "markdown" },
   opts = {
-    file_types = { "markdown", "vimwiki" },
+    file_types = { "markdown" },
   },
 }

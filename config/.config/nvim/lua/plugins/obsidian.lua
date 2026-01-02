@@ -180,7 +180,7 @@ return {
     },
 
     -- Note ID function - use filename instead of random ID
-    -- Normalizes names to match vimwiki convention: spaces, colons, dots, @ replaced with hyphens
+    -- Normalizes names to match wiki conventions: spaces, colons, dots, @ replaced with hyphens
     note_id_func = function(title)
       -- Use the title as the ID (filename without extension)
       -- If title is nil, generate a simple timestamp-based name

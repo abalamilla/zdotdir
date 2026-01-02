@@ -17,10 +17,18 @@ vim.api.nvim_clear_autocmds({ group = "lazyvim_wrap_spell" })
 
 -- create custom autocmd
 -- wrap and check for spell in text filetypes
-local spell_filetypes = { "text", "plaintex", "typst", "gitcommit", "markdown", "vimwiki" }
+local spell_filetypes = { "text", "plaintex", "typst", "gitcommit", "markdown" }
 vim.api.nvim_create_autocmd("FileType", {
   pattern = spell_filetypes,
   callback = function()
     vim.opt_local.spell = true
+  end,
+})
+
+-- Enable autoformat for wiki files
+vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
+  pattern = { vim.fn.expand("~") .. "/vimwiki/**/*.md" },
+  callback = function()
+    vim.b.autoformat = true
   end,
 })

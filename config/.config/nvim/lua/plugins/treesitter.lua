@@ -18,9 +18,6 @@ return {
     sync_install = false,
   },
   init = function()
-    -- Map vimwiki filetype to use markdown parser
-    vim.treesitter.language.register("markdown", "vimwiki")
-
     -- Enable treesitter folding globally for all file types
     vim.opt.foldmethod = "expr"
     vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
@@ -28,11 +25,10 @@ return {
     vim.opt.foldlevel = 99
     vim.opt.foldlevelstart = 99
 
-    -- Set up markdown/vimwiki keymaps
+    -- Set up markdown keymaps
     vim.api.nvim_create_autocmd("FileType", {
-      pattern = { "markdown", "vimwiki" },
+      pattern = { "markdown" },
       callback = function(ev)
-
         -- Set up markdown utility keymaps
         local md = require("utils.markdown")
 
@@ -49,7 +45,12 @@ return {
           md.indent_to_bullets(opts.line1, opts.line2)
         end, { range = true })
 
-        vim.keymap.set("x", "<leader>hb", ":IndentToBullets<CR>", { desc = "Convert indent to bullets", buffer = ev.buf })
+        vim.keymap.set(
+          "x",
+          "<leader>hb",
+          ":IndentToBullets<CR>",
+          { desc = "Convert indent to bullets", buffer = ev.buf }
+        )
       end,
     })
   end,
