@@ -11,7 +11,13 @@
 		<key>string</key>
 		<string></string>
 	</dict>
+	<key>showWithCtrl</key>
+	<false/>
+	<key>showWithFn</key>
+	<false/>
 	<key>showWithRightArrow</key>
 	<false/>
+	<key>showWithTab</key>
+	<true/>
 </dict>
 </plist>
