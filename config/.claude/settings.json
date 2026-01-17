@@ -58,7 +58,9 @@
       "Bash(aws cloudformation describe-stacks:*)",
       "Bash(aws cloudformation list-stacks:*)",
       "Bash(aws sts get-caller-identity:*)",
-      "Bash(awsenv:*)"
+      "Bash(awsenv:*)",
+      "Bash(~/.claude/scripts/fetch-my-jira-tickets.sh)",
+      "Bash(~/.claude/scripts/task-manager.sh:*)"
     ]
   },
   "env": {
