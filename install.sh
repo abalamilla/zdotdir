@@ -2,7 +2,117 @@
 
 set -e
 
-BRANCH_NAME=${1:-main}
+# Default values
+BRANCH_NAME="main"
+RUN_MODE="auto"  # auto, initial, update
+typeset -a COMPONENTS
+COMPONENTS=()
+SKIP_CONFIRMATION=false
+INTERACTIVE_COMPONENTS=false
+CURRENT_OPERATION=""
+
+# Cleanup function
+cleanup() {
+	local exit_code=$?
+
+	# Unset environment variables we may have set
+	unset HOMEBREW_NO_AUTO_UPDATE
+
+	if [[ $exit_code -ne 0 ]] && [[ -n "$CURRENT_OPERATION" ]]; then
+		echo ""
+		echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+		echo "  Installation interrupted during: $CURRENT_OPERATION"
+		echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+		echo ""
+		echo "You can resume by running:"
+		echo "  ./install.sh --component ${(j:,:)COMPONENTS}"
+		echo ""
+	fi
+}
+
+# Signal handlers
+handle_interrupt() {
+	echo ""
+	echo ""
+	echo "${Red}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${Color_Off}"
+	echo "${Red}  Installation cancelled by user${Color_Off}"
+	echo "${Red}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${Color_Off}"
+	echo ""
+
+	if [[ -n "$CURRENT_OPERATION" ]]; then
+		echo "Stopped during: $CURRENT_OPERATION"
+		echo ""
+		echo "To resume, run:"
+		echo "  ./install.sh --component ${(j:,:)COMPONENTS}"
+		echo ""
+	fi
+
+	cleanup
+	exit 130
+}
+
+# Set up traps
+trap cleanup EXIT
+trap handle_interrupt INT TERM
+
+# Parse command-line arguments
+while [[ $# -gt 0 ]]; do
+	case $1 in
+		--branch)
+			BRANCH_NAME="$2"
+			shift 2
+			;;
+		--mode)
+			RUN_MODE="$2"
+			shift 2
+			;;
+		--component)
+			# Support comma-separated values
+			IFS=',' read -rA comp_array <<< "$2"
+			COMPONENTS+=("${comp_array[@]}")
+			shift 2
+			;;
+		-i|--interactive)
+			INTERACTIVE_COMPONENTS=true
+			shift
+			;;
+		-y|--yes)
+			SKIP_CONFIRMATION=true
+			shift
+			;;
+		-h|--help)
+			echo "Usage: install.sh [OPTIONS]"
+			echo ""
+			echo "Options:"
+			echo "  --branch BRANCH        Git branch to use (default: main)"
+			echo "  --mode MODE           Run mode: auto|initial|update (default: auto)"
+			echo "  --component COMP      Component(s) to install/update (comma-separated or multiple flags)"
+			echo "                        Options: all, brew, plugins, asdf, config, macos"
+			echo "  -i, --interactive     Choose components interactively"
+			echo "  -y, --yes             Skip confirmation prompts"
+			echo "  -h, --help            Show this help message"
+			echo ""
+			echo "Examples:"
+			echo "  install.sh                                    # Interactive mode if no components specified"
+			echo "  install.sh --component all                    # Install/update all components"
+			echo "  install.sh --component brew,plugins           # Update Homebrew and plugins"
+			echo "  install.sh --component brew --component asdf  # Update Homebrew and ASDF"
+			echo "  install.sh -i                                 # Choose components interactively"
+			echo "  install.sh --mode update --component brew -y  # Quick brew update"
+			exit 0
+			;;
+		*)
+			echo "Unknown option: $1"
+			echo "Use --help for usage information"
+			exit 1
+			;;
+	esac
+done
+
+# If no components specified, enable interactive mode
+if [[ ${#COMPONENTS[@]} -eq 0 ]] && [[ "$INTERACTIVE_COMPONENTS" == false ]]; then
+	INTERACTIVE_COMPONENTS=true
+fi
 
 MY_ZDOTDIR=$HOME/zdotdir
 ZDOTDIR_PLUGINS="$MY_ZDOTDIR/plugins"
@@ -20,6 +130,95 @@ print_message() {
 		0) echo "${Green}${CHECK_MARK} Success: ${Color_Off} $MESSAGE";;
 		*) echo "${Red}${CROSS_MARK} Error: ${Color_Off} $MESSAGE";;
 	esac
+}
+
+detect_mode() {
+	# Auto-detect if this is initial setup or update
+	if [[ "$RUN_MODE" != "auto" ]]; then
+		echo "$RUN_MODE"
+		return
+	fi
+
+	# Check if homebrew exists in known locations
+	local brew_exists=false
+	if command -v brew &> /dev/null; then
+		brew_exists=true
+	elif [[ -x "/opt/homebrew/bin/brew" ]] || [[ -x "/usr/local/bin/brew" ]] || [[ -x "/home/linuxbrew/.linuxbrew/bin/brew" ]]; then
+		brew_exists=true
+	fi
+
+	# Check for indicators of existing installation
+	if [[ -d "$MY_ZDOTDIR" ]] && [[ -d "$MY_ZDOTDIR/.git" ]] && [[ "$brew_exists" == true ]]; then
+		echo "update"
+	else
+		echo "initial"
+	fi
+}
+
+should_run_component() {
+	# Check if a component should run based on COMPONENTS array
+	local component=$1
+
+	# Check if "all" is in the array
+	if (( ${COMPONENTS[(I)all]} )); then
+		return 0
+	fi
+
+	# Check if the specific component is in the array
+	if (( ${COMPONENTS[(I)$component]} )); then
+		return 0
+	fi
+
+	return 1
+}
+
+select_components() {
+	# Interactive component selection
+	echo ""
+	echo "Select components to install/update:"
+	echo ""
+	echo "  [1] All components"
+	echo "  [2] Homebrew packages (brew)"
+	echo "  [3] Zsh plugins"
+	echo "  [4] ASDF tools"
+	echo "  [5] Config files (stow)"
+	echo "  [6] macOS settings"
+	echo ""
+	echo "Enter numbers separated by spaces (e.g., '2 3 4'), or press Enter for all:"
+	read "selection?> "
+
+	if [[ -z "$selection" ]] || [[ "$selection" =~ "1" ]]; then
+		COMPONENTS=("all")
+		return
+	fi
+
+	# Map numbers to component names
+	typeset -A component_map
+	component_map[2]="brew"
+	component_map[3]="plugins"
+	component_map[4]="asdf"
+	component_map[5]="config"
+	component_map[6]="macos"
+
+	# Parse selection
+	for num in ${(s: :)selection}; do
+		if [[ -n "${component_map[$num]}" ]]; then
+			COMPONENTS+=("${component_map[$num]}")
+		fi
+	done
+
+	# If nothing valid selected, default to all
+	if [[ ${#COMPONENTS[@]} -eq 0 ]]; then
+		COMPONENTS=("all")
+	fi
+}
+
+is_initial_setup() {
+	[[ "$(detect_mode)" == "initial" ]]
+}
+
+is_update() {
+	[[ "$(detect_mode)" == "update" ]]
 }
 
 clone_repo() {
@@ -173,6 +372,105 @@ configure_docker_buildx() {
 	print_message "Finished configuring docker buildx" $?
 }
 
+update_brewfile() {
+	CURRENT_OPERATION="Homebrew package updates"
+	print_message "Updating Brewfile packages (this may take several minutes)" -1
+
+	# Check for outdated packages
+	local outdated_count=$(brew outdated --quiet 2>/dev/null | wc -l | tr -d ' ')
+	if [[ "$outdated_count" -gt 0 ]]; then
+		print_message "$outdated_count package(s) need updating" -1
+	fi
+
+	# Skip brew's auto-update for speed (it already ran once)
+	export HOMEBREW_NO_AUTO_UPDATE=1
+
+	# Install/update brewfile dependencies
+	# --no-upgrade: only install missing packages, faster and more reliable for updates
+	if brew bundle install --file=$MY_ZDOTDIR/Brewfile --no-upgrade; then
+		print_message "Brewfile update finished" 0
+	else
+		local exit_code=$?
+		print_message "Brewfile update completed with some failures" 1
+		echo ""
+		echo "Some packages may have failed to install (network issues, etc.)"
+		echo "You can retry with: ./install.sh --component brew"
+		echo "Or manually run: brew bundle install --file=$MY_ZDOTDIR/Brewfile"
+		echo ""
+	fi
+
+	CURRENT_OPERATION=""
+}
+
+update_python_venv() {
+	if [[ ! -d $MY_ZDOTDIR/.venv ]]; then
+		print_message "Python venv doesn't exist, creating..." -1
+		python -m venv $MY_ZDOTDIR/.venv
+		source $MY_ZDOTDIR/.venv/bin/activate
+		pip install -r $MY_ZDOTDIR/requirements.txt
+		print_message "Python venv created" $?
+	else
+		print_message "Updating python venv packages" -1
+		source $MY_ZDOTDIR/.venv/bin/activate
+		pip install --upgrade -r $MY_ZDOTDIR/requirements.txt
+		print_message "Python venv updated" $?
+	fi
+}
+
+update_stow_config() {
+	print_message "Updating stow configuration" -1
+
+	# Try to stow (will skip existing, error on conflicts)
+	local stow_output=$(stow config -t ~ 2>&1)
+	local stow_status=$?
+
+	if [[ $stow_status -ne 0 ]]; then
+		# Check if the error is about conflicts
+		if echo "$stow_output" | grep -q "existing target is not owned by stow"; then
+			print_message "Stow conflicts detected" 1
+			echo ""
+			echo "The following files/symlinks are blocking stow:"
+			echo ""
+
+			# Parse and display conflicts
+			local conflicts=$(echo "$stow_output" | grep "existing target is not owned by stow" | sed 's/.*: //')
+			while IFS= read -r conflict_path; do
+				[[ -z "$conflict_path" ]] && continue
+
+				local full_path="$HOME/$conflict_path"
+				if [[ -L "$full_path" ]]; then
+					local target=$(readlink "$full_path")
+					echo "  • $conflict_path (symlink -> $target)"
+				elif [[ -e "$full_path" ]]; then
+					echo "  • $conflict_path (file/directory)"
+				fi
+			done <<< "$conflicts"
+
+			echo ""
+			echo "To resolve these conflicts, you can:"
+			echo "  1. Back up any important files"
+			echo "  2. Remove the conflicting items:"
+			echo ""
+			while IFS= read -r conflict_path; do
+				[[ -z "$conflict_path" ]] && continue
+				echo "     rm ~/$conflict_path"
+			done <<< "$conflicts"
+			echo ""
+			echo "  3. Re-run: ./install.sh --component config"
+			echo ""
+
+			return 1
+		else
+			# Different error, show it
+			echo "$stow_output"
+			print_message "Stow configuration failed" 1
+			return 1
+		fi
+	else
+		print_message "Stow configuration updated" 0
+	fi
+}
+
 install_others() {
 	# symlink docker buildx
 	configure_docker_buildx
@@ -189,68 +487,43 @@ install_others() {
 	fi
 }
 
+add_asdf_plugin() {
+	local plugin=$1
+	if asdf plugin list | grep -q "^${plugin}$"; then
+		print_message "asdf plugin $plugin already exists" -2
+	else
+		print_message "Adding asdf plugin $plugin" -1
+		asdf plugin add "$plugin" 2>&1 || true
+	fi
+}
+
 config_asdf() {
+	CURRENT_OPERATION="ASDF tool installation"
 	print_message "Configuring asdf" -1
 
-  # asdf plugin list | awk '{print "asdf plugin add " $1 }'
-  asdf plugin add argocd
-  asdf plugin add aws-sam-cli
-  asdf plugin add awscli
-  asdf plugin add bun
-  asdf plugin add clj-kondo
-  asdf plugin add cljstyle
-  asdf plugin add colima
-  asdf plugin add coursier
-  asdf plugin add dive
-  asdf plugin add dotnet
-  asdf plugin add eza
-  asdf plugin add fd
-  asdf plugin add fzf
-  asdf plugin add git
-  asdf plugin add golang
-  asdf plugin add gradle
-  asdf plugin add helm
-  asdf plugin add imagemagick
-  asdf plugin add java
-  asdf plugin add jq
-  asdf plugin add julia
-  asdf plugin add k9s
-  asdf plugin add krew
-  asdf plugin add kubebuilder
-  asdf plugin add kubectl
-  asdf plugin add kubectx
-  asdf plugin add kubeseal
-  asdf plugin add kuttl
-  asdf plugin add lazygit
-  asdf plugin add leiningen
-  asdf plugin add lima
-  asdf plugin add markdownlint-cli2
-  asdf plugin add maven
-  asdf plugin add neovim
-  asdf plugin add nodejs
-  asdf plugin add python
-  asdf plugin add ripgrep
-  asdf plugin add rust
-  asdf plugin add rust-analyzer
-  asdf plugin add sbt
-  asdf plugin add scala
-  asdf plugin add shellcheck
-  asdf plugin add shfmt
-  asdf plugin add task
-  asdf plugin add terraform
-  asdf plugin add uv
-  asdf plugin add vault
-  asdf plugin add yarn
-  asdf plugin add yq
-  asdf plugin add zoxide
-
-	# install tools
-	asdf install
-
-	# load asdf
+	# Load asdf first to enable plugin commands
 	source "$(brew --prefix asdf)/libexec/asdf.sh"
 
+	# asdf plugin list | awk '{print "asdf plugin add " $1 }'
+	local plugins=(
+		argocd aws-sam-cli awscli bun clj-kondo cljstyle colima coursier
+		dive dotnet eza fd fzf git golang gradle helm imagemagick java jq
+		julia k9s krew kubebuilder kubectl kubectx kubeseal kuttl lazygit
+		leiningen lima markdownlint-cli2 maven neovim nodejs python ripgrep
+		rust rust-analyzer sbt scala shellcheck shfmt task terraform uv
+		vault yarn yq zoxide
+	)
+
+	for plugin in "${plugins[@]}"; do
+		add_asdf_plugin "$plugin"
+	done
+
+	# install tools
+	print_message "Installing asdf tools from .tool-versions" -1
+	asdf install
+
 	print_message "Finished configuring asdf" $?
+	CURRENT_OPERATION=""
 }
 
 install_asdf() {
@@ -279,31 +552,157 @@ configure_macos() {
   defaults write com.apple.spaces spans-displays -bool true && killall SystemUIServer
 }
 
-# init
-() {
-	print_message "Starting installation" -1
+run_initial_setup() {
+	print_message "Starting INITIAL SETUP" -1
+	echo ""
 
-	# clone my zdotdir repository
-	clone_repo abalamilla/zdotdir $HOME
+	# Clone zdotdir repository
+	if should_run_component "all"; then
+		clone_repo abalamilla/zdotdir $HOME
+	fi
 
-	# setup initial configuration
-	init_config
+	# Setup initial configuration (homebrew + scripts)
+	if should_run_component "all"; then
+		init_config
+	fi
 
-	# clone plugins and themes
-	clone_repos
+	# Clone plugins and themes
+	if should_run_component "plugins" || should_run_component "all"; then
+		clone_repos
+	fi
 
-	# install brewfile
-	install_brewfile
+	# Install brewfile
+	if should_run_component "brew" || should_run_component "all"; then
+		install_brewfile
+	fi
 
-	stow config -t ~
+	# Stow configuration files
+	if should_run_component "config" || should_run_component "all"; then
+		stow config -t ~
+	fi
 
-  configure_macos
+	# Configure macOS settings
+	if should_run_component "macos" || should_run_component "all"; then
+		if [[ "$OSTYPE" == "darwin"* ]]; then
+			configure_macos
+		else
+			print_message "Skipping macOS configuration (not on macOS)" -2
+		fi
+	fi
 
-	# install and configure asdf
-	install_asdf
+	# Install and configure asdf
+	if should_run_component "asdf" || should_run_component "all"; then
+		install_asdf
+	fi
 
-	install_apps
-	install_others
+	# Install other apps and configurations
+	if should_run_component "all"; then
+		install_apps
+		install_others
+	fi
 
+	echo ""
 	print_message "Finish! Enjoy your new environment."
+}
+
+run_update() {
+	print_message "Starting UPDATE" -1
+	echo ""
+
+	# Update zdotdir repository
+	if should_run_component "all"; then
+		clone_repo abalamilla/zdotdir $HOME
+		load_homebrew
+		load_scripts
+	fi
+
+	# Update plugins
+	if should_run_component "plugins" || should_run_component "all"; then
+		clone_repos
+	fi
+
+	# Update brewfile packages
+	if should_run_component "brew" || should_run_component "all"; then
+		update_brewfile
+	fi
+
+	# Update stow configuration
+	if should_run_component "config" || should_run_component "all"; then
+		update_stow_config
+	fi
+
+	# Re-configure macOS settings (idempotent)
+	if should_run_component "macos" || should_run_component "all"; then
+		if [[ "$OSTYPE" == "darwin"* ]]; then
+			configure_macos
+		else
+			print_message "Skipping macOS configuration (not on macOS)" -2
+		fi
+	fi
+
+	# Update asdf and tools
+	if should_run_component "asdf" || should_run_component "all"; then
+		config_asdf
+	fi
+
+	# Update other components
+	if should_run_component "all"; then
+		configure_docker_buildx
+		update_python_venv
+	fi
+
+	echo ""
+	print_message "Update complete!"
+}
+
+show_run_info() {
+	local mode=$(detect_mode)
+
+	# Show interactive component selection if needed
+	if [[ "$INTERACTIVE_COMPONENTS" == true ]]; then
+		select_components
+	fi
+
+	# Format components for display
+	local components_display
+	if (( ${COMPONENTS[(I)all]} )); then
+		components_display="all"
+	else
+		components_display="${(j:, :)COMPONENTS}"
+	fi
+
+	echo ""
+	echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+	echo "  zdotdir Setup & Configuration"
+	echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+	echo ""
+	echo "  Mode:       $mode"
+	echo "  Components: $components_display"
+	echo "  Branch:     $BRANCH_NAME"
+	echo ""
+	echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+	echo ""
+
+	if [[ "$SKIP_CONFIRMATION" == false ]]; then
+		read "response?Continue? [Y/n] "
+		if [[ "$response" =~ ^[Nn]$ ]]; then
+			echo "Aborted."
+			exit 0
+		fi
+	fi
+}
+
+# Main execution
+() {
+	local mode=$(detect_mode)
+
+	# Show run information
+	show_run_info
+
+	# Execute based on mode
+	if [[ "$mode" == "initial" ]]; then
+		run_initial_setup
+	else
+		run_update
+	fi
 }

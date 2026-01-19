@@ -1,162 +1,416 @@
-# Zsh configuration - zdotdir
+# zdotdir - Personal Zsh Development Environment
 
-## Introduction
+A comprehensive, modular development environment configuration for Zsh with
+modern tooling, automated setup, and extensive customizations.
 
-This is my personalized configuration settings, themes, plugins and other
-customizations for Zsh shell.
+## Features
 
-## Installing
+- **Intelligent Installation**: Auto-detects initial setup vs. updates, with
+  component-based installation
+- **Modern Shell Experience**: Zsh with oh-my-posh prompt, interactive
+  completions, and powerful plugins
+- **Unified Tool Management**: ASDF for language runtimes, Homebrew for packages
+- **Dotfile Management**: GNU Stow for symlink management
+- **Application Configs**: Pre-configured Neovim, Kitty, Tmux, AeroSpace, and
+  more
+- **Cloud-Native Tooling**: Kubernetes, AWS, Docker tools pre-installed
+- **Idempotent Operations**: Safe to run multiple times without errors
 
-To install just run the following command:
+## Quick Start
 
-```zsh
+### Fresh Installation
+
+```bash
 curl -s https://raw.githubusercontent.com/abalamilla/zdotdir/main/install.sh | zsh
 ```
 
-The installation process will:
+This will:
 
-- Clone this repo into `$HOME/.config/zdotdir`
-- Clone these [Zsh Plugins](#zsh-plugins)
-- Clone these [Vim Plugins](#vim-plugins)
+1. Clone the repository to `~/zdotdir`
+2. Install Homebrew (if not present)
+3. Install all packages from Brewfile
+4. Clone Zsh plugins
+5. Symlink configuration files to `~/.config/` and `~/`
+6. Configure ASDF and install all tools from `.tool-versions`
+7. Set up Python virtual environment
+8. Configure macOS settings (if on macOS)
+
+### Update Existing Installation
+
+```bash
+cd ~/zdotdir
+./install.sh
+```
+
+The script auto-detects update mode and runs faster by skipping unnecessary
+steps.
+
+## Installation Options
+
+The `install.sh` script supports flexible installation modes:
+
+```bash
+# Show help
+./install.sh --help
+
+# Update only specific components
+./install.sh --component brew           # Update Homebrew packages only
+./install.sh --component plugins        # Update Zsh plugins only
+./install.sh --component asdf           # Update ASDF tools only
+./install.sh --component config         # Refresh config symlinks only
+./install.sh --component macos          # Reconfigure macOS settings only
+
+# Force initial setup mode
+./install.sh --mode initial
+
+# Update from specific branch
+./install.sh --branch feature-branch
+
+# Skip confirmation prompt
+./install.sh -y
+```
+
+## Repository Structure
+
+```text
+zdotdir/
+├── config/                 # Dotfiles (symlinked via Stow)
+│   ├── .config/           # XDG config directory
+│   │   ├── nvim/         # Neovim configuration (Lazy.nvim)
+│   │   ├── kitty/        # Kitty terminal config
+│   │   ├── tmux/         # Tmux configuration
+│   │   ├── aerospace/    # AeroSpace window manager
+│   │   ├── oh-my-posh/   # Shell prompt theme
+│   │   ├── lazygit/      # Git TUI config
+│   │   ├── yazi/         # File manager config
+│   │   └── k9s/          # Kubernetes TUI config
+│   ├── .claude/          # Claude Code integration
+│   ├── .zshrc            # Main Zsh configuration
+│   └── .zshenv           # Environment variables
+├── env/
+│   ├── autoload_functions.sh  # Function autoloader
+│   ├── config/           # Shell configuration modules
+│   │   ├── aliases.sh    # Shell aliases
+│   │   ├── load_zsh_plugins.sh  # Plugin loader
+│   │   └── options.sh    # Zsh options
+│   └── functions/        # Custom functions (auto-loaded)
+├── plugins/              # Zsh plugins (cloned externally)
+├── utils/
+│   ├── colors.sh         # Color definitions
+│   └── functions/        # Utility functions
+├── zstyles/              # Zsh style configurations
+├── Brewfile              # Homebrew package definitions
+├── .tool-versions        # ASDF tool versions
+├── requirements.txt      # Python packages
+└── install.sh            # Installation script
+```
+
+## Configuration Architecture
+
+### Boot Sequence
+
+1. **`.zshenv`** - Sets environment variables and core paths
+2. **`.zshrc`** - Loads configuration modules and initializes prompt
+3. **Autoloading** - Registers functions from `utils/functions/` and
+   `env/functions/`
+
+All configuration files in `config/` are symlinked to your home directory using
+GNU Stow:
+
+```bash
+stow config -t ~
+```
+
+### Function System
+
+Functions are automatically discovered and loaded from:
+
+- `utils/functions/` - Utility functions
+- `env/functions/` - Shell functions (awsenv, eksctx, gcl, yy, etc.)
 
 ## Zsh Plugins
 
-These are my plugins selection to customize Zsh shell
+- **[fzf-tab](https://github.com/Aloxaf/fzf-tab)** - Interactive TAB completion
+  with fuzzy finding
+- **[zsh-autosuggestions](https://github.com/zsh-users/zsh-autosuggestions)** -
+Command suggestions from history
+<!-- markdownlint-disable-next-line MD013 -->
+- **[zsh-history-substring-search](https://github.com/zsh-users/zsh-history-substring-search)** -
+  Substring history search
+- **[zsh-completions](https://github.com/zsh-users/zsh-completions)** -
+Additional completion definitions
+<!-- markdownlint-disable-next-line MD013 -->
+- **[zsh-syntax-highlighting](https://github.com/zsh-users/zsh-syntax-highlighting)** -
+  Real-time syntax highlighting
 
-### fzf-tab
+## Application Configurations
 
-This plugin shows you a completion list on tab press, the list shows commands,
-directories, environment variables and more, depending on the context, it uses
-fzf to show an interactive list.
+### Neovim
 
-You can find more in [fzf-tab](https://github.com/Aloxaf/fzf-tab) repo.
+Modern Neovim setup with [Lazy.nvim](https://github.com/folke/lazy.nvim) plugin
+manager.
 
-### zsh-autosuggestions
+**Key plugins**: LSP, Tree-sitter, Telescope, Git integration, DAP debugging,
+Claude Code integration, Obsidian notes
 
-Completion tool that suggest commands based on your history.
+**Location**: `config/.config/nvim/`
 
-You can find more in
-[zsh-autosuggestions](https://github.com/zsh-users/zsh-autosuggestions?tab=readme-ov-file#configuration)
-repo.
+### Kitty Terminal
 
-### zsh-history-substring-search
+GPU-accelerated terminal with image preview support and Nerd Font rendering.
 
-Search for a substring into history to execute it again
+**Location**: `config/.config/kitty/kitty.conf`
 
-You can find more in
-[zsh-history-substring-search](https://github.com/zsh-users/zsh-history-substring-search)
-repo.
+### Tmux
 
-### zsh-completions
+Terminal multiplexer with plugins via TPM:
 
-By default Zsh already have some completions, but for those that are still
-missing `zsh-completions` is the chosen one
+- tmux-sensible
+- tmux.nvim (Neovim integration)
+- rose-pine theme
+- tmux-fzf
 
-You can find more in
-[zsh-completions](https://github.com/zsh-users/zsh-completions) repo.
+**Location**: `config/.config/tmux/tmux.conf`
 
-### zsh-syntax-highlighting
+### AeroSpace Window Manager
 
-Highlights commands whilst they are typed, helpful to identify if the current
-command syntax is well formed before running
+Tiling window manager for macOS with i3-like keybindings.
 
-You can find more in
-[zsh-syntax-highlighting](https://github.com/zsh-users/zsh-syntax-highlighting)
-repo.
+**Key features**:
 
-## Vim Plugins
+- Workspace-based navigation (Alt+hjkl)
+- Auto-assignment of apps to workspaces
+- Multi-monitor support
 
-### vim-polyglot
+**Location**: `config/.config/aerospace/aerospace.toml`
 
-Syntax highlighter for extra file types that are not included within vim itself
+### oh-my-posh Prompt
 
-You can find more in
-[sheerun/vim-polyglot](https://github.com/sheerun/vim-polyglot) repo.
+Custom shell prompt with segments for:
 
-### fzf
+- Git status
+- Kubernetes context
+- AWS profile
+- Programming language versions
+- Execution time
 
-Wrapper for fzf that is an utility for interactive searches, it offers a fast
-processing speed, approximate searches, file content preview, and much more
+**Location**: `config/.config/oh-my-posh/ab.omp.toml`
 
-You can find more in [fzf](https://github.com/junegunn/fzf) repo.
+## Tool Management
 
-### fzf.vim
+### ASDF
 
-fzf vim plugin with multiple predefined commands and mappings like:
+Version manager for multiple languages and tools. All versions are defined in
+`.tool-versions`:
 
-- `:GFiles` to filter files inside a git repository
-- `:Files` to search accross any path in the filesystem
-- `:Buffers` to search in current buffer list
+**Languages**: Go, Node.js, Python, Rust, Java, Scala, Julia **Cloud Tools**:
+kubectl, helm, k9s, argocd, awscli **Development**: terraform, neovim, lazygit,
+fzf, ripgrep
 
-You can find more in [junegunn/fzf.vim](https://github.com/junegunn/fzf.vim)
-repo.
+```bash
+# Install all tools
+asdf install
 
-### vim-gutentags
+# Add a new plugin
+asdf plugin add <name>
 
-This plugin manage tags files for vim, useful to navigate code within vim
+# List installed versions
+asdf list
+```
 
-You can find more in
-[ludovicchabant/vim-gutentags](https://github.com/ludovicchabant/vim-gutentags)
-repo.
+### Homebrew
 
-### vim-autoformat
+Package manager for macOS/Linux. Packages defined in `Brewfile`:
 
-Formats code manually or automatically on save
+```bash
+# Install/update packages
+brew bundle install --file=./Brewfile
 
-You can find more in
-[vim-autoformat/vim-autoformat](https://github.com/vim-autoformat/vim-autoformat)
-repo.
+# Update Brewfile with current packages
+brew bundle dump --force
+```
 
-### vader.vim
+## Customization
 
-Run VimScript tests
+### Adding Aliases
 
-You can find more in [junegunn/vader.vim](https://github.com/junegunn/vader.vim)
-repo.
+Edit `env/config/aliases.sh`:
 
-### julia-vim
+```bash
+alias myalias='command'
+```
 
-Julia support for Vim
+Reload: `source ~/.zshrc`
 
-You can find more in
-[JuliaEditorSupport/julia-vim](https://github.com/JuliaEditorSupport/julia-vim)
-repo.
+### Adding Functions
 
-### vim-airline
+Create a file in `env/functions/<function-name>`:
 
-Status tabline for Vim
+```zsh
+#!/usr/bin/env zsh
+function_name() {
+  # Your code here
+}
+```
 
-You can find more in
-[vim-airline/vim-airline](https://github.com/vim-airline/vim-airline) repo.
+The function is auto-loaded on next shell startup.
 
-### vim-airline-themes
+### Adding Zsh Options
 
-Vim airline themes
+Edit `env/config/options.sh`:
 
-You can find more in
-[vim-airline/vim-airline-themes](https://github.com/vim-airline/vim-airline-themes)
-repo.
+```bash
+setopt AUTO_CD
+```
 
-### copilot.vim
+### Modifying Zsh Plugins
 
-GitHub Copilot vim integration
+Plugins are git repositories in `plugins/`. Update with:
 
-You can find more in [github/copilot.vim](https://github.com/github/copilot.vim)
-repo.
+```bash
+git -C plugins/<plugin-name> pull
+```
 
-### vim-fugitive
+## Development Workflow
 
-Git Vim integration, allows you to run Git commands within Vim
+### Testing Configuration Changes
 
-You can find more in [tpope/vim-fugitive](https://github.com/tpope/vim-fugitive)
-repo.
+```bash
+# Enable debug profiling
+export ZDOTFILES_DEBUG=1
+source ~/.zshrc
 
-### markdown-preview.nvim
+# Test specific function
+autoload -Uz function_name
+function_name args
+```
 
-Live preview Markdown changes in your web explorer
+### Managing Brewfile
 
-You can find more in
-[iamcco/markdown-preview.nvim](https://github.com/iamcco/markdown-preview.nvim)
-repo.
+```bash
+# Add packages to Brewfile manually or via:
+brew bundle dump --force
 
-## Zsh themes
+# Install new packages
+brew bundle install
+```
+
+### Updating ASDF Tools
+
+```bash
+# Update plugin versions in .tool-versions
+asdf install
+```
+
+## Key Environment Variables
+
+```bash
+MY_CONFIG_PATH         # ~/zdotdir
+ASDF_CONFIG_FILE       # ~/.asdfrc
+K9S_CONFIG_DIR         # ~/.config/k9s
+LG_CONFIG_FILE         # ~/.config/lazygit/config.yml
+EDITOR                 # nvim
+DOCKER_BUILDKIT        # 1
+```
+
+## Claude Code Integration
+
+This repository includes Claude Code configuration:
+
+- Custom scripts in `config/.claude/scripts/`
+- Task management system
+- Jira ticket fetching
+- Rich status line with context information
+
+## macOS-Specific Features
+
+### AeroSpace
+
+Tiling window manager with automatic app workspace assignment.
+
+### Karabiner Elements
+
+Key remapping:
+
+- Caps Lock → Hyper Key (Cmd+Ctrl+Opt+Shift)
+- External keyboard priority
+
+### Hammerspoon
+
+Lua-based automation (config in `config/.config/hammerspoon/`)
+
+## Updating
+
+### Update Everything
+
+```bash
+cd ~/zdotdir
+./install.sh
+```
+
+### Update Specific Components
+
+```bash
+# Update Homebrew packages
+./install.sh --component brew -y
+
+# Update Zsh plugins
+./install.sh --component plugins -y
+
+# Update ASDF tools
+./install.sh --component asdf -y
+
+# Refresh config symlinks
+./install.sh --component config -y
+```
+
+## Troubleshooting
+
+### Stow Conflicts
+
+If stow reports conflicts:
+
+```bash
+# Remove existing files/symlinks first
+stow -D config -t ~  # Unstow
+stow config -t ~     # Restow
+```
+
+### ASDF Plugin Errors
+
+If plugin installation fails:
+
+```bash
+# Remove and re-add plugin
+asdf plugin remove <plugin>
+asdf plugin add <plugin>
+asdf install
+```
+
+### Homebrew Issues
+
+```bash
+# Fix brew doctor issues
+brew doctor
+
+# Update Homebrew itself
+brew update
+```
+
+## Contributing
+
+This is a personal configuration repository, but feel free to fork and adapt for
+your own use.
+
+## License
+
+Personal configuration - use at your own discretion.
+
+## Resources
+
+- [Zsh Documentation](https://zsh.sourceforge.io/Doc/)
+- [oh-my-posh Themes](https://ohmyposh.dev/docs/themes)
+- [ASDF Plugins](https://github.com/asdf-vm/asdf-plugins)
+- [Homebrew Formulae](https://formulae.brew.sh/)
+- [Neovim Documentation](https://neovim.io/doc/)
+- [AeroSpace Guide](https://nikitabobko.github.io/AeroSpace/guide)
