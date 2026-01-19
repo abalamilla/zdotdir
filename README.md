@@ -102,7 +102,8 @@ zdotdir/
 ├── Brewfile              # Homebrew package definitions
 ├── .tool-versions        # ASDF tool versions
 ├── requirements.txt      # Python packages
-└── install.sh            # Installation script
+├── install.sh            # Installation script
+└── uninstall.sh          # Uninstallation script
 ```
 
 ## Configuration Architecture
@@ -362,6 +363,63 @@ cd ~/zdotdir
 
 # Refresh config symlinks
 ./install.sh --component config -y
+```
+
+## Uninstalling
+
+The `uninstall.sh` script provides safe, component-based uninstallation with
+error handling and confirmation prompts.
+
+### Uninstall Options
+
+```bash
+# Show help
+./uninstall.sh --help
+
+# Interactive component selection
+./uninstall.sh -i
+
+# Uninstall all components (with confirmation)
+./uninstall.sh --component all
+
+# Uninstall specific components
+./uninstall.sh --component brew           # Remove Homebrew packages from Brewfile
+./uninstall.sh --component plugins        # Remove Zsh plugins directory
+./uninstall.sh --component asdf           # Remove ASDF and all tools
+./uninstall.sh --component config         # Unstow config files
+./uninstall.sh --component nvim           # Remove Neovim files
+./uninstall.sh --component venv           # Remove Python virtual environment
+
+# Skip confirmation prompt
+./uninstall.sh -y --component all
+
+# Uninstall multiple components
+./uninstall.sh --component nvim,venv,plugins
+```
+
+### Safety Features
+
+- **Confirmation Prompt**: Shows exactly what will be removed before proceeding
+- **Component-Based**: Uninstall only what you need to remove
+- **Trap Handlers**: Graceful cleanup on interruption (Ctrl+C)
+- **Resume Support**: Suggests commands to resume if interrupted
+- **Smart Detection**: Checks if components exist before attempting removal
+- **Error Handling**: Continues on individual failures, reports issues clearly
+
+### What Gets Removed
+
+- **brew**: Only packages listed in Brewfile (not Homebrew itself)
+- **plugins**: `./plugins` and `./themes` directories
+- **asdf**: Entire `~/.asdf` directory with all tools
+- **config**: Unstows config files from `$HOME`
+- **nvim**: `~/.config/nvim`, `~/.local/share/nvim`, `~/.cache/nvim`
+- **venv**: `./.venv` Python virtual environment
+
+**Note**: The uninstall script preserves Homebrew itself. To completely remove
+Homebrew, run:
+
+```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/uninstall.sh)"
 ```
 
 ## Troubleshooting

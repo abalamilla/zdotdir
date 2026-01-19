@@ -103,6 +103,55 @@ mode by checking for:
 - Verifies ASDF plugin installations
 - Provides context-aware error messages for each operation
 
+### Uninstallation Script Features
+
+The `uninstall.sh` script provides safe, component-based uninstallation with
+enterprise-grade error handling:
+
+**Component-Based Uninstallation**: Supports selective removal of components:
+
+```bash
+# Interactive component selection
+./uninstall.sh -i
+
+# Uninstall specific components
+./uninstall.sh --component brew           # Homebrew packages from Brewfile
+./uninstall.sh --component plugins        # Zsh plugins directory
+./uninstall.sh --component asdf           # ASDF and all tools
+./uninstall.sh --component config         # Config files (unstow)
+./uninstall.sh --component nvim           # Neovim files
+./uninstall.sh --component venv           # Python virtual environment
+
+# Uninstall all components
+./uninstall.sh --component all
+
+# Skip confirmation prompt
+./uninstall.sh -y --component all
+```
+
+**Safety Features**:
+
+- Trap handlers for graceful interruption (INT, TERM, EXIT signals)
+- Suggests resume commands if interrupted mid-operation
+- Confirmation prompt showing exactly what will be removed
+- Safe component removal - checks existence before attempting removal
+- Continues on individual failures with clear warnings
+- Idempotent operations - safe to run multiple times
+
+**Smart Homebrew Removal**:
+
+- Reads Brewfile to determine exact packages to remove
+- Removes packages individually (formulas and casks separately)
+- Continues on failure instead of aborting entire operation
+- Preserves Homebrew itself with instructions for manual removal
+
+**Error Handling**:
+
+- Validates stow operations with detailed error messages
+- Checks for command availability (brew, stow) before use
+- Provides helpful messages when components are missing
+- Tracks CURRENT_OPERATION for interrupt recovery
+
 ## Configuration Architecture
 
 ### Boot Sequence
@@ -143,7 +192,8 @@ zdotdir/
 │   └── functions/      # Utility functions (auto-loaded)
 ├── zstyles/            # Zsh style configurations
 ├── Brewfile            # Homebrew package definitions
-└── install.sh          # Complete installation script
+├── install.sh          # Complete installation script
+└── uninstall.sh        # Complete uninstallation script
 ```
 
 ### Configuration Modules

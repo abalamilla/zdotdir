@@ -1,35 +1,389 @@
-#!/usr/bin/env bash
+#!/usr/bin/env zsh
 
-# remove python venv
-echo "Removing python venv"
-rm -rf ./.venv
+set -e
 
-# remove asdf packages and plugins
-echo "Removing asdf packages and plugins"
-rm -rf ~/.asdf
+# Default values
+typeset -a COMPONENTS
+COMPONENTS=()
+SKIP_CONFIRMATION=false
+INTERACTIVE_COMPONENTS=false
+CURRENT_OPERATION=""
+SCRIPT_DIR="${0:a:h}"
 
-# unstow dotfiles
-echo "Unstowing dotfiles"
-stow -D config
+# Source colors
+source "${SCRIPT_DIR}/utils/colors.sh"
 
-# uninstall brew packages
-echo "Removing brew packages"
-brew remove --force "$(brew list --formula)"
-brew remove --force "$(brew list)"
+# Cleanup function
+cleanup() {
+	local exit_code=$?
 
-# remove nvim folders
-echo "Removing nvim files"
-rm -rf ~/.config/nvim
-rm -rf ~/.local/share/nvim
-rm -rf ~/.cache/nvim
+	if [[ $exit_code -ne 0 ]] && [[ -n "$CURRENT_OPERATION" ]]; then
+		echo ""
+		echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+		echo "  Uninstall interrupted during: $CURRENT_OPERATION"
+		echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+		echo ""
+		echo "You can resume by running:"
+		echo "  ./uninstall.sh --component ${(j:,:)COMPONENTS}"
+		echo ""
+	fi
+}
 
-# remove zsh plugins
-echo "Removing zsh plugins"
-rm -rf ./plugins
+# Signal handlers
+handle_interrupt() {
+	echo ""
+	echo ""
+	echo "${Red}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${Color_Off}"
+	echo "${Red}  Uninstall cancelled by user${Color_Off}"
+	echo "${Red}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${Color_Off}"
+	echo ""
 
-# remove zsh theme
-echo "Removing zsh themes"
-rm -rf ./themes
+	if [[ -n "$CURRENT_OPERATION" ]]; then
+		echo "Stopped during: $CURRENT_OPERATION"
+		echo ""
+		echo "To resume, run:"
+		echo "  ./uninstall.sh --component ${(j:,:)COMPONENTS}"
+		echo ""
+	fi
 
-echo "Uninstall completed"
-echo "Reload environment"
+	cleanup
+	exit 130
+}
+
+# Set up traps
+trap cleanup EXIT
+trap handle_interrupt INT TERM
+
+# Helper functions
+print_header() {
+	echo ""
+	echo "${BBlue}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${Color_Off}"
+	echo "${BBlue}  $1${Color_Off}"
+	echo "${BBlue}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${Color_Off}"
+	echo ""
+}
+
+print_success() {
+	echo "${Green}${CHECK_MARK} $1${Color_Off}"
+}
+
+print_error() {
+	echo "${Red}${CROSS_MARK} $1${Color_Off}"
+}
+
+print_warning() {
+	echo "${Yellow}⚠️  $1${Color_Off}"
+}
+
+print_info() {
+	echo "${Cyan}ℹ️  $1${Color_Off}"
+}
+
+# Parse command-line arguments
+while [[ $# -gt 0 ]]; do
+	case $1 in
+		--component)
+			# Support comma-separated values
+			IFS=',' read -rA comp_array <<< "$2"
+			COMPONENTS+=("${comp_array[@]}")
+			shift 2
+			;;
+		-i|--interactive)
+			INTERACTIVE_COMPONENTS=true
+			shift
+			;;
+		-y|--yes)
+			SKIP_CONFIRMATION=true
+			shift
+			;;
+		-h|--help)
+			echo "Usage: uninstall.sh [OPTIONS]"
+			echo ""
+			echo "Options:"
+			echo "  --component COMP      Component(s) to uninstall (comma-separated or multiple flags)"
+			echo "                        Options: all, brew, plugins, asdf, config, nvim, venv"
+			echo "  -i, --interactive     Choose components interactively"
+			echo "  -y, --yes             Skip confirmation prompts"
+			echo "  -h, --help            Show this help message"
+			echo ""
+			echo "Examples:"
+			echo "  uninstall.sh                                    # Interactive mode"
+			echo "  uninstall.sh --component all                    # Uninstall all components"
+			echo "  uninstall.sh --component brew,plugins           # Uninstall Homebrew and plugins"
+			echo "  uninstall.sh --component nvim --component config # Uninstall Neovim and config"
+			echo "  uninstall.sh -i                                 # Choose components interactively"
+			echo "  uninstall.sh -y --component all                 # Uninstall all without confirmation"
+			exit 0
+			;;
+		*)
+			echo "${Red}Unknown option: $1${Color_Off}"
+			echo "Run './uninstall.sh --help' for usage information"
+			exit 1
+			;;
+	esac
+done
+
+# Interactive component selection
+if [[ $INTERACTIVE_COMPONENTS == true ]]; then
+	print_header "Select Components to Uninstall"
+	echo "Choose which components to uninstall:"
+	echo ""
+	echo "  1) All components"
+	echo "  2) Homebrew packages (from Brewfile)"
+	echo "  3) Zsh plugins"
+	echo "  4) ASDF and tools"
+	echo "  5) Config files (unstow)"
+	echo "  6) Neovim files"
+	echo "  7) Python venv"
+	echo ""
+	echo -n "Enter numbers (space-separated, e.g., '2 3 6'): "
+	read -r selections
+
+	for sel in ${(s: :)selections}; do
+		case $sel in
+			1) COMPONENTS=(all) ; break ;;
+			2) COMPONENTS+=(brew) ;;
+			3) COMPONENTS+=(plugins) ;;
+			4) COMPONENTS+=(asdf) ;;
+			5) COMPONENTS+=(config) ;;
+			6) COMPONENTS+=(nvim) ;;
+			7) COMPONENTS+=(venv) ;;
+			*)
+				print_error "Invalid selection: $sel"
+				exit 1
+				;;
+		esac
+	done
+fi
+
+# Default to interactive if no components specified
+if [[ ${#COMPONENTS[@]} -eq 0 ]]; then
+	print_warning "No components specified. Use -i for interactive mode or --help for usage."
+	exit 1
+fi
+
+# Expand "all" component
+if [[ " ${COMPONENTS[@]} " =~ " all " ]]; then
+	COMPONENTS=(brew plugins asdf config nvim venv)
+fi
+
+# Show what will be uninstalled
+print_header "Uninstall Plan"
+echo "The following components will be uninstalled:"
+echo ""
+for comp in "${COMPONENTS[@]}"; do
+	case $comp in
+		brew)
+			echo "  ${Red}•${Color_Off} Homebrew packages (from Brewfile)"
+			;;
+		plugins)
+			echo "  ${Red}•${Color_Off} Zsh plugins (./plugins directory)"
+			;;
+		asdf)
+			echo "  ${Red}•${Color_Off} ASDF and all installed tools (~/.asdf)"
+			;;
+		config)
+			echo "  ${Red}•${Color_Off} Config files (unstow from $HOME)"
+			;;
+		nvim)
+			echo "  ${Red}•${Color_Off} Neovim files (~/.config/nvim, ~/.local/share/nvim, ~/.cache/nvim)"
+			;;
+		venv)
+			echo "  ${Red}•${Color_Off} Python virtual environment (./.venv)"
+			;;
+		*)
+			print_error "Unknown component: $comp"
+			exit 1
+			;;
+	esac
+done
+echo ""
+
+# Confirmation prompt
+if [[ $SKIP_CONFIRMATION == false ]]; then
+	echo "${BRed}WARNING: This operation cannot be easily undone!${Color_Off}"
+	echo ""
+	echo -n "Are you sure you want to continue? [y/N]: "
+	read -r confirmation
+	if [[ ! "$confirmation" =~ ^[Yy]$ ]]; then
+		print_info "Uninstall cancelled."
+		exit 0
+	fi
+	echo ""
+fi
+
+# Component uninstall functions
+uninstall_venv() {
+	CURRENT_OPERATION="Removing Python venv"
+	print_header "$CURRENT_OPERATION"
+
+	if [[ -d "./.venv" ]]; then
+		rm -rf ./.venv
+		print_success "Python venv removed"
+	else
+		print_info "Python venv not found, skipping"
+	fi
+}
+
+uninstall_asdf() {
+	CURRENT_OPERATION="Removing ASDF and tools"
+	print_header "$CURRENT_OPERATION"
+
+	if [[ -d "$HOME/.asdf" ]]; then
+		rm -rf "$HOME/.asdf"
+		print_success "ASDF and all tools removed"
+	else
+		print_info "ASDF not found, skipping"
+	fi
+}
+
+uninstall_config() {
+	CURRENT_OPERATION="Unstowing config files"
+	print_header "$CURRENT_OPERATION"
+
+	if [[ -d "./config" ]]; then
+		if command -v stow &> /dev/null; then
+			if stow -D config -t ~ 2>&1; then
+				print_success "Config files unstowed"
+			else
+				print_error "Failed to unstow config files"
+				print_info "You may need to manually remove symlinks from $HOME"
+			fi
+		else
+			print_error "GNU Stow not found, cannot unstow config files"
+			print_info "You may need to manually remove symlinks from $HOME"
+		fi
+	else
+		print_info "Config directory not found, skipping"
+	fi
+}
+
+uninstall_brew() {
+	CURRENT_OPERATION="Removing Homebrew packages"
+	print_header "$CURRENT_OPERATION"
+
+	if ! command -v brew &> /dev/null; then
+		print_info "Homebrew not found, skipping"
+		return
+	fi
+
+	if [[ ! -f "./Brewfile" ]]; then
+		print_warning "Brewfile not found, cannot determine packages to remove"
+		return
+	fi
+
+	print_info "Reading Brewfile to determine packages..."
+
+	# Extract formulas from Brewfile
+	local formulas=(${(f)"$(grep '^brew ' ./Brewfile | sed 's/^brew "\(.*\)"$/\1/' | sed "s/^brew '\(.*\)'$/\1/")"})
+
+	# Extract casks from Brewfile
+	local casks=(${(f)"$(grep '^cask ' ./Brewfile | sed 's/^cask "\(.*\)"$/\1/' | sed "s/^cask '\(.*\)'$/\1/")"})
+
+	# Remove formulas
+	if [[ ${#formulas[@]} -gt 0 ]]; then
+		print_info "Removing ${#formulas[@]} Homebrew formulas..."
+		for formula in "${formulas[@]}"; do
+			if brew list --formula | grep -q "^${formula}$"; then
+				echo "  Removing formula: $formula"
+				brew uninstall --force "$formula" 2>&1 || print_warning "Failed to remove: $formula"
+			fi
+		done
+	fi
+
+	# Remove casks
+	if [[ ${#casks[@]} -gt 0 ]]; then
+		print_info "Removing ${#casks[@]} Homebrew casks..."
+		for cask in "${casks[@]}"; do
+			if brew list --cask | grep -q "^${cask}$"; then
+				echo "  Removing cask: $cask"
+				brew uninstall --cask --force "$cask" 2>&1 || print_warning "Failed to remove: $cask"
+			fi
+		done
+	fi
+
+	print_success "Homebrew packages processed"
+	print_info "Note: Homebrew itself was not uninstalled. To remove Homebrew:"
+	print_info "  /bin/bash -c \"\$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/uninstall.sh)\""
+}
+
+uninstall_nvim() {
+	CURRENT_OPERATION="Removing Neovim files"
+	print_header "$CURRENT_OPERATION"
+
+	local removed=false
+
+	if [[ -d "$HOME/.config/nvim" ]]; then
+		rm -rf "$HOME/.config/nvim"
+		print_success "Removed ~/.config/nvim"
+		removed=true
+	fi
+
+	if [[ -d "$HOME/.local/share/nvim" ]]; then
+		rm -rf "$HOME/.local/share/nvim"
+		print_success "Removed ~/.local/share/nvim"
+		removed=true
+	fi
+
+	if [[ -d "$HOME/.cache/nvim" ]]; then
+		rm -rf "$HOME/.cache/nvim"
+		print_success "Removed ~/.cache/nvim"
+		removed=true
+	fi
+
+	if [[ $removed == false ]]; then
+		print_info "No Neovim files found, skipping"
+	fi
+}
+
+uninstall_plugins() {
+	CURRENT_OPERATION="Removing Zsh plugins"
+	print_header "$CURRENT_OPERATION"
+
+	if [[ -d "./plugins" ]]; then
+		rm -rf ./plugins
+		print_success "Zsh plugins removed"
+	else
+		print_info "Plugins directory not found, skipping"
+	fi
+
+	# Also remove themes directory mentioned in original script
+	if [[ -d "./themes" ]]; then
+		rm -rf ./themes
+		print_success "Zsh themes removed"
+	fi
+}
+
+# Execute uninstall for each component
+for component in "${COMPONENTS[@]}"; do
+	case $component in
+		venv)
+			uninstall_venv
+			;;
+		asdf)
+			uninstall_asdf
+			;;
+		config)
+			uninstall_config
+			;;
+		brew)
+			uninstall_brew
+			;;
+		nvim)
+			uninstall_nvim
+			;;
+		plugins)
+			uninstall_plugins
+			;;
+	esac
+done
+
+# Final summary
+print_header "Uninstall Complete"
+print_success "All selected components have been processed"
+echo ""
+print_info "Next steps:"
+echo "  1. Reload your shell environment: exec zsh"
+echo "  2. If you unstowed config files, check $HOME for any remaining symlinks"
+echo "  3. To completely remove Homebrew, run the official uninstall script"
+echo ""
