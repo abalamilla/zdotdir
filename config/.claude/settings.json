@@ -60,7 +60,9 @@
       "Bash(aws sts get-caller-identity:*)",
       "Bash(awsenv:*)",
       "Bash(~/.claude/scripts/fetch-my-jira-tickets.sh)",
-      "Bash(~/.claude/scripts/task-manager.sh:*)"
+      "Bash(~/.claude/scripts/task-manager.sh:*)",
+      "Bash(.claude/scripts/ch-debug.sh:*)",
+      "Bash(.claude/scripts/ch-debug.sh *:*)"
     ]
   },
   "env": {
