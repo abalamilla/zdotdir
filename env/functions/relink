@@ -1,0 +1,24 @@
+#!/usr/bin/env zsh
+# Fix DisplayLink displays when they don't reconnect properly after wake
+
+relink() {
+  echo "🔄 Reconnecting DisplayLink displays..."
+
+  # Kill DisplayLink processes
+  killall DisplayLinkUserAgent 2>/dev/null
+  killall DisplayLinkXpcService 2>/dev/null
+  sleep 2
+
+  # Restart DisplayLink Manager
+  open -a "DisplayLink Manager"
+
+  echo "✅ DisplayLink Manager restarted"
+
+  # Wait for displays to reconnect
+  sleep 2
+  echo "💡 Displays should reconnect in a few seconds..."
+}
+
+relink "$@"
+
+# vim: ft=zsh
