@@ -101,7 +101,7 @@ while [[ $# -gt 0 ]]; do
 			echo ""
 			echo "Options:"
 			echo "  --component COMP      Component(s) to uninstall (comma-separated or multiple flags)"
-			echo "                        Options: all, brew, plugins, asdf, config, nvim, venv"
+			echo "                        Options: all, brew, plugins, asdf, config, nvim, venv, apps"
 			echo "  -i, --interactive     Choose components interactively"
 			echo "  -y, --yes             Skip confirmation prompts"
 			echo "  -h, --help            Show this help message"
@@ -135,6 +135,7 @@ if [[ $INTERACTIVE_COMPONENTS == true ]]; then
 	echo "  5) Config files (unstow)"
 	echo "  6) Neovim files"
 	echo "  7) Python venv"
+	echo "  8) AppleScript apps"
 	echo ""
 	echo -n "Enter numbers (space-separated, e.g., '2 3 6'): "
 	read -r selections
@@ -148,6 +149,7 @@ if [[ $INTERACTIVE_COMPONENTS == true ]]; then
 			5) COMPONENTS+=(config) ;;
 			6) COMPONENTS+=(nvim) ;;
 			7) COMPONENTS+=(venv) ;;
+			8) COMPONENTS+=(apps) ;;
 			*)
 				print_error "Invalid selection: $sel"
 				exit 1
@@ -164,8 +166,29 @@ fi
 
 # Expand "all" component
 if [[ " ${COMPONENTS[@]} " =~ " all " ]]; then
-	COMPONENTS=(brew plugins asdf config nvim venv)
+	COMPONENTS=(brew plugins asdf config nvim venv apps)
 fi
+
+# Helper function to list apps that will be removed
+list_apps_to_remove() {
+	local apps_found=()
+
+	if [[ -d "$HOME/Applications" ]]; then
+		for app in "$HOME/Applications"/*.app; do
+			[[ ! -e "$app" ]] && continue
+
+			local app_name=$(basename "$app")
+			local source_name=$(echo "$app_name" | sed 's/\.app$//' | tr '[:upper:]' '[:lower:]' | tr ' ' '-')
+			local source_file="${SCRIPT_DIR}/automator/${source_name}.applescript"
+
+			if [[ -f "$source_file" ]]; then
+				apps_found+=("$app_name")
+			fi
+		done
+	fi
+
+	echo "${apps_found[@]}"
+}
 
 # Show what will be uninstalled
 print_header "Uninstall Plan"
@@ -190,6 +213,17 @@ for comp in "${COMPONENTS[@]}"; do
 			;;
 		venv)
 			echo "  ${Red}•${Color_Off} Python virtual environment (./.venv)"
+			;;
+		apps)
+			local apps_list=($(list_apps_to_remove))
+			if [[ ${#apps_list[@]} -gt 0 ]]; then
+				echo "  ${Red}•${Color_Off} AppleScript apps:"
+				for app in "${apps_list[@]}"; do
+					echo "    - ~/Applications/$app"
+				done
+			else
+				echo "  ${Red}•${Color_Off} AppleScript apps (none found)"
+			fi
 			;;
 		*)
 			print_error "Unknown component: $comp"
@@ -217,8 +251,8 @@ uninstall_venv() {
 	CURRENT_OPERATION="Removing Python venv"
 	print_header "$CURRENT_OPERATION"
 
-	if [[ -d "./.venv" ]]; then
-		rm -rf ./.venv
+	if [[ -d "${SCRIPT_DIR}/.venv" ]]; then
+		rm -rf "${SCRIPT_DIR}/.venv"
 		print_success "Python venv removed"
 	else
 		print_info "Python venv not found, skipping"
@@ -241,9 +275,9 @@ uninstall_config() {
 	CURRENT_OPERATION="Unstowing config files"
 	print_header "$CURRENT_OPERATION"
 
-	if [[ -d "./config" ]]; then
+	if [[ -d "${SCRIPT_DIR}/config" ]]; then
 		if command -v stow &> /dev/null; then
-			if stow -D config -t ~ 2>&1; then
+			if (cd "${SCRIPT_DIR}" && stow -D config -t ~) 2>&1; then
 				print_success "Config files unstowed"
 			else
 				print_error "Failed to unstow config files"
@@ -267,7 +301,7 @@ uninstall_brew() {
 		return
 	fi
 
-	if [[ ! -f "./Brewfile" ]]; then
+	if [[ ! -f "${SCRIPT_DIR}/Brewfile" ]]; then
 		print_warning "Brewfile not found, cannot determine packages to remove"
 		return
 	fi
@@ -275,10 +309,10 @@ uninstall_brew() {
 	print_info "Reading Brewfile to determine packages..."
 
 	# Extract formulas from Brewfile
-	local formulas=(${(f)"$(grep '^brew ' ./Brewfile | sed 's/^brew "\(.*\)"$/\1/' | sed "s/^brew '\(.*\)'$/\1/")"})
+	local formulas=(${(f)"$(grep '^brew ' "${SCRIPT_DIR}/Brewfile" | sed 's/^brew "\(.*\)"$/\1/' | sed "s/^brew '\(.*\)'$/\1/")"})
 
 	# Extract casks from Brewfile
-	local casks=(${(f)"$(grep '^cask ' ./Brewfile | sed 's/^cask "\(.*\)"$/\1/' | sed "s/^cask '\(.*\)'$/\1/")"})
+	local casks=(${(f)"$(grep '^cask ' "${SCRIPT_DIR}/Brewfile" | sed 's/^cask "\(.*\)"$/\1/' | sed "s/^cask '\(.*\)'$/\1/")"})
 
 	# Remove formulas
 	if [[ ${#formulas[@]} -gt 0 ]]; then
@@ -340,17 +374,50 @@ uninstall_plugins() {
 	CURRENT_OPERATION="Removing Zsh plugins"
 	print_header "$CURRENT_OPERATION"
 
-	if [[ -d "./plugins" ]]; then
-		rm -rf ./plugins
+	if [[ -d "${SCRIPT_DIR}/plugins" ]]; then
+		rm -rf "${SCRIPT_DIR}/plugins"
 		print_success "Zsh plugins removed"
 	else
 		print_info "Plugins directory not found, skipping"
 	fi
 
 	# Also remove themes directory mentioned in original script
-	if [[ -d "./themes" ]]; then
-		rm -rf ./themes
+	if [[ -d "${SCRIPT_DIR}/themes" ]]; then
+		rm -rf "${SCRIPT_DIR}/themes"
 		print_success "Zsh themes removed"
+	fi
+}
+
+uninstall_apps() {
+	CURRENT_OPERATION="Removing AppleScript apps"
+	print_header "$CURRENT_OPERATION"
+
+	local removed=false
+
+	# Find all .app files in ~/Applications that were built from this repo
+	if [[ -d "$HOME/Applications" ]]; then
+		# Look for apps that match the naming pattern from our build script
+		# The build script creates apps with Title Case names and spaces
+		for app in "$HOME/Applications"/*.app; do
+			[[ ! -e "$app" ]] && continue
+
+			local app_name=$(basename "$app")
+			# Convert app name to lowercase and replace spaces with hyphens
+			# to check if it matches our source files
+			local source_name=$(echo "$app_name" | sed 's/\.app$//' | tr '[:upper:]' '[:lower:]' | tr ' ' '-')
+			local source_file="${SCRIPT_DIR}/automator/${source_name}.applescript"
+
+			# Only remove if we have the source file
+			if [[ -f "$source_file" ]]; then
+				rm -rf "$app"
+				print_success "Removed $app_name"
+				removed=true
+			fi
+		done
+	fi
+
+	if [[ $removed == false ]]; then
+		print_info "No AppleScript apps found, skipping"
 	fi
 }
 
@@ -374,6 +441,9 @@ for component in "${COMPONENTS[@]}"; do
 			;;
 		plugins)
 			uninstall_plugins
+			;;
+		apps)
+			uninstall_apps
 			;;
 	esac
 done

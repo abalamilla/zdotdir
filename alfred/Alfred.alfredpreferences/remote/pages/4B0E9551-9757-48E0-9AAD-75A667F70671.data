@@ -198,16 +198,16 @@
 			<key>actionconfig</key>
 			<dict>
 				<key>path</key>
-				<string>/System/Applications/TextEdit.app</string>
+				<string>~/Applications/Relink.app</string>
 			</dict>
 			<key>actionuid</key>
 			<string>remote.alfred.launchfile</string>
 			<key>buttoniconid</key>
-			<string>477571C7-C22D-4833-8FE5-CEB4DA559200</string>
+			<string>C5A32CA8-3B6F-4819-B117-F992FE35241A</string>
 			<key>buttonlabel</key>
-			<string>TextEdit</string>
+			<string>Relink</string>
 			<key>itemuid</key>
-			<string>307FF84B-3B19-4889-9852-DC07F972E8B7</string>
+			<string>2913AAC5-0C1C-49D7-91B4-73832EB6A51E</string>
 		</dict>
 		<dict>
 			<key>actionconfig</key>
@@ -443,16 +443,16 @@
 			<key>actionconfig</key>
 			<dict>
 				<key>path</key>
-				<string>/System/Applications/TextEdit.app</string>
+				<string>~/Applications/Relink.app</string>
 			</dict>
 			<key>actionuid</key>
 			<string>remote.alfred.launchfile</string>
 			<key>buttoniconid</key>
-			<string>477571C7-C22D-4833-8FE5-CEB4DA559200</string>
+			<string>C5A32CA8-3B6F-4819-B117-F992FE35241A</string>
 			<key>buttonlabel</key>
-			<string>TextEdit</string>
+			<string>Relink</string>
 			<key>itemuid</key>
-			<string>307FF84B-3B19-4889-9852-DC07F972E8B7</string>
+			<string>2913AAC5-0C1C-49D7-91B4-73832EB6A51E</string>
 		</dict>
 		<dict>
 			<key>actionconfig</key>

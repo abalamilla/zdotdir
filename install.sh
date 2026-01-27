@@ -87,7 +87,7 @@ while [[ $# -gt 0 ]]; do
 			echo "  --branch BRANCH        Git branch to use (default: main)"
 			echo "  --mode MODE           Run mode: auto|initial|update (default: auto)"
 			echo "  --component COMP      Component(s) to install/update (comma-separated or multiple flags)"
-			echo "                        Options: all, brew, plugins, asdf, config, macos"
+			echo "                        Options: all, brew, plugins, asdf, config, macos, apps"
 			echo "  -i, --interactive     Choose components interactively"
 			echo "  -y, --yes             Skip confirmation prompts"
 			echo "  -h, --help            Show this help message"
@@ -183,6 +183,7 @@ select_components() {
 	echo "  [4] ASDF tools"
 	echo "  [5] Config files (stow)"
 	echo "  [6] macOS settings"
+	echo "  [7] AppleScript apps"
 	echo ""
 	echo "Enter numbers separated by spaces (e.g., '2 3 4'), or press Enter for all:"
 	read "selection?> "
@@ -199,6 +200,7 @@ select_components() {
 	component_map[4]="asdf"
 	component_map[5]="config"
 	component_map[6]="macos"
+	component_map[7]="apps"
 
 	# Parse selection
 	for num in ${(s: :)selection}; do
@@ -552,6 +554,81 @@ configure_macos() {
   defaults write com.apple.spaces spans-displays -bool true && killall SystemUIServer
 }
 
+build_applescript_apps() {
+	CURRENT_OPERATION="AppleScript apps installation"
+	print_message "Building and installing AppleScript apps" -1
+
+	# Check if on macOS
+	if [[ "$OSTYPE" != "darwin"* ]]; then
+		print_message "Skipping AppleScript apps (not on macOS)" -2
+		return 0
+	fi
+
+	# Check if osacompile is available
+	if ! command -v osacompile &> /dev/null; then
+		print_message "osacompile not found, skipping AppleScript apps" 1
+		return 1
+	fi
+
+	# Create ~/Applications if it doesn't exist
+	mkdir -p ~/Applications
+
+	# Build each .applescript file in automator/
+	local apps_built=0
+	local apps_failed=0
+
+	if [[ -d "$MY_ZDOTDIR/automator" ]]; then
+		for script_file in "$MY_ZDOTDIR/automator"/*.applescript; do
+			# Skip if no .applescript files found
+			[[ ! -f "$script_file" ]] && continue
+
+			local script_name=$(basename "$script_file" .applescript)
+			# Capitalize first letter and replace hyphens with spaces
+			local app_name="$(echo ${script_name:gs/-/ /} | awk '{for(i=1;i<=NF;i++) $i=toupper(substr($i,1,1)) tolower(substr($i,2));}1').app"
+			local temp_app="/tmp/${app_name}"
+			local dest_app="$HOME/Applications/${app_name}"
+
+			print_message "Building $app_name" -1
+
+			# Compile AppleScript to app bundle
+			if osacompile -o "$temp_app" "$script_file" 2>&1; then
+				# Check for custom icon
+				local icon_file="$MY_ZDOTDIR/automator/icons/${script_name}.icns"
+				if [[ -f "$icon_file" ]]; then
+					# Copy icon to app bundle
+					cp "$icon_file" "$temp_app/Contents/Resources/applet.icns"
+					print_message "Custom icon applied to $app_name" -1
+				fi
+
+				# Remove existing app if present
+				[[ -d "$dest_app" ]] && rm -rf "$dest_app"
+
+				# Move to Applications
+				mv "$temp_app" "$dest_app"
+
+				# Touch the app to refresh Finder's icon cache
+				touch "$dest_app"
+
+				print_message "$app_name installed to ~/Applications/" 0
+				apps_built=$((apps_built + 1))
+			else
+				print_message "Failed to build $app_name" 1
+				apps_failed=$((apps_failed + 1))
+			fi
+		done
+	fi
+
+	if [[ $apps_built -eq 0 ]] && [[ $apps_failed -eq 0 ]]; then
+		print_message "No AppleScript files found in automator/" -2
+	elif [[ $apps_failed -gt 0 ]]; then
+		print_message "Built $apps_built app(s), $apps_failed failed" 1
+	else
+		print_message "Successfully built and installed $apps_built app(s)" 0
+	fi
+
+	CURRENT_OPERATION=""
+}
+
 run_initial_setup() {
 	print_message "Starting INITIAL SETUP" -1
 	echo ""
@@ -593,6 +670,11 @@ run_initial_setup() {
 	# Install and configure asdf
 	if should_run_component "asdf" || should_run_component "all"; then
 		install_asdf
+	fi
+
+	# Build and install AppleScript apps
+	if should_run_component "apps" || should_run_component "all"; then
+		build_applescript_apps
 	fi
 
 	# Install other apps and configurations
@@ -643,6 +725,11 @@ run_update() {
 	# Update asdf and tools
 	if should_run_component "asdf" || should_run_component "all"; then
 		config_asdf
+	fi
+
+	# Build and install AppleScript apps
+	if should_run_component "apps" || should_run_component "all"; then
+		build_applescript_apps
 	fi
 
 	# Update other components
