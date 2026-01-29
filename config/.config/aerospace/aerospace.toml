@@ -217,6 +217,5 @@ if.app-id = 'io.zsa.keymapp'
 run = 'move-node-to-workspace W'
 
 [workspace-to-monitor-force-assignment]
-B = 2
-C = 2
-F = ['built-in Retina Display', 1]
+B = 'Odyssey.*1.*'
+C = 'Odyssey.*1.*'
