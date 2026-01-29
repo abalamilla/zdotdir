@@ -7,6 +7,27 @@ return {
     "nvim-lua/plenary.nvim",
   },
   init = function()
+    -- Suppress obsidian.nvim footer errors after sleep/idle
+    -- These occur when the note object becomes nil after Mac wakes from sleep
+    vim.api.nvim_create_autocmd("VimResume", {
+      pattern = "*",
+      callback = function()
+        -- Clear any pending obsidian async operations
+        vim.schedule(function()
+          pcall(function()
+            local obsidian = require("obsidian")
+            if obsidian and obsidian.get_client then
+              local client = obsidian.get_client()
+              if client then
+                -- Force refresh the current buffer's note state
+                vim.cmd("edit")
+              end
+            end
+          end)
+        end)
+      end,
+    })
+
     -- Autocmd to add title heading to new notes
     vim.api.nvim_create_autocmd({ "BufNewFile", "BufReadPost" }, {
       pattern = { "*/vimwiki/*.md", "*/vimwiki/*/*.md", "*/vimwiki/*/*/*.md" },
@@ -286,6 +307,9 @@ return {
     -- Disable obsidian UI (use render-markdown instead)
     ui = {
       enable = false,
+      -- Explicitly disable footer to prevent errors after sleep/idle
+      update_debounce = 0,
+      max_file_length = 0,
     },
   },
 }
