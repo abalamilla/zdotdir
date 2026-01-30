@@ -86,6 +86,44 @@ parse_time() {
 		fi
 	fi
 
+	# Handle day names (Monday, Tuesday, etc.) with optional "at HH:MM"
+	if [[ $time_spec =~ ^(Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)([[:space:]]+at[[:space:]]+(.+))?$ ]]; then
+		local day_name="${BASH_REMATCH[1]}"
+		local time_part="${BASH_REMATCH[3]:-09:00am}" # Default to 9:00am if no time specified
+
+		# Get current day of week (0=Sunday, 1=Monday, etc.)
+		local current_dow=$(date +%w)
+		# Convert day name to number
+		local target_dow
+		case "$day_name" in
+			Sunday) target_dow=0 ;;
+			Monday) target_dow=1 ;;
+			Tuesday) target_dow=2 ;;
+			Wednesday) target_dow=3 ;;
+			Thursday) target_dow=4 ;;
+			Friday) target_dow=5 ;;
+			Saturday) target_dow=6 ;;
+		esac
+
+		# Calculate days until target day
+		local days_until=$(( (target_dow - current_dow + 7) % 7 ))
+		# If the target day is today, schedule for next week
+		if [[ $days_until -eq 0 ]]; then
+			days_until=7
+		fi
+
+		# Parse the time
+		local parsed=$(date -j -f "%I:%M%p" "$time_part" "+%s" 2>/dev/null ||
+			date -j -f "%H:%M" "$time_part" "+%s" 2>/dev/null ||
+			date -j -f "%l:%M%p" "$time_part" "+%s" 2>/dev/null ||
+			echo "")
+
+		if [[ -n "$parsed" ]]; then
+			echo $((parsed + days_until * 86400))
+			return
+		fi
+	fi
+
 	# Default: parse as absolute time
 	date -j -f "%Y-%m-%d %H:%M:%S" "$time_spec" "+%s" 2>/dev/null || echo "$now"
 }
@@ -115,6 +153,7 @@ COMMANDS:
   complete <task_id>                    Mark a task as completed
   delete <task_id>                      Remove a task
   snooze <task_id> <minutes>            Postpone a task by X minutes
+  reschedule <task_id> <time_spec>      Change the due time of an existing task
   help                                  Show this help message
 
 TIME SPECIFICATIONS:
@@ -122,6 +161,7 @@ TIME SPECIFICATIONS:
   at HH:MM                       e.g., "at 3:00pm", "at 14:30"
   today at HH:MM                 e.g., "today at 3:00pm", "today at 15:00"
   tomorrow at HH:MM              e.g., "tomorrow at 8:00am"
+  Monday/Tuesday/etc at HH:MM    e.g., "Monday at 9:00am", "Friday at 2:00pm"
 
 TASK TYPES:
   user                           User-created tasks (default)
@@ -136,6 +176,7 @@ EXAMPLES:
   task-manager.sh list system    # Show only system tasks
   task-manager.sh complete 1
   task-manager.sh snooze 2 15
+  task-manager.sh reschedule 1 "Monday at 9:00am"
   task-manager.sh delete 3
 EOF
 }
@@ -267,6 +308,31 @@ cmd_snooze() {
 	echo "TASK_SNOOZED|$task_id|$description|$(format_time "$new_time")"
 }
 
+# Command: reschedule
+cmd_reschedule() {
+	local task_id="$1"
+	local time_spec="$2"
+	local new_time=$(parse_time "$time_spec")
+
+	# Get task description
+	local description=$(jq -r --arg id "$task_id" \
+		'.tasks[] | select(.id == ($id | tonumber)) | .description' "$TASKS_FILE")
+
+	if [[ -z "$description" ]]; then
+		echo "TASK_NOT_FOUND|$task_id"
+		return 1
+	fi
+
+	# Update due time
+	jq --arg id "$task_id" --arg newTime "$new_time" \
+		'(.tasks[] | select(.id == ($id | tonumber)) | .dueTime) = ($newTime | tonumber)' \
+		"$TASKS_FILE" >"$TASKS_FILE.tmp"
+
+	mv "$TASKS_FILE.tmp" "$TASKS_FILE"
+
+	echo "TASK_RESCHEDULED|$task_id|$description|$(format_time "$new_time")"
+}
+
 # Main
 COMMAND="${1:-}"
 shift || true
@@ -286,6 +352,9 @@ delete)
 	;;
 snooze)
 	cmd_snooze "$1" "$2"
+	;;
+reschedule)
+	cmd_reschedule "$1" "$2"
 	;;
 help | --help | -h | "")
 	cmd_help
