@@ -71,8 +71,6 @@
     "AWS_REGION": "us-west-2",
     "AWS_PROFILE": "Architects_Development-Development",
     "CLAUDE_CODE_USE_BEDROCK": "1",
-    "CLAUDE_CODE_MAX_OUTPUT_TOKENS": "8192",
-    "MAX_THINKING_TOKENS": "4096"
   },
   "statusLine": {
     "type": "command",
