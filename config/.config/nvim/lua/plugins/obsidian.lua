@@ -183,6 +183,7 @@ return {
     { "gf", "<cmd>Obsidian follow_link<cr>", desc = "Follow link" },
   },
   opts = {
+    legacy_commands = false,
     workspaces = {
       {
         name = "pgd",
@@ -242,49 +243,51 @@ return {
     end,
 
     -- Note frontmatter - preserve or generate tags
-    note_frontmatter_func = function(note)
-      local tags = note.tags or {}
+    frontmatter = {
+      func = function(note)
+        local tags = note.tags or {}
 
-      -- If no tags exist, generate them from the file path
-      if #tags == 0 then
-        local note_path = tostring(note.path)
+        -- If no tags exist, generate them from the file path
+        if #tags == 0 then
+          local note_path = tostring(note.path)
 
-        -- Try to find workspace root in the path
-        for _, ws in ipairs({ "ab", "pgd", "vimwiki", "jira-reports", "assets" }) do
-          local pattern = "/" .. ws .. "/"
-          local idx = note_path:find(pattern)
+          -- Try to find workspace root in the path
+          for _, ws in ipairs({ "ab", "pgd", "vimwiki", "jira-reports", "assets" }) do
+            local pattern = "/" .. ws .. "/"
+            local idx = note_path:find(pattern)
 
-          if idx then
-            -- Found workspace, add it as first tag
-            table.insert(tags, ws)
+            if idx then
+              -- Found workspace, add it as first tag
+              table.insert(tags, ws)
 
-            -- Get relative path after workspace
-            local rel_path = note_path:sub(idx + #pattern)
-            -- Remove filename to get directory path
-            local dir_path = vim.fn.fnamemodify(rel_path, ":h")
+              -- Get relative path after workspace
+              local rel_path = note_path:sub(idx + #pattern)
+              -- Remove filename to get directory path
+              local dir_path = vim.fn.fnamemodify(rel_path, ":h")
 
-            -- Add directory components as tags
-            if dir_path ~= "." and dir_path ~= "" then
-              for dir in string.gmatch(dir_path, "[^/]+") do
-                table.insert(tags, dir)
+              -- Add directory components as tags
+              if dir_path ~= "." and dir_path ~= "" then
+                for dir in string.gmatch(dir_path, "[^/]+") do
+                  table.insert(tags, dir)
+                end
               end
-            end
 
-            break
+              break
+            end
           end
         end
-      end
 
-      local out = { id = note.id, aliases = note.aliases or {}, tags = tags }
+        local out = { id = note.id, aliases = note.aliases or {}, tags = tags }
 
-      if note.metadata ~= nil and not vim.tbl_isempty(note.metadata) then
-        for k, v in pairs(note.metadata) do
-          out[k] = v
+        if note.metadata ~= nil and not vim.tbl_isempty(note.metadata) then
+          for k, v in pairs(note.metadata) do
+            out[k] = v
+          end
         end
-      end
 
-      return out
-    end,
+        return out
+      end,
+    },
 
     -- Picker configuration - avoid conflict with LazyVim's Ctrl+l
     picker = {
