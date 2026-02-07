@@ -231,15 +231,57 @@ return {
     note_path_func = function(spec)
       local Path = require("obsidian").Path
       local buf_path = vim.api.nvim_buf_get_name(0)
+      local spec_dir = tostring(spec.dir)
 
-      -- If we have a valid buffer path, use its directory
+      -- Determine which workspace the current buffer belongs to
+      local buffer_workspace_root = nil
       if buf_path and buf_path ~= "" then
-        local current_dir = vim.fn.fnamemodify(buf_path, ":h")
-        return Path.new(current_dir) / tostring(spec.id)
+        for _, ws in ipairs({ "pgd", "ab", "vimwiki", "jira-reports", "assets" }) do
+          local pattern = "/vimwiki/" .. ws .. "/"
+          if buf_path:find(pattern) then
+            buffer_workspace_root = vim.fn.expand("~/vimwiki/" .. ws)
+            break
+          end
+        end
       end
 
-      -- Fallback to default behavior
-      return spec.dir / tostring(spec.id)
+      -- Extract workspace from spec.dir to detect if link has subdirectory
+      local spec_workspace_root = nil
+      for _, ws in ipairs({ "pgd", "ab", "vimwiki", "jira-reports", "assets" }) do
+        local pattern = "/vimwiki/" .. ws
+        local idx = spec_dir:find(pattern)
+        if idx then
+          spec_workspace_root = vim.fn.expand("~/vimwiki/" .. ws)
+          break
+        end
+      end
+
+      local base_dir
+      -- Check if spec.dir has subdirectories beyond the workspace root
+      if spec_workspace_root and spec_dir ~= spec_workspace_root then
+        -- Link has subdirectory like [[folder/note]]
+        -- Replace spec's workspace with buffer's workspace
+        if buffer_workspace_root and spec_workspace_root then
+          base_dir = spec_dir:gsub("^" .. vim.pesc(spec_workspace_root), buffer_workspace_root)
+        else
+          base_dir = spec_dir
+        end
+      elseif buf_path and buf_path ~= "" then
+        -- Simple link like [[note]], use current buffer's directory
+        base_dir = vim.fn.fnamemodify(buf_path, ":h")
+      else
+        -- Fallback
+        base_dir = spec_dir
+      end
+
+      -- Construct full path
+      local full_path = base_dir .. "/" .. tostring(spec.id)
+
+      -- Ensure parent directory exists
+      local parent_dir = vim.fn.fnamemodify(full_path, ":h")
+      vim.fn.mkdir(parent_dir, "p")
+
+      return Path.new(full_path)
     end,
 
     -- Note frontmatter - preserve or generate tags
