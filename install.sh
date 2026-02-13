@@ -87,18 +87,19 @@ while [[ $# -gt 0 ]]; do
 			echo "  --branch BRANCH        Git branch to use (default: main)"
 			echo "  --mode MODE           Run mode: auto|initial|update (default: auto)"
 			echo "  --component COMP      Component(s) to install/update (comma-separated or multiple flags)"
-			echo "                        Options: all, brew, plugins, asdf, config, macos, apps"
+			echo "                        Options: all, brew, brew-upgrade, plugins, asdf, config, macos, apps"
 			echo "  -i, --interactive     Choose components interactively"
 			echo "  -y, --yes             Skip confirmation prompts"
 			echo "  -h, --help            Show this help message"
 			echo ""
 			echo "Examples:"
-			echo "  install.sh                                    # Interactive mode if no components specified"
-			echo "  install.sh --component all                    # Install/update all components"
-			echo "  install.sh --component brew,plugins           # Update Homebrew and plugins"
-			echo "  install.sh --component brew --component asdf  # Update Homebrew and ASDF"
-			echo "  install.sh -i                                 # Choose components interactively"
-			echo "  install.sh --mode update --component brew -y  # Quick brew update"
+			echo "  install.sh                                      # Interactive mode"
+			echo "  install.sh --component all                      # All components (no brew upgrade)"
+			echo "  install.sh --component all,brew-upgrade -y      # All components + brew upgrade"
+			echo "  install.sh --component brew -y                  # Install missing packages only (fast)"
+			echo "  install.sh --component brew-upgrade -y          # Install + upgrade all packages"
+			echo "  install.sh --component brew,plugins             # Homebrew and plugins"
+			echo "  install.sh -i                                   # Interactive component selection"
 			exit 0
 			;;
 		*)
@@ -159,6 +160,14 @@ should_run_component() {
 	# Check if a component should run based on COMPONENTS array
 	local component=$1
 
+	# brew-upgrade is opt-in only, never included in "all"
+	if [[ "$component" == "brew-upgrade" ]]; then
+		if (( ${COMPONENTS[(I)brew-upgrade]} )); then
+			return 0
+		fi
+		return 1
+	fi
+
 	# Check if "all" is in the array
 	if (( ${COMPONENTS[(I)all]} )); then
 		return 0
@@ -178,14 +187,15 @@ select_components() {
 	echo "Select components to install/update:"
 	echo ""
 	echo "  [1] All components"
-	echo "  [2] Homebrew packages (brew)"
-	echo "  [3] Zsh plugins"
-	echo "  [4] ASDF tools"
-	echo "  [5] Config files (stow)"
-	echo "  [6] macOS settings"
-	echo "  [7] AppleScript apps"
+	echo "  [2] Homebrew packages (install missing only)"
+	echo "  [3] Homebrew packages + upgrade (full update)"
+	echo "  [4] Zsh plugins"
+	echo "  [5] ASDF tools"
+	echo "  [6] Config files (stow)"
+	echo "  [7] macOS settings"
+	echo "  [8] AppleScript apps"
 	echo ""
-	echo "Enter numbers separated by spaces (e.g., '2 3 4'), or press Enter for all:"
+	echo "Enter numbers separated by spaces (e.g., '2 4 5'), or press Enter for all:"
 	read "selection?> "
 
 	if [[ -z "$selection" ]] || [[ "$selection" =~ "1" ]]; then
@@ -196,11 +206,12 @@ select_components() {
 	# Map numbers to component names
 	typeset -A component_map
 	component_map[2]="brew"
-	component_map[3]="plugins"
-	component_map[4]="asdf"
-	component_map[5]="config"
-	component_map[6]="macos"
-	component_map[7]="apps"
+	component_map[3]="brew-upgrade"
+	component_map[4]="plugins"
+	component_map[5]="asdf"
+	component_map[6]="config"
+	component_map[7]="macos"
+	component_map[8]="apps"
 
 	# Parse selection
 	for num in ${(s: :)selection}; do
@@ -376,9 +387,17 @@ configure_docker_buildx() {
 
 update_brewfile() {
 	CURRENT_OPERATION="Homebrew package updates"
-	print_message "Updating Brewfile packages (this may take several minutes)" -1
 
-	# Check for outdated packages
+	# Determine if we should upgrade packages
+	local should_upgrade=false
+	if should_run_component "brew-upgrade"; then
+		should_upgrade=true
+		print_message "Updating and upgrading Homebrew packages (this may take several minutes)" -1
+	else
+		print_message "Updating Brewfile packages (install missing only)" -1
+	fi
+
+	# Check for outdated packages before operation
 	local outdated_count=$(brew outdated --quiet 2>/dev/null | wc -l | tr -d ' ')
 	if [[ "$outdated_count" -gt 0 ]]; then
 		print_message "$outdated_count package(s) need updating" -1
@@ -388,12 +407,29 @@ update_brewfile() {
 	export HOMEBREW_NO_AUTO_UPDATE=1
 
 	# Install/update brewfile dependencies
-	# --no-upgrade: only install missing packages, faster and more reliable for updates
-	if brew bundle install --file=$MY_ZDOTDIR/Brewfile --no-upgrade; then
-		print_message "Brewfile update finished" 0
+	local brew_cmd="brew bundle install --file=$MY_ZDOTDIR/Brewfile"
+	if [[ "$should_upgrade" == false ]]; then
+		brew_cmd="$brew_cmd --no-upgrade"
+	fi
+
+	if eval "$brew_cmd"; then
+		print_message "Brewfile operation finished" 0
+
+		# Show helpful message if packages are still outdated and upgrade wasn't requested
+		if [[ "$should_upgrade" == false ]]; then
+			local outdated_after=$(brew outdated --quiet 2>/dev/null | wc -l | tr -d ' ')
+			if [[ "$outdated_after" -gt 0 ]]; then
+				echo ""
+				echo "Note: $outdated_after package(s) are outdated but were not upgraded (--no-upgrade mode)"
+				echo "To upgrade outdated packages, run:"
+				echo "  ./install.sh --component brew-upgrade"
+				echo "Or manually: brew upgrade"
+				echo ""
+			fi
+		fi
 	else
 		local exit_code=$?
-		print_message "Brewfile update completed with some failures" 1
+		print_message "Brewfile operation completed with some failures" 1
 		echo ""
 		echo "Some packages may have failed to install (network issues, etc.)"
 		echo "You can retry with: ./install.sh --component brew"
@@ -704,7 +740,7 @@ run_update() {
 	fi
 
 	# Update brewfile packages
-	if should_run_component "brew" || should_run_component "all"; then
+	if should_run_component "brew" || should_run_component "brew-upgrade" || should_run_component "all"; then
 		update_brewfile
 	fi
 
@@ -793,3 +829,4 @@ show_run_info() {
 		run_update
 	fi
 }
+
