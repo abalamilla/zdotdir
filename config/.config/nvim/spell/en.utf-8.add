@@ -521,3 +521,8 @@ OpenJDK
 openjdk
 epel
 pulumi
+S3
+sg
+t2
+Crossplane
+MSK
