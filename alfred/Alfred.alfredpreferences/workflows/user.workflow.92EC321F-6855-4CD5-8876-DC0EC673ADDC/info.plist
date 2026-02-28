@@ -90,7 +90,7 @@ osascript -e "display notification \"Connecting to $name\" with title \"Bluetoot
 				<key>runningsubtext</key>
 				<string></string>
 				<key>script</key>
-				<string>/opt/homebrew/bin/blueutil --paired --format json | jq '{items: [.[] | {title: "\(if .connected then "✓" else "○" end) \(.name)", subtitle: "Address: \(.address)", arg: .address, variables: {device_name: .name}}]}'</string>
+				<string>blueutil --paired --format json | jq '{items: [.[] | {title: "\(if .connected then "✓" else "○" end) \(.name)", subtitle: "Address: \(.address)", arg: .address, variables: {device_name: .name}}]}'</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
