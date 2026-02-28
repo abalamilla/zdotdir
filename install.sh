@@ -10,10 +10,17 @@ COMPONENTS=()
 SKIP_CONFIRMATION=false
 INTERACTIVE_COMPONENTS=false
 CURRENT_OPERATION=""
+typeset -a TEMP_FILES
+TEMP_FILES=()
 
 # Cleanup function
 cleanup() {
 	local exit_code=$?
+
+	# Clean up temporary files
+	for temp_file in "${TEMP_FILES[@]}"; do
+		[[ -f "$temp_file" ]] && rm -f "$temp_file"
+	done
 
 	# Unset environment variables we may have set
 	unset HOMEBREW_NO_AUTO_UPDATE
@@ -87,17 +94,18 @@ while [[ $# -gt 0 ]]; do
 			echo "  --branch BRANCH        Git branch to use (default: main)"
 			echo "  --mode MODE           Run mode: auto|initial|update (default: auto)"
 			echo "  --component COMP      Component(s) to install/update (comma-separated or multiple flags)"
-			echo "                        Options: all, brew, brew-upgrade, plugins, asdf, config, macos, apps"
+			echo "                        Options: all, brew, brew-upgrade, plugins, asdf, upgrade-tools, config, macos, apps"
 			echo "  -i, --interactive     Choose components interactively"
 			echo "  -y, --yes             Skip confirmation prompts"
 			echo "  -h, --help            Show this help message"
 			echo ""
 			echo "Examples:"
 			echo "  install.sh                                      # Interactive mode"
-			echo "  install.sh --component all                      # All components (no brew upgrade)"
+			echo "  install.sh --component all                      # All components (no brew/tool upgrades)"
 			echo "  install.sh --component all,brew-upgrade -y      # All components + brew upgrade"
 			echo "  install.sh --component brew -y                  # Install missing packages only (fast)"
 			echo "  install.sh --component brew-upgrade -y          # Install + upgrade all packages"
+			echo "  install.sh --component upgrade-tools -y         # Upgrade all tool versions to latest"
 			echo "  install.sh --component brew,plugins             # Homebrew and plugins"
 			echo "  install.sh -i                                   # Interactive component selection"
 			exit 0
@@ -160,9 +168,9 @@ should_run_component() {
 	# Check if a component should run based on COMPONENTS array
 	local component=$1
 
-	# brew-upgrade is opt-in only, never included in "all"
-	if [[ "$component" == "brew-upgrade" ]]; then
-		if (( ${COMPONENTS[(I)brew-upgrade]} )); then
+	# brew-upgrade and upgrade-tools are opt-in only, never included in "all"
+	if [[ "$component" == "brew-upgrade" ]] || [[ "$component" == "upgrade-tools" ]]; then
+		if (( ${COMPONENTS[(I)$component]} )); then
 			return 0
 		fi
 		return 1
@@ -191,9 +199,10 @@ select_components() {
 	echo "  [3] Homebrew packages + upgrade (full update)"
 	echo "  [4] Zsh plugins"
 	echo "  [5] ASDF tools"
-	echo "  [6] Config files (stow)"
-	echo "  [7] macOS settings"
-	echo "  [8] AppleScript apps"
+	echo "  [6] Upgrade tool versions to latest"
+	echo "  [7] Config files (stow)"
+	echo "  [8] macOS settings"
+	echo "  [9] AppleScript apps"
 	echo ""
 	echo "Enter numbers separated by spaces (e.g., '2 4 5'), or press Enter for all:"
 	read "selection?> "
@@ -209,9 +218,10 @@ select_components() {
 	component_map[3]="brew-upgrade"
 	component_map[4]="plugins"
 	component_map[5]="asdf"
-	component_map[6]="config"
-	component_map[7]="macos"
-	component_map[8]="apps"
+	component_map[6]="upgrade-tools"
+	component_map[7]="config"
+	component_map[8]="macos"
+	component_map[9]="apps"
 
 	# Parse selection
 	for num in ${(s: :)selection}; do
@@ -350,15 +360,46 @@ install_apps() {
 }
 
 install_brewfile() {
+	CURRENT_OPERATION="Brewfile installation"
 	print_message "Installing Brewfile" -1
 
 	brew update
 	brew upgrade
 
-	# install brewfile dependencies
-	brew bundle install --file=$MY_ZDOTDIR/Brewfile
+	# Install brewfile dependencies with automatic link fixing
+	local brew_output=$(mktemp)
+	TEMP_FILES+=("$brew_output")
 
-	print_message "Installing Brewfile finished" $?
+	if brew bundle install --file=$MY_ZDOTDIR/Brewfile > "$brew_output" 2>&1; then
+		cat "$brew_output"
+		print_message "Installing Brewfile finished" 0
+	else
+		# Check for symlink conflicts
+		if grep -q "Could not symlink" "$brew_output" && grep -q "already exists" "$brew_output"; then
+			print_message "Detected symlink conflicts, fixing..." -1
+
+			# Extract package names that failed to link
+			grep -B10 "Could not symlink" "$brew_output" | grep -E "(Installing|Upgrading)" | \
+			awk '{print $2}' | sed 's|.*/||' | sort -u | while read -r pkg; do
+				print_message "Relinking $pkg" -1
+				brew link --overwrite "$pkg" 2>/dev/null || true
+			done
+
+			# Retry brew bundle
+			print_message "Retrying brew bundle after fixing symlinks..." -1
+
+			if brew bundle install --file=$MY_ZDOTDIR/Brewfile; then
+				print_message "Installing Brewfile finished after fixing symlinks" 0
+			else
+				print_message "Installing Brewfile completed with some failures" 1
+			fi
+		else
+			cat "$brew_output"
+			print_message "Installing Brewfile completed with failures" 1
+		fi
+	fi
+
+	CURRENT_OPERATION=""
 }
 
 link_file() {
@@ -406,35 +447,66 @@ update_brewfile() {
 	# Skip brew's auto-update for speed (it already ran once)
 	export HOMEBREW_NO_AUTO_UPDATE=1
 
-	# Install/update brewfile dependencies
+	# Install/update brewfile dependencies with automatic link fixing
 	local brew_cmd="brew bundle install --file=$MY_ZDOTDIR/Brewfile"
+	local brew_opts=""
 	if [[ "$should_upgrade" == false ]]; then
-		brew_cmd="$brew_cmd --no-upgrade"
+		brew_opts="--no-upgrade"
 	fi
 
-	if eval "$brew_cmd"; then
-		print_message "Brewfile operation finished" 0
+	# First attempt
+	local brew_output=$(mktemp)
+	TEMP_FILES+=("$brew_output")
 
-		# Show helpful message if packages are still outdated and upgrade wasn't requested
-		if [[ "$should_upgrade" == false ]]; then
-			local outdated_after=$(brew outdated --quiet 2>/dev/null | wc -l | tr -d ' ')
-			if [[ "$outdated_after" -gt 0 ]]; then
+	if eval "$brew_cmd $brew_opts" > "$brew_output" 2>&1; then
+		cat "$brew_output"
+		print_message "Brewfile operation finished" 0
+	else
+		# Check for symlink conflicts
+		if grep -q "Could not symlink" "$brew_output" && grep -q "already exists" "$brew_output"; then
+			print_message "Detected symlink conflicts, fixing..." -1
+
+			# Extract package names that failed to link
+			grep -B10 "Could not symlink" "$brew_output" | grep -E "(Installing|Upgrading)" | \
+			awk '{print $2}' | sed 's|.*/||' | sort -u | while read -r pkg; do
+				print_message "Relinking $pkg" -1
+				brew link --overwrite "$pkg" 2>/dev/null || true
+			done
+
+			# Retry brew bundle
+			print_message "Retrying brew bundle after fixing symlinks..." -1
+
+			if eval "$brew_cmd $brew_opts"; then
+				print_message "Brewfile operation finished after fixing symlinks" 0
+			else
+				print_message "Brewfile operation completed with some failures" 1
 				echo ""
-				echo "Note: $outdated_after package(s) are outdated but were not upgraded (--no-upgrade mode)"
-				echo "To upgrade outdated packages, run:"
-				echo "  ./install.sh --component brew-upgrade"
-				echo "Or manually: brew upgrade"
+				echo "Some packages may have failed to install (network issues, etc.)"
+				echo "You can retry with: ./install.sh --component brew"
+				echo "Or manually run: brew bundle install --file=$MY_ZDOTDIR/Brewfile"
 				echo ""
 			fi
+		else
+			cat "$brew_output"
+			print_message "Brewfile operation completed with some failures" 1
+			echo ""
+			echo "Some packages may have failed to install"
+			echo "You can retry with: ./install.sh --component brew"
+			echo ""
 		fi
-	else
-		local exit_code=$?
-		print_message "Brewfile operation completed with some failures" 1
-		echo ""
-		echo "Some packages may have failed to install (network issues, etc.)"
-		echo "You can retry with: ./install.sh --component brew"
-		echo "Or manually run: brew bundle install --file=$MY_ZDOTDIR/Brewfile"
-		echo ""
+	fi
+
+	# Show helpful message if packages are still outdated and upgrade wasn't requested
+	if [[ "$should_upgrade" == false ]]; then
+		local outdated_after=$(brew outdated --quiet 2>/dev/null | wc -l | tr -d ' ')
+		if [[ "$outdated_after" -gt 0 ]]; then
+			echo ""
+			echo "Note: $outdated_after package(s) are outdated but were not upgraded (--no-upgrade mode)"
+			echo "To upgrade outdated packages, run:"
+			echo "  ./install.sh --component brew-upgrade"
+			echo "Or manually: brew upgrade"
+			echo ""
+		fi
 	fi
 
 	CURRENT_OPERATION=""
@@ -561,6 +633,114 @@ config_asdf() {
 	asdf install
 
 	print_message "Finished configuring asdf" $?
+	CURRENT_OPERATION=""
+}
+
+upgrade_asdf_tools() {
+	CURRENT_OPERATION="ASDF tool version upgrades"
+	print_message "Upgrading tool versions in .tool-versions" -1
+
+	# Load asdf first to enable plugin commands
+	source "$(brew --prefix asdf)/libexec/asdf.sh"
+
+	# Check if .tool-versions exists
+	if [[ ! -f "$MY_ZDOTDIR/.tool-versions" ]]; then
+		print_message ".tool-versions file not found" 1
+		CURRENT_OPERATION=""
+		return 1
+	fi
+
+	# Create backup
+	local backup_file="$MY_ZDOTDIR/.tool-versions.backup.$(date +%Y%m%d_%H%M%S)"
+	cp "$MY_ZDOTDIR/.tool-versions" "$backup_file"
+	print_message "Backed up .tool-versions to $(basename $backup_file)" -1
+
+	# Update all plugins to get latest version info
+	print_message "Updating asdf plugins..." -1
+	asdf plugin update --all
+
+	# Create temporary file for new versions
+	local temp_file=$(mktemp)
+	TEMP_FILES+=("$temp_file")
+	local updated_count=0
+	local failed_count=0
+	local skipped_count=0
+
+	# Read and process each line
+	while IFS= read -r line; do
+		# Skip empty lines and comments
+		if [[ -z "$line" ]] || [[ "$line" =~ ^[[:space:]]*# ]]; then
+			echo "$line" >> "$temp_file"
+			continue
+		fi
+
+		# Parse tool name and current version
+		local tool_name=$(echo "$line" | awk '{print $1}')
+		local current_version=$(echo "$line" | awk '{print $2}')
+
+		if [[ -z "$tool_name" ]] || [[ -z "$current_version" ]]; then
+			echo "$line" >> "$temp_file"
+			continue
+		fi
+
+		# Check if plugin exists
+		if ! asdf plugin list | grep -q "^${tool_name}$"; then
+			print_message "Plugin $tool_name not installed, skipping" -2
+			echo "$line" >> "$temp_file"
+			skipped_count=$((skipped_count + 1))
+			continue
+		fi
+
+		# Get latest stable version
+		print_message "Checking $tool_name (current: $current_version)..." -1
+		local latest_version=$(asdf latest "$tool_name" 2>/dev/null)
+
+		if [[ -z "$latest_version" ]]; then
+			print_message "Could not determine latest version for $tool_name" 1
+			echo "$line" >> "$temp_file"
+			failed_count=$((failed_count + 1))
+			continue
+		fi
+
+		# Check if update is needed
+		if [[ "$current_version" == "$latest_version" ]]; then
+			print_message "$tool_name is already at latest version ($current_version)" -2
+			echo "$line" >> "$temp_file"
+			skipped_count=$((skipped_count + 1))
+		else
+			print_message "Updating $tool_name: $current_version → $latest_version" -1
+			echo "$tool_name $latest_version" >> "$temp_file"
+			updated_count=$((updated_count + 1))
+		fi
+	done < "$MY_ZDOTDIR/.tool-versions"
+
+	# Replace original file with updated versions
+	mv "$temp_file" "$MY_ZDOTDIR/.tool-versions"
+
+	# Summary
+	echo ""
+	print_message "Version upgrade summary:" -1
+	echo "  Updated: $updated_count"
+	echo "  Skipped (already latest): $skipped_count"
+	echo "  Failed: $failed_count"
+	echo ""
+
+	if [[ $updated_count -gt 0 ]]; then
+		print_message "Installing updated tool versions..." -1
+		if asdf install; then
+			print_message "Successfully installed $updated_count updated tool(s)" 0
+		else
+			print_message "Some tools failed to install, check output above" 1
+			echo ""
+			echo "Backup available at: $backup_file"
+			echo "To restore: cp $backup_file $MY_ZDOTDIR/.tool-versions"
+			echo ""
+		fi
+	else
+		print_message "No tools needed upgrading" 0
+		rm -f "$backup_file"
+	fi
+
 	CURRENT_OPERATION=""
 }
 
@@ -761,6 +941,11 @@ run_update() {
 	# Update asdf and tools
 	if should_run_component "asdf" || should_run_component "all"; then
 		config_asdf
+	fi
+
+	# Upgrade tool versions to latest (opt-in only)
+	if should_run_component "upgrade-tools"; then
+		upgrade_asdf_tools
 	fi
 
 	# Build and install AppleScript apps

@@ -44,11 +44,19 @@ brew bundle dump --force
 ### ASDF Plugins
 
 ```bash
-# Add all plugins (see install.sh lines 196-245 for complete list)
+# Add all plugins (see config_asdf() in install.sh for complete list)
 asdf plugin add <plugin-name>
 
 # Install all tools from .tool-versions
 asdf install
+
+# Upgrade all tool versions to latest (via install.sh)
+./install.sh --component upgrade-tools -y
+
+# Manual version upgrade
+asdf latest <tool-name>        # Check latest version
+asdf install <tool-name> latest # Install latest version
+asdf global <tool-name> <version> # Set global version
 ```
 
 ### Installation Script Features
@@ -69,17 +77,44 @@ mode by checking for:
 ./install.sh -i
 
 # Update specific components
-./install.sh --component brew           # Homebrew packages only
+./install.sh --component brew           # Homebrew packages only (no upgrade)
+./install.sh --component brew-upgrade   # Homebrew + upgrade all packages
 ./install.sh --component plugins        # Zsh plugins only
 ./install.sh --component asdf           # ASDF tools only
+./install.sh --component upgrade-tools  # Upgrade tool versions to latest
 ./install.sh --component config         # Config symlinks only
 ./install.sh --component macos          # macOS settings only
+./install.sh --component apps           # AppleScript apps only
+
+# Combine components
+./install.sh --component brew,plugins,upgrade-tools -y
 
 # Force initial setup mode
 ./install.sh --mode initial
 
 # Skip confirmation prompt
 ./install.sh -y
+```
+
+**Tool Version Upgrades**: The `upgrade-tools` component upgrades all tools in
+`.tool-versions` to their latest stable versions:
+
+- Creates timestamped backup of `.tool-versions` before changes
+- Updates all asdf plugins to get latest version information
+- Compares current versions with latest available versions
+- Updates `.tool-versions` file with new versions
+- Installs updated tools automatically
+- Provides detailed summary (updated, skipped, failed)
+- Preserves comments and empty lines in `.tool-versions`
+- Opt-in only (never runs with `--component all`)
+
+Example:
+```bash
+# Upgrade all tools to latest versions
+./install.sh --component upgrade-tools -y
+
+# Combine with brew upgrade for full system update
+./install.sh --component brew-upgrade,upgrade-tools -y
 ```
 
 **Safety Features**:
@@ -102,6 +137,8 @@ mode by checking for:
 - Detects and reports stow conflicts with clear resolution instructions
 - Verifies ASDF plugin installations
 - Provides context-aware error messages for each operation
+- Creates automatic backups before modifying `.tool-versions`
+- Displays backup location for easy recovery if tool upgrades fail
 
 ### Uninstallation Script Features
 
@@ -492,13 +529,21 @@ DOCKER_BUILDKIT        # 1 (enabled by default)
 
 ### Version Management
 
-**asdf** manages all language runtimes and CLI tools. See
-`config/.tool-versions` for complete list including:
+**asdf** manages all language runtimes and CLI tools. See `.tool-versions` for
+complete list including:
 
 - Programming languages: golang, nodejs, python, rust, java, scala
 - Kubernetes tools: kubectl, helm, k9s, kubectx
 - AWS tools: awscli, aws-sam-cli
 - Others: terraform, neovim, jq, yq, fzf
+
+To upgrade all tools to their latest versions:
+```bash
+./install.sh --component upgrade-tools -y
+```
+
+This creates a timestamped backup (`.tool-versions.backup.YYYYMMDD_HHMMSS`)
+before upgrading, allowing easy rollback if needed.
 
 ### Container Management
 
