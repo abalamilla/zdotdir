@@ -30,5 +30,14 @@ vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
   pattern = { vim.fn.expand("~") .. "/vimwiki/**/*.md" },
   callback = function()
     vim.b.autoformat = true
+    vim.cmd("normal! Gzz")
+  end,
+})
+
+-- Go to bottom and center after saving wiki files
+vim.api.nvim_create_autocmd("BufWritePost", {
+  pattern = { vim.fn.expand("~") .. "/vimwiki/**/*.md" },
+  callback = function()
+    vim.cmd("normal! Gzz")
   end,
 })
