@@ -6,12 +6,15 @@ colima 0.8.1
 coursier 2.1.25-M1
 dive 0.13.1
 dotnet 9.0.201
+eksctl 0.223.0
 eza 0.23.1
 fd 10.2.0
 fzf 0.62.0
 golang 1.24.4
+golangci-lint 2.3.1
 helm 3.17.2
 java corretto-21.0.6.7.1
+jq 1.8.0
 julia 1.11.4
 k9s 0.50.6
 krew 0.4.5
@@ -19,9 +22,11 @@ kubebuilder 4.5.2
 kubectl 1.33.0
 kubectx 0.9.5
 kubeseal 0.29.0
+kustomize 5.7.1
 lazygit 0.51.1
 leiningen 2.11.2
 lima 1.1.1
+lua 5.1.5
 markdownlint-cli2 0.18.1
 maven 3.9.9
 neovim 0.11.2
@@ -40,7 +45,3 @@ vault 1.19.5
 vim 9.1.1455
 yarn 1.22.22
 zoxide 0.9.8
-jq 1.8.0
-golangci-lint 2.3.1
-kustomize 5.7.1
-lua 5.1.5
