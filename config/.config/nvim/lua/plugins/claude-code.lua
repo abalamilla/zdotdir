@@ -13,20 +13,11 @@ return {
         keys = {
           {
             toggle_key,
-            function()
-              -- Change focus back to the previous window instead of hiding
-              vim.cmd("wincmd p")
-            end,
-            mode = "t",
-            desc = "Focus previous window (Ctrl+,)",
-          },
-          {
-            "<C-h>",
             function(self)
               self:hide()
             end,
             mode = "t",
-            desc = "Hide (Alt+,)",
+            desc = "Hide (Ctrl+,)",
           },
         },
       },
