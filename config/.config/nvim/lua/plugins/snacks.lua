@@ -52,6 +52,75 @@ return {
               },
               keys = {
                 -- Send file(s) to Claude Code
+                ["<leader>ad"] = {
+                  function(self)
+                    -- Get the picker from Snacks
+                    local ok, snacks_picker = pcall(require, "snacks.picker")
+                    if not ok then
+                      vim.notify("Could not load snacks.picker", vim.log.levels.ERROR)
+                      return
+                    end
+
+                    -- Get the active picker
+                    local picker_result = snacks_picker.get()
+                    if not picker_result then
+                      vim.notify("No active picker found", vim.log.levels.WARN)
+                      return
+                    end
+
+                    -- The result is an array with the actual picker at index 1
+                    local picker = picker_result[1] or picker_result
+
+                    -- Collect files (filter out directories)
+                    local files = {}
+
+                    -- Check for selected items first
+                    if picker.list and picker.list.selected then
+                      for _, item in pairs(picker.list.selected) do
+                        if not item.dir then
+                          local file_path = item.file or item._path or item.path
+                          if file_path then
+                            table.insert(files, file_path)
+                          end
+                        end
+                      end
+                    end
+
+                    -- If no selected items, fall back to current item
+                    if #files == 0 and picker.list then
+                      local item = picker.list._current or (picker.list.items and picker.list.items[picker.list.cursor])
+                      if item and not item.dir then
+                        local file_path = item.file or item._path or item.path
+                        if file_path then
+                          table.insert(files, file_path)
+                        end
+                      end
+                    end
+
+                    if #files == 0 then
+                      vim.notify("No files selected (directories excluded)", vim.log.levels.WARN)
+                      return
+                    end
+
+                    if #files == 1 then
+                      vim.notify("Select 2 files to diff", vim.log.levels.WARN)
+                      return
+                    end
+
+                    if #files > 2 then
+                      vim.notify("Too many files. Select exactly 2 to diff.", vim.log.levels.WARN)
+                      return
+                    end
+
+                    -- Open in vimdiff (supports arbitrary local files)
+                    local escaped_1 = vim.fn.fnameescape(files[1])
+                    local escaped_2 = vim.fn.fnameescape(files[2])
+                    vim.cmd("tabnew " .. escaped_1)
+                    vim.cmd("vertical diffsplit " .. escaped_2)
+                    vim.notify("Diffing: " .. vim.fn.fnamemodify(files[1], ":~:.") .. " vs " .. vim.fn.fnamemodify(files[2], ":~:."), vim.log.levels.INFO)
+                  end,
+                  desc = "Diff two selected files",
+                },
                 ["<leader>as"] = {
                   function(self)
                     -- Get the picker from Snacks
