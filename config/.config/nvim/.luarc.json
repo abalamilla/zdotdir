@@ -1,0 +1,23 @@
+{
+  "Lua": {
+    "diagnostics": {
+      "globals": ["vim"]
+    },
+    "runtime": {
+      "version": "LuaJIT",
+      "path": ["?.lua", "?/init.lua"]
+    },
+    "workspace": {
+      "checkThirdParty": false,
+      "library": [
+        "${3rd}/luv/library",
+        "${VIMRUNTIME}/lua",
+        "${NVIM_DATA_DIR}/nvim/lazy/neodev.nvim/types/stable"
+      ],
+      "maxPreload": 2000
+    },
+    "completion": {
+      "callSnippet": "Both"
+    }
+  }
+}
