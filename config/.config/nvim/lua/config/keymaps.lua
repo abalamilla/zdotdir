@@ -52,3 +52,8 @@ vim.keymap.set("i", "<C-g>s", function()
   vim.api.nvim_put({ "~~~~" }, "c", false, true)
   vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Left><Left>", true, false, true), "n", false)
 end, { desc = "Insert strikethrough markers" })
+
+-- Run markdown code block
+local utils = require("config.utils")
+vim.keymap.set("n", "<leader>rr", utils.run_markdown_code, { desc = "Run code block" })
+vim.keymap.set("v", "<leader>rr", utils.run_markdown_code, { desc = "Run code block" })
