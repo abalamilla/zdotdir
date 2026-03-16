@@ -569,3 +569,5 @@ Datalog
 OPA
 enum
 RestAPI
+oci
+ghcr
