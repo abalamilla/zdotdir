@@ -7,7 +7,16 @@ setopt histreduceblanks
 setopt histignorespace
 setopt histignorealldups
 
-PATH="/opt/homebrew/opt/curl/bin:$HOME/.local/share/nvim/mason/bin:${KREW_ROOT:-$HOME/.krew}/bin:$HOME/.local/bin:$HOME/Applications/IntelliJ IDEA.app/Contents/MacOS:$PATH"
+# PATH priority: custom tools > system > lower-priority tools
+_ORIGINAL_PATH="$PATH"
+PATH="/usr/local/bin"                                               # Custom system tools (highest priority)
+PATH="$PATH:/opt/homebrew/opt/curl/bin"                            # Homebrew
+PATH="$PATH:${KREW_ROOT:-$HOME/.krew}/bin"                         # Krew (Kubernetes)
+PATH="$PATH:$HOME/.local/bin"                                      # Local bin
+PATH="$PATH:$HOME/Applications/IntelliJ IDEA.app/Contents/MacOS"  # IntelliJ
+PATH="$PATH:$_ORIGINAL_PATH"                                       # System PATH (in middle priority)
+PATH="$PATH:$HOME/.local/share/nvim/mason/bin"                    # Mason (lowest priority)
+unset _ORIGINAL_PATH
 
 bindkey '^[[A' history-substring-search-up
 bindkey '^[[B' history-substring-search-down
