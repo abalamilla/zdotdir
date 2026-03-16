@@ -220,5 +220,4 @@ run = 'move-node-to-workspace W'
 
 [workspace-to-monitor-force-assignment]
 B = 'Built-in'
-C = 'Built-in'
 T = 'Odyssey'
