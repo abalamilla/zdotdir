@@ -7,7 +7,7 @@
 ## Get directory content sorted by size
 
 ```bash
-du -chs $HOME/* 2>/dev/null | sort -rh
+du -chs $HOME/{.,}* 2>/dev/null | sort -rh
 ```
 
 ## clean runtime dependencies
