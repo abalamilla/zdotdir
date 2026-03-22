@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+#MISE description="Display free disk space."
+
+df -h
+
+# vim:ft=zsh

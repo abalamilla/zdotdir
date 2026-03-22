@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+#MISE alias = "crc"
+#MISE confirm="Are you sure you want to recursively remove runtime caches from {{usage.path}}?"
+#MISE description="Recursive remove runtime caches. Directories to find and remove: node_modules, __pycache__, .terraform, .venv, venv, build, dist, .idea, .pytest_cache"
+#USAGE arg "<path>" help="Path to recursively remove runtime caches"
+
+find "${usage_path}" -xdev -prune -maxdepth 10 -type d \( -name node_modules -o -name __pycache__ \
+  -o -name .terraform -o -name .venv -o -name venv -o -name build \
+  -o -name dist -o -name .idea -o -name .pytest_cache \) -exec rm -rf {} + 2>/dev/null
+
+# vim:ft=zsh

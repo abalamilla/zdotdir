@@ -349,14 +349,17 @@ load_homebrew() {
 }
 
 install_apps() {
+  print_message "Installing apps" -1
 	APPS=(
 		# "https://nixos.org/nix/install"::"nix-shell"
+    "https://mise.run"::"mise"
 	)
 
 	for a in $APPS; do
 		CURRENT_APP=(${(s(::))a})
 		install_sh $CURRENT_APP[1] $CURRENT_APP[2]
 	done
+  print_message "Apps installed" -1
 }
 
 install_brewfile() {
@@ -1001,7 +1004,7 @@ show_run_info() {
 }
 
 # Main execution
-() {
+main() {
 	local mode=$(detect_mode)
 
 	# Show run information
@@ -1015,3 +1018,7 @@ show_run_info() {
 	fi
 }
 
+
+if [ "${BASH_SOURCE[0]}" -ef "$0" ]; then
+  main "$@"
+fi

@@ -41,3 +41,8 @@ fi
 if [[ -x "$(command -v kubectl)" ]]; then
   source <(kubectl completion zsh)
 fi
+
+if [[ -x "$(command -v mise)" ]]; then
+  eval "$(~/.local/bin/mise activate zsh)"
+  source <(~/.local/bin/mise completion zsh)
+fi

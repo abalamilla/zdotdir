@@ -19,9 +19,6 @@ export ZDOTFILES_DEBUG=0
 # set docker buildkit as default
 export DOCKER_BUILDKIT=1
 
-# asdf config
-export ASDF_CONFIG_FILE=$MY_CONFIG_PATH/.asdfrc
-
 # lazygit
 export LG_CONFIG_FILE=$HOME/.config/lazygit/config.yml
 

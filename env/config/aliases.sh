@@ -47,7 +47,5 @@ alias zdotdir='cd ${ZDOTDIR:-$HOME}/zdotdir'
 alias k='kubectl'
 alias kg='kubectl get'
 
-alias go-reshim='asdf reshim golang && export GOROOT="$(asdf where golang)/go/"'
-
 # create a list of common typos
 alias ecit='exit'

@@ -1,7 +1,6 @@
 tap "jandedobbeleer/oh-my-posh"
 
 brew "7-zip"
-brew "asdf"
 brew "aws-cdk"
 brew "cfn-lint"
 brew "chafa"

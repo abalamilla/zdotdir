@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+#MISE description="Display disk usage statistics from a given path. Default to current path."
+#USAGE arg "<path>" help="Path to display disk usage statistics." default=""
+
+du -chs "${usage_path:-$PWD}"/{.,}* 2>/dev/null | sort -rh
+
+# vim:ft=zsh

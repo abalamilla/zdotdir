@@ -21,6 +21,6 @@ find ~/Documents/[dir] -type d \( -name node_modules -o -name __pycache__ \
 ## Safe to delete when space is needed
 
 ```bash
-rm -rf ~/Library/Application\ Support/Google
-rm -rf ~/Library/Caches/Google ~/Library/Caches/Homebrew ~/Library/Caches/colima
+rm -rf ~/Library/Application\ Support/Google ~/Library/Caches/Google \
+  ~/Library/Caches/Homebrew ~/Library/Caches/colima
 ```
