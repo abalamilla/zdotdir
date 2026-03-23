@@ -94,7 +94,7 @@ while [[ $# -gt 0 ]]; do
 			echo "  --branch BRANCH        Git branch to use (default: main)"
 			echo "  --mode MODE           Run mode: auto|initial|update (default: auto)"
 			echo "  --component COMP      Component(s) to install/update (comma-separated or multiple flags)"
-			echo "                        Options: all, brew, brew-upgrade, plugins, asdf, upgrade-tools, config, macos, apps"
+			echo "                        Options: all, brew, brew-upgrade, plugins, mise, upgrade-tools, config, macos, apps"
 			echo "  -i, --interactive     Choose components interactively"
 			echo "  -y, --yes             Skip confirmation prompts"
 			echo "  -h, --help            Show this help message"
@@ -198,7 +198,7 @@ select_components() {
 	echo "  [2] Homebrew packages (install missing only)"
 	echo "  [3] Homebrew packages + upgrade (full update)"
 	echo "  [4] Zsh plugins"
-	echo "  [5] ASDF tools"
+	echo "  [5] Mise tools"
 	echo "  [6] Upgrade tool versions to latest"
 	echo "  [7] Config files (stow)"
 	echo "  [8] macOS settings"
@@ -217,7 +217,7 @@ select_components() {
 	component_map[2]="brew"
 	component_map[3]="brew-upgrade"
 	component_map[4]="plugins"
-	component_map[5]="asdf"
+	component_map[5]="mise"
 	component_map[6]="upgrade-tools"
 	component_map[7]="config"
 	component_map[8]="macos"
@@ -600,51 +600,22 @@ install_others() {
 	fi
 }
 
-add_asdf_plugin() {
-	local plugin=$1
-	if asdf plugin list | grep -q "^${plugin}$"; then
-		print_message "asdf plugin $plugin already exists" -2
-	else
-		print_message "Adding asdf plugin $plugin" -1
-		asdf plugin add "$plugin" 2>&1 || true
-	fi
-}
 
-config_asdf() {
-	CURRENT_OPERATION="ASDF tool installation"
-	print_message "Configuring asdf" -1
+config_mise() {
+	CURRENT_OPERATION="Mise tool installation"
+	print_message "Configuring mise" -1
 
-	# Load asdf first to enable plugin commands
-	source "$(brew --prefix asdf)/libexec/asdf.sh"
+	# install tools from .tool-versions
+	print_message "Installing mise tools from .tool-versions" -1
+	mise install
 
-	# asdf plugin list | awk '{print "asdf plugin add " $1 }'
-	local plugins=(
-		argocd aws-sam-cli awscli bun clj-kondo cljstyle colima coursier
-		dive dotnet eza fd fzf git golang gradle helm imagemagick java jq
-		julia k9s krew kubebuilder kubectl kubectx kubeseal kuttl lazygit
-		leiningen lima markdownlint-cli2 maven neovim nodejs python ripgrep
-		rust rust-analyzer sbt scala shellcheck shfmt task terraform uv
-		vault yarn yq zoxide
-	)
-
-	for plugin in "${plugins[@]}"; do
-		add_asdf_plugin "$plugin"
-	done
-
-	# install tools
-	print_message "Installing asdf tools from .tool-versions" -1
-	asdf install
-
-	print_message "Finished configuring asdf" $?
+	print_message "Finished configuring mise" $?
 	CURRENT_OPERATION=""
 }
 
-upgrade_asdf_tools() {
-	CURRENT_OPERATION="ASDF tool version upgrades"
+upgrade_mise_tools() {
+	CURRENT_OPERATION="Mise tool version upgrades"
 	print_message "Upgrading tool versions in .tool-versions" -1
-
-	# Load asdf first to enable plugin commands
-	source "$(brew --prefix asdf)/libexec/asdf.sh"
 
 	# Check if .tool-versions exists
 	if [[ ! -f "$MY_ZDOTDIR/.tool-versions" ]]; then
@@ -657,10 +628,6 @@ upgrade_asdf_tools() {
 	local backup_file="$MY_ZDOTDIR/.tool-versions.backup.$(date +%Y%m%d_%H%M%S)"
 	cp "$MY_ZDOTDIR/.tool-versions" "$backup_file"
 	print_message "Backed up .tool-versions to $(basename $backup_file)" -1
-
-	# Update all plugins to get latest version info
-	print_message "Updating asdf plugins..." -1
-	asdf plugin update --all
 
 	# Create temporary file for new versions
 	local temp_file=$(mktemp)
@@ -686,17 +653,9 @@ upgrade_asdf_tools() {
 			continue
 		fi
 
-		# Check if plugin exists
-		if ! asdf plugin list | grep -q "^${tool_name}$"; then
-			print_message "Plugin $tool_name not installed, skipping" -2
-			echo "$line" >> "$temp_file"
-			skipped_count=$((skipped_count + 1))
-			continue
-		fi
-
-		# Get latest stable version
+		# Get latest stable version using mise
 		print_message "Checking $tool_name (current: $current_version)..." -1
-		local latest_version=$(asdf latest "$tool_name" 2>/dev/null)
+		local latest_version=$(mise latest "$tool_name" 2>/dev/null)
 
 		if [[ -z "$latest_version" ]]; then
 			print_message "Could not determine latest version for $tool_name" 1
@@ -730,7 +689,7 @@ upgrade_asdf_tools() {
 
 	if [[ $updated_count -gt 0 ]]; then
 		print_message "Installing updated tool versions..." -1
-		if asdf install; then
+		if mise install; then
 			print_message "Successfully installed $updated_count updated tool(s)" 0
 		else
 			print_message "Some tools failed to install, check output above" 1
@@ -747,12 +706,6 @@ upgrade_asdf_tools() {
 	CURRENT_OPERATION=""
 }
 
-install_asdf() {
-	print_message "Installing asdf" -1
-	brew install asdf
-	config_asdf
-	print_message "Finished installing asdf" $?
-}
 
 init_config() {
 	# install homebrew
@@ -886,10 +839,6 @@ run_initial_setup() {
 		fi
 	fi
 
-	# Install and configure asdf
-	if should_run_component "asdf" || should_run_component "all"; then
-		install_asdf
-	fi
 
 	# Build and install AppleScript apps
 	if should_run_component "apps" || should_run_component "all"; then
@@ -941,14 +890,14 @@ run_update() {
 		fi
 	fi
 
-	# Update asdf and tools
-	if should_run_component "asdf" || should_run_component "all"; then
-		config_asdf
+	# Update mise and tools
+	if should_run_component "mise" || should_run_component "all"; then
+		config_mise
 	fi
 
 	# Upgrade tool versions to latest (opt-in only)
 	if should_run_component "upgrade-tools"; then
-		upgrade_asdf_tools
+		upgrade_mise_tools
 	fi
 
 	# Build and install AppleScript apps

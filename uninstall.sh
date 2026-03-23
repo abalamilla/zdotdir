@@ -101,7 +101,7 @@ while [[ $# -gt 0 ]]; do
 			echo ""
 			echo "Options:"
 			echo "  --component COMP      Component(s) to uninstall (comma-separated or multiple flags)"
-			echo "                        Options: all, brew, plugins, asdf, config, nvim, venv, apps"
+			echo "                        Options: all, brew, plugins, mise, config, nvim, venv, apps"
 			echo "  -i, --interactive     Choose components interactively"
 			echo "  -y, --yes             Skip confirmation prompts"
 			echo "  -h, --help            Show this help message"
@@ -131,7 +131,7 @@ if [[ $INTERACTIVE_COMPONENTS == true ]]; then
 	echo "  1) All components"
 	echo "  2) Homebrew packages (from Brewfile)"
 	echo "  3) Zsh plugins"
-	echo "  4) ASDF and tools"
+	echo "  4) Mise and tools"
 	echo "  5) Config files (unstow)"
 	echo "  6) Neovim files"
 	echo "  7) Python venv"
@@ -145,7 +145,7 @@ if [[ $INTERACTIVE_COMPONENTS == true ]]; then
 			1) COMPONENTS=(all) ; break ;;
 			2) COMPONENTS+=(brew) ;;
 			3) COMPONENTS+=(plugins) ;;
-			4) COMPONENTS+=(asdf) ;;
+			4) COMPONENTS+=(mise) ;;
 			5) COMPONENTS+=(config) ;;
 			6) COMPONENTS+=(nvim) ;;
 			7) COMPONENTS+=(venv) ;;
@@ -166,7 +166,7 @@ fi
 
 # Expand "all" component
 if [[ " ${COMPONENTS[@]} " =~ " all " ]]; then
-	COMPONENTS=(brew plugins asdf config nvim venv apps)
+	COMPONENTS=(brew plugins mise config nvim venv apps)
 fi
 
 # Helper function to list apps that will be removed
@@ -202,8 +202,8 @@ for comp in "${COMPONENTS[@]}"; do
 		plugins)
 			echo "  ${Red}•${Color_Off} Zsh plugins (./plugins directory)"
 			;;
-		asdf)
-			echo "  ${Red}•${Color_Off} ASDF and all installed tools (~/.asdf)"
+		mise)
+			echo "  ${Red}•${Color_Off} Mise and all installed tools (various XDG directories)"
 			;;
 		config)
 			echo "  ${Red}•${Color_Off} Config files (unstow from $HOME)"
@@ -259,15 +259,55 @@ uninstall_venv() {
 	fi
 }
 
-uninstall_asdf() {
-	CURRENT_OPERATION="Removing ASDF and tools"
+uninstall_mise() {
+	CURRENT_OPERATION="Removing Mise and tools"
 	print_header "$CURRENT_OPERATION"
 
-	if [[ -d "$HOME/.asdf" ]]; then
-		rm -rf "$HOME/.asdf"
-		print_success "ASDF and all tools removed"
-	else
-		print_info "ASDF not found, skipping"
+	local removed=false
+
+	# Remove mise binary
+	if [[ -f "$HOME/.local/bin/mise" ]]; then
+		rm -f "$HOME/.local/bin/mise"
+		print_success "Removed ~/.local/bin/mise"
+		removed=true
+	fi
+
+	# Remove mise data directory
+	if [[ -d "$HOME/.local/share/mise" ]]; then
+		rm -rf "$HOME/.local/share/mise"
+		print_success "Removed ~/.local/share/mise"
+		removed=true
+	fi
+
+	# Remove mise state directory
+	if [[ -d "$HOME/.local/state/mise" ]]; then
+		rm -rf "$HOME/.local/state/mise"
+		print_success "Removed ~/.local/state/mise"
+		removed=true
+	fi
+
+	# Remove mise config directory
+	if [[ -d "$HOME/.config/mise" ]]; then
+		rm -rf "$HOME/.config/mise"
+		print_success "Removed ~/.config/mise"
+		removed=true
+	fi
+
+	# Remove cache directories (platform-specific)
+	if [[ -d "$HOME/.cache/mise" ]]; then
+		rm -rf "$HOME/.cache/mise"
+		print_success "Removed ~/.cache/mise"
+		removed=true
+	fi
+
+	if [[ -d "$HOME/Library/Caches/mise" ]]; then
+		rm -rf "$HOME/Library/Caches/mise"
+		print_success "Removed ~/Library/Caches/mise"
+		removed=true
+	fi
+
+	if [[ $removed == false ]]; then
+		print_info "Mise not found, skipping"
 	fi
 }
 
@@ -427,8 +467,8 @@ for component in "${COMPONENTS[@]}"; do
 		venv)
 			uninstall_venv
 			;;
-		asdf)
-			uninstall_asdf
+		mise)
+			uninstall_mise
 			;;
 		config)
 			uninstall_config

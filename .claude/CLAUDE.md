@@ -41,22 +41,18 @@ brew bundle install --file=./Brewfile
 brew bundle dump --force
 ```
 
-### ASDF Plugins
+### Mise
 
 ```bash
-# Add all plugins (see config_asdf() in install.sh for complete list)
-asdf plugin add <plugin-name>
-
 # Install all tools from .tool-versions
-asdf install
+mise install
 
 # Upgrade all tool versions to latest (via install.sh)
 ./install.sh --component upgrade-tools -y
 
 # Manual version upgrade
-asdf latest <tool-name>        # Check latest version
-asdf install <tool-name> latest # Install latest version
-asdf global <tool-name> <version> # Set global version
+mise latest <tool-name>        # Check latest version
+mise install <tool-name>@latest # Install latest version
 ```
 
 ### Installation Script Features
@@ -80,7 +76,7 @@ mode by checking for:
 ./install.sh --component brew           # Homebrew packages only (no upgrade)
 ./install.sh --component brew-upgrade   # Homebrew + upgrade all packages
 ./install.sh --component plugins        # Zsh plugins only
-./install.sh --component asdf           # ASDF tools only
+./install.sh --component mise           # Mise tools only
 ./install.sh --component upgrade-tools  # Upgrade tool versions to latest
 ./install.sh --component config         # Config symlinks only
 ./install.sh --component macos          # macOS settings only
@@ -100,7 +96,7 @@ mode by checking for:
 `.tool-versions` to their latest stable versions:
 
 - Creates timestamped backup of `.tool-versions` before changes
-- Updates all asdf plugins to get latest version information
+- Retrieves latest version information from mise
 - Compares current versions with latest available versions
 - Updates `.tool-versions` file with new versions
 - Installs updated tools automatically
@@ -109,6 +105,7 @@ mode by checking for:
 - Opt-in only (never runs with `--component all`)
 
 Example:
+
 ```bash
 # Upgrade all tools to latest versions
 ./install.sh --component upgrade-tools -y
@@ -135,7 +132,7 @@ Example:
 
 - Validates brew bundle operations with detailed error messages
 - Detects and reports stow conflicts with clear resolution instructions
-- Verifies ASDF plugin installations
+- Verifies Mise tool installations
 - Provides context-aware error messages for each operation
 - Creates automatic backups before modifying `.tool-versions`
 - Displays backup location for easy recovery if tool upgrades fail
@@ -154,7 +151,7 @@ enterprise-grade error handling:
 # Uninstall specific components
 ./uninstall.sh --component brew           # Homebrew packages from Brewfile
 ./uninstall.sh --component plugins        # Zsh plugins directory
-./uninstall.sh --component asdf           # ASDF and all tools
+./uninstall.sh --component mise           # Mise and all tools
 ./uninstall.sh --component config         # Config files (unstow)
 ./uninstall.sh --component nvim           # Neovim files
 ./uninstall.sh --component venv           # Python virtual environment
@@ -333,7 +330,7 @@ Key commands:
 - `calendar.lua` - Calendar integration
 
 Development languages supported: Java, Scala, Python, JavaScript/TypeScript, Go,
-Rust, Lua, and more via ASDF.
+Rust, Lua, and more via Mise.
 
 ### Kitty (Terminal)
 
@@ -518,7 +515,6 @@ MY_CONFIG_PATH         # ~/zdotdir
 MY_INITIAL_CONFIGURATION  # autoload_functions.sh path
 MY_ZSTYLES_PATH        # Array of zstyle files
 MY_ENV_PATH            # Array of env/config files
-ASDF_CONFIG_FILE       # Points to config/.asdfrc
 K9S_CONFIG_DIR         # ~/.config/k9s
 LG_CONFIG_FILE         # ~/.config/lazygit/config.yml
 EDITOR                 # nvim
@@ -529,7 +525,7 @@ DOCKER_BUILDKIT        # 1 (enabled by default)
 
 ### Version Management
 
-**asdf** manages all language runtimes and CLI tools. See `.tool-versions` for
+**Mise** manages all language runtimes and CLI tools. See `.tool-versions` for
 complete list including:
 
 - Programming languages: golang, nodejs, python, rust, java, scala
@@ -538,6 +534,7 @@ complete list including:
 - Others: terraform, neovim, jq, yq, fzf
 
 To upgrade all tools to their latest versions:
+
 ```bash
 ./install.sh --component upgrade-tools -y
 ```

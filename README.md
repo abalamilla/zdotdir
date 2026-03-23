@@ -9,7 +9,7 @@ modern tooling, automated setup, and extensive customizations.
   component-based installation
 - **Modern Shell Experience**: Zsh with oh-my-posh prompt, interactive
   completions, and powerful plugins
-- **Unified Tool Management**: ASDF for language runtimes, Homebrew for packages
+- **Unified Tool Management**: Mise for language runtimes, Homebrew for packages
 - **Dotfile Management**: GNU Stow for symlink management
 - **Application Configs**: Pre-configured Neovim, Kitty, Tmux, AeroSpace, and
   more
@@ -31,7 +31,7 @@ This will:
 3. Install all packages from Brewfile
 4. Clone Zsh plugins
 5. Symlink configuration files to `~/.config/` and `~/`
-6. Configure ASDF and install all tools from `.tool-versions`
+6. Configure Mise and install all tools from `.tool-versions`
 7. Set up Python virtual environment
 8. Configure macOS settings (if on macOS)
 
@@ -56,7 +56,7 @@ The `install.sh` script supports flexible installation modes:
 # Update only specific components
 ./install.sh --component brew           # Update Homebrew packages only
 ./install.sh --component plugins        # Update Zsh plugins only
-./install.sh --component asdf           # Update ASDF tools only
+./install.sh --component mise           # Update Mise tools only
 ./install.sh --component config         # Refresh config symlinks only
 ./install.sh --component macos          # Reconfigure macOS settings only
 
@@ -100,7 +100,7 @@ zdotdir/
 │   └── functions/        # Utility functions
 ├── zstyles/              # Zsh style configurations
 ├── Brewfile              # Homebrew package definitions
-├── .tool-versions        # ASDF tool versions
+├── .tool-versions        # Mise tool versions
 ├── requirements.txt      # Python packages
 ├── install.sh            # Installation script
 └── uninstall.sh          # Uninstallation script
@@ -199,7 +199,7 @@ Custom shell prompt with segments for:
 
 ## Tool Management
 
-### ASDF
+### Mise
 
 Version manager for multiple languages and tools. All versions are defined in
 `.tool-versions`:
@@ -210,13 +210,10 @@ fzf, ripgrep
 
 ```bash
 # Install all tools
-asdf install
-
-# Add a new plugin
-asdf plugin add <name>
+mise install
 
 # List installed versions
-asdf list
+mise list
 ```
 
 ### Homebrew
@@ -296,18 +293,17 @@ brew bundle dump --force
 brew bundle install
 ```
 
-### Updating ASDF Tools
+### Updating Mise Tools
 
 ```bash
-# Update plugin versions in .tool-versions
-asdf install
+# Update tool versions in .tool-versions
+mise install
 ```
 
 ## Key Environment Variables
 
 ```bash
 MY_CONFIG_PATH         # ~/zdotdir
-ASDF_CONFIG_FILE       # ~/.asdfrc
 K9S_CONFIG_DIR         # ~/.config/k9s
 LG_CONFIG_FILE         # ~/.config/lazygit/config.yml
 EDITOR                 # nvim
@@ -358,8 +354,8 @@ cd ~/zdotdir
 # Update Zsh plugins
 ./install.sh --component plugins -y
 
-# Update ASDF tools
-./install.sh --component asdf -y
+# Update Mise tools
+./install.sh --component mise -y
 
 # Refresh config symlinks
 ./install.sh --component config -y
@@ -385,7 +381,7 @@ error handling and confirmation prompts.
 # Uninstall specific components
 ./uninstall.sh --component brew           # Remove Homebrew packages from Brewfile
 ./uninstall.sh --component plugins        # Remove Zsh plugins directory
-./uninstall.sh --component asdf           # Remove ASDF and all tools
+./uninstall.sh --component mise           # Remove Mise and all tools
 ./uninstall.sh --component config         # Unstow config files
 ./uninstall.sh --component nvim           # Remove Neovim files
 ./uninstall.sh --component venv           # Remove Python virtual environment
@@ -410,7 +406,7 @@ error handling and confirmation prompts.
 
 - **brew**: Only packages listed in Brewfile (not Homebrew itself)
 - **plugins**: `./plugins` and `./themes` directories
-- **asdf**: Entire `~/.asdf` directory with all tools
+- **mise**: Mise data, state, config, and cache directories
 - **config**: Unstows config files from `$HOME`
 - **nvim**: `~/.config/nvim`, `~/.local/share/nvim`, `~/.cache/nvim`
 - **venv**: `./.venv` Python virtual environment
@@ -434,15 +430,16 @@ stow -D config -t ~  # Unstow
 stow config -t ~     # Restow
 ```
 
-### ASDF Plugin Errors
+### Mise Installation Errors
 
-If plugin installation fails:
+If tool installation fails:
 
 ```bash
-# Remove and re-add plugin
-asdf plugin remove <plugin>
-asdf plugin add <plugin>
-asdf install
+# Diagnose issues
+mise doctor
+
+# Reinstall all tools
+mise install
 ```
 
 ### Homebrew Issues
@@ -468,7 +465,7 @@ Personal configuration - use at your own discretion.
 
 - [Zsh Documentation](https://zsh.sourceforge.io/Doc/)
 - [oh-my-posh Themes](https://ohmyposh.dev/docs/themes)
-- [ASDF Plugins](https://github.com/asdf-vm/asdf-plugins)
+- [Mise Documentation](https://mise.jdx.dev/)
 - [Homebrew Formulae](https://formulae.brew.sh/)
 - [Neovim Documentation](https://neovim.io/doc/)
 - [AeroSpace Guide](https://nikitabobko.github.io/AeroSpace/guide)
