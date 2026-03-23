@@ -9,4 +9,9 @@ aliases:
   np: networkpolicies
   spot: nodes karpenter.sh/capacity-type=spot
   ondemand: nodes karpenter.sh/capacity-type=on-demand
-  karpenter: nodes karpenter.sh/nodepool
+  karpenter: nodes karpenter.sh/registered=true
+  np-default: nodes karpenter.sh/nodepool=default
+  np-default-arm64: nodes karpenter.sh/nodepool=default-arm64
+  np-dba: nodes karpenter.sh/nodepool=dba
+  np-cronjob: nodes karpenter.sh/nodepool=cronjob
+  np-gitlab-runner: nodes karpenter.sh/nodepool=gitlab-runner
