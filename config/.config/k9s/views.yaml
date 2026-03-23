@@ -5,7 +5,7 @@ views:
       - STATUS
 
   v1/nodes:
-    sortColumn: AGE:desc,NODEPOOL:desc,NAME:desc
+    sortColumn: AGE:asc
     columns:
       - NAME
       - STATUS
