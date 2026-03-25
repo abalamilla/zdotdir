@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+#MISE description="Debug specific app pod by executing shell."
+#USAGE arg "<app>" help="App name/label"
+#USAGE flag "-n --namespace <namespace>" help="Kubernetes namespace" default="default"
+
+APP="${usage_app?}"
+NAMESPACE="${usage_namespace}"
+
+# Find pod for app
+POD=$(kubectl get pod --namespace="$NAMESPACE" -l app="$APP" -o jsonpath='{.items[0].metadata.name}' 2>/dev/null)
+
+if [[ -z "$POD" ]]; then
+  echo "Error: no pod found for app '$APP' in namespace $NAMESPACE"
+  echo ""
+  echo "Available pods:"
+  kubectl get pods --namespace="$NAMESPACE" -L app
+  exit 1
+fi
+
+echo "Debugging app: $APP, pod: $POD"
+kubectl debug -it -n "$NAMESPACE" "$POD" --image=nicolaka/netshoot
+
+# vim:ft=zsh

@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+#MISE description="Run kubernetes debug pod on specific node."
+#USAGE arg "<node>" help="Node name"
+
+NAMESPACE="engexp"
+POD_NAME="debug-pod-$(date +%s)"
+NODE="${usage_node?}"
+
+# Validate node exists
+if ! kubectl get node "$NODE" &>/dev/null; then
+  echo "Error: node '$NODE' not found"
+  echo ""
+  echo "Available nodes:"
+  kubectl get nodes
+  exit 1
+fi
+
+echo "Starting debug pod: $POD_NAME on node: $NODE"
+kubectl run "$POD_NAME" --namespace="$NAMESPACE" --image=nicolaka/netshoot \
+  --overrides='{"spec":{"nodeSelector":{"kubernetes.io/hostname":"'"$NODE"'"}}}' \
+  -it --rm -- sh
+
+# vim:ft=zsh

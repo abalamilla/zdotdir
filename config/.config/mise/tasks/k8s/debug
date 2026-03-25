@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+#MISE description="Run kubernetes debug pod."
+
+NAMESPACE="engexp"
+POD_NAME="debug-pod-$(date +%s)"
+
+echo "Starting debug pod: $POD_NAME"
+kubectl run "$POD_NAME" --namespace="$NAMESPACE" --image=nicolaka/netshoot -it --rm -- sh
+
+# vim:ft=zsh
