@@ -52,7 +52,7 @@ return {
               },
               keys = {
                 -- Send file(s) to Claude Code
-                ["<leader>ad"] = {
+                ["<leader>gd"] = {
                   function(self)
                     -- Get the picker from Snacks
                     local ok, snacks_picker = pcall(require, "snacks.picker")
