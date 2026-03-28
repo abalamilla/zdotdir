@@ -967,7 +967,6 @@ main() {
 	fi
 }
 
-
-if [ "${BASH_SOURCE[0]}" -ef "$0" ]; then
+if [[ -n $ZSH_SCRIPT ]]; then
   main "$@"
 fi
