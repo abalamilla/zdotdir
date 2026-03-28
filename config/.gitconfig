@@ -25,11 +25,6 @@
   gpgsign = true
 [rerere]
 	enabled = true
-[credential]
-	helper = 
-	helper = /usr/local/share/gcm-core/git-credential-manager
-[credential "https://dev.azure.com"]
-	useHttpPath = true
 [difftool]
 	prompt = false
 [mergetool]
@@ -37,3 +32,8 @@
 	keepBackup = false
 [rebase]
 	autoStash = true
+[credential]
+	helper = 
+	helper = /usr/local/share/gcm-core/git-credential-manager
+[credential "https://dev.azure.com"]
+	useHttpPath = true
