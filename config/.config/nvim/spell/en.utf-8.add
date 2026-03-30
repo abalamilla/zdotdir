@@ -571,3 +571,7 @@ enum
 RestAPI
 oci
 ghcr
+pkl
+kotlin
+JVM
+SREs
