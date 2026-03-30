@@ -227,57 +227,60 @@ return {
       return normalized
     end,
 
-    -- Note path function - create notes in same directory as current file
+    -- Note path function - create notes in current buffer's directory with nested directory support
+    -- Constraint: all notes are created at the same level as the current file
+    -- [[Language/Bindings/index]] creates Language/Bindings/index.md in current directory
     note_path_func = function(spec)
       local Path = require("obsidian").Path
       local buf_path = vim.api.nvim_buf_get_name(0)
-      local spec_dir = tostring(spec.dir)
+      local spec_id = tostring(spec.id)
 
-      -- Determine which workspace the current buffer belongs to
-      local buffer_workspace_root = nil
+      -- Get current buffer's directory - this is where ALL notes will be created
+      local buf_dir
       if buf_path and buf_path ~= "" then
+        buf_dir = vim.fn.fnamemodify(buf_path, ":h")
+      else
+        -- Fallback if no buffer path
+        return (spec.dir / spec_id):with_suffix(".md")
+      end
+
+      -- spec.id may contain nested directory structure from wiki link parsing
+      -- e.g., for [[Language/Bindings/index]], spec.id might be "Language/Bindings/index"
+      -- OR it might just be "index" with spec.dir containing the structure
+
+      local spec_id_str = tostring(spec.id)
+      local full_path
+
+      -- Check if spec.id contains directory separators (nested structure)
+      if spec_id_str:find("/") then
+        -- spec.id contains the nested path, just append to buffer directory
+        full_path = buf_dir .. "/" .. spec_id_str
+      else
+        -- spec.id is just the filename
+        -- Check spec.dir for nested structure beyond workspace root
+        local spec_dir = tostring(spec.dir)
+
+        -- Extract nested directories from spec.dir by removing workspace root
+        -- Pattern: find workspace name and get everything after it
+        local nested_dirs = ""
         for _, ws in ipairs({ "pgd", "ab", "vimwiki", "jira-reports", "assets" }) do
-          local pattern = "/vimwiki/" .. ws .. "/"
-          if buf_path:find(pattern) then
-            buffer_workspace_root = vim.fn.expand("~/vimwiki/" .. ws)
+          local pattern = "/vimwiki/" .. ws .. "/?(.*)$"
+          local match = spec_dir:match(pattern)
+          if match and match ~= "" then
+            nested_dirs = match
             break
           end
         end
-      end
 
-      -- Extract workspace from spec.dir to detect if link has subdirectory
-      local spec_workspace_root = nil
-      for _, ws in ipairs({ "pgd", "ab", "vimwiki", "jira-reports", "assets" }) do
-        local pattern = "/vimwiki/" .. ws
-        local idx = spec_dir:find(pattern)
-        if idx then
-          spec_workspace_root = vim.fn.expand("~/vimwiki/" .. ws)
-          break
-        end
-      end
-
-      local base_dir
-      -- Check if spec.dir has subdirectories beyond the workspace root
-      if spec_workspace_root and spec_dir ~= spec_workspace_root then
-        -- Link has subdirectory like [[folder/note]]
-        -- Replace spec's workspace with buffer's workspace
-        if buffer_workspace_root and spec_workspace_root then
-          base_dir = spec_dir:gsub("^" .. vim.pesc(spec_workspace_root), buffer_workspace_root)
+        -- Construct path: current_buffer_dir + nested_dirs + filename
+        if nested_dirs ~= "" then
+          full_path = buf_dir .. "/" .. nested_dirs .. "/" .. spec_id_str
         else
-          base_dir = spec_dir
+          full_path = buf_dir .. "/" .. spec_id_str
         end
-      elseif buf_path and buf_path ~= "" then
-        -- Simple link like [[note]], use current buffer's directory
-        base_dir = vim.fn.fnamemodify(buf_path, ":h")
-      else
-        -- Fallback
-        base_dir = spec_dir
       end
 
-      -- Construct full path
-      local full_path = base_dir .. "/" .. tostring(spec.id)
-
-      -- Ensure parent directory exists
+      -- Ensure all parent directories exist
       local parent_dir = vim.fn.fnamemodify(full_path, ":h")
       vim.fn.mkdir(parent_dir, "p")
 
