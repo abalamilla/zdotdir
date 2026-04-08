@@ -28,8 +28,6 @@ fi
 
 if [[ -x "$(command -v zoxide)" ]] then
   eval "$(zoxide init zsh)"
- else
-  echo "zoxide not found"
 fi
 
 if [[ -x "$(command -v fzf)" ]] then
