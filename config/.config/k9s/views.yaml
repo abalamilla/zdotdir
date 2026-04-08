@@ -16,3 +16,15 @@ views:
       - ZONE:.metadata.labels.topology\.kubernetes\.io/zone
       - CPU:.metadata.labels.karpenter\.k8s\.aws/instance-cpu
       - MEMORY:.metadata.labels.karpenter\.k8s\.aws/instance-memory
+
+  v1/events:
+    sortColumn: LASTSEEN:asc
+    columns:
+      - NAMESPACE
+      - NAME
+      - TYPE
+      - REASON
+      - OBJECT
+      - MESSAGE
+      - LASTSEEN
+      - COUNT
