@@ -19,7 +19,7 @@ return {
           sh = { command = { "zsh" } },
           pkl = { command = { "pkl", "repl" } },
         },
-        repl_open_cmd = view.bottom(40),
+        repl_open_cmd = view.split.vertical.botright(0.3),
       },
       keymaps = {
         toggle_repl = "<leader>ir",
