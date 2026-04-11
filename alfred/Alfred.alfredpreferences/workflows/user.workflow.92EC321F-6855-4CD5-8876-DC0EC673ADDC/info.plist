@@ -10,6 +10,19 @@
 	<dict>
 		<key>3B87BE1B-CE34-4729-B9A6-E7A74B7CCD79</key>
 		<array/>
+		<key>73294A21-D50A-49E8-A244-2D1A9C5C20EC</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>FEE22DC7-F386-4AEB-8420-85C5589C5D38</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
 		<key>D670E47D-536D-40BE-BD24-39BA78033B1F</key>
 		<array>
 			<dict>
@@ -111,6 +124,79 @@ osascript -e "display notification \"Connecting to $name\" with title \"Bluetoot
 			<key>version</key>
 			<integer>3</integer>
 		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>#!/bin/zsh                                                                                               
+aerospace focus --window-id "$1"</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>11</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>FEE22DC7-F386-4AEB-8420-85C5589C5D38</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>alfredfiltersresults</key>
+				<true/>
+				<key>alfredfiltersresultsmatchmode</key>
+				<integer>2</integer>
+				<key>argumenttreatemptyqueryasnil</key>
+				<true/>
+				<key>argumenttrimmode</key>
+				<integer>0</integer>
+				<key>argumenttype</key>
+				<integer>1</integer>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>keyword</key>
+				<string>wls</string>
+				<key>queuedelaycustom</key>
+				<integer>3</integer>
+				<key>queuedelayimmediatelyinitially</key>
+				<true/>
+				<key>queuedelaymode</key>
+				<integer>0</integer>
+				<key>queuemode</key>
+				<integer>1</integer>
+				<key>runningsubtext</key>
+				<string></string>
+				<key>script</key>
+				<string>aerospace list-windows --all --format "%{window-id}|%{app-name}|%{window-title}" | jq -R 'split("|") as [$id, $app, $title] | {title: "\($app) | \($title)", subtitle: $id, arg: $id}' | jq -s '{items: .}' </string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>subtext</key>
+				<string></string>
+				<key>title</key>
+				<string>List current app OS Windows</string>
+				<key>type</key>
+				<integer>11</integer>
+				<key>withspace</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.scriptfilter</string>
+			<key>uid</key>
+			<string>73294A21-D50A-49E8-A244-2D1A9C5C20EC</string>
+			<key>version</key>
+			<integer>3</integer>
+		</dict>
 	</array>
 	<key>readme</key>
 	<string></string>
@@ -123,12 +209,26 @@ osascript -e "display notification \"Connecting to $name\" with title \"Bluetoot
 			<key>ypos</key>
 			<real>260</real>
 		</dict>
+		<key>73294A21-D50A-49E8-A244-2D1A9C5C20EC</key>
+		<dict>
+			<key>xpos</key>
+			<real>485</real>
+			<key>ypos</key>
+			<real>475</real>
+		</dict>
 		<key>D670E47D-536D-40BE-BD24-39BA78033B1F</key>
 		<dict>
 			<key>xpos</key>
 			<real>645</real>
 			<key>ypos</key>
 			<real>295</real>
+		</dict>
+		<key>FEE22DC7-F386-4AEB-8420-85C5589C5D38</key>
+		<dict>
+			<key>xpos</key>
+			<real>800</real>
+			<key>ypos</key>
+			<real>440</real>
 		</dict>
 	</dict>
 	<key>userconfigurationconfig</key>
