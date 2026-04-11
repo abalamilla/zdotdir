@@ -21,6 +21,7 @@
   "helm-ls.nvim": { "branch": "main", "commit": "20df43509b02a3ce3c6b3eee254d6e2bffa9a370" },
   "img-clip.nvim": { "branch": "main", "commit": "b6ddfb97b5600d99afe3452d707444afda658aca" },
   "inc-rename.nvim": { "branch": "main", "commit": "0074b551a17338ccdcd299bd86687cc651bcb33d" },
+  "iron.nvim": { "branch": "master", "commit": "88cd340407b959f1168af2a6ae5a3d180e6df32c" },
   "kanagawa.nvim": { "branch": "master", "commit": "aef7f5cec0a40dbe7f3304214850c472e2264b10" },
   "kcl.nvim": { "branch": "main", "commit": "beededb5a8ed01ba2d121ed053aa6380ecb59597" },
   "lazy.nvim": { "branch": "main", "commit": "85c7ff3711b730b4030d03144f6db6375044ae82" },
