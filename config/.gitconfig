@@ -8,6 +8,7 @@
 	excludesfile = ~/.gitignore_global
 	whitespace = trailing-space,cr-at-eol
 	editor = nvim
+	hooksPath = ~/.config/git/hooks
 
 [alias]
 	root = rev-parse --show-toplevel
@@ -22,7 +23,8 @@
 [pull]
 	rebase = true
 [commit]
-  gpgsign = true
+	gpgsign = true
+	verbose = true
 [rerere]
 	enabled = true
 [difftool]
