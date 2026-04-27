@@ -65,3 +65,10 @@ run = '''
 	sh -c 'for path in "$@"; do cb copy < "$path"; done'
 '''
 desc = "Copy file contents to clipboard"
+
+[[mgr.prepend_keymap]]
+on = "<Return>"
+run = '''
+	shell --str '$EDITOR "$@"' --confirm
+'''
+desc = "Open file in editor, navigating to directory if it's a dir"
