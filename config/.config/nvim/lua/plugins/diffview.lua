@@ -14,6 +14,7 @@ local function multi_commit_diff()
   -- Build git log command
   local git_cmd = { "git", "log", "--oneline", "--no-merges", "-n", "100" }
   if grep_pattern ~= "" then
+    table.insert(git_cmd, "-E")
     table.insert(git_cmd, "--grep=" .. grep_pattern)
   end
 
