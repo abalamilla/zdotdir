@@ -1,0 +1,2 @@
+# Auto-configure jj repo based on git remotes
+~/zdotdir/scripts/jj-setup-repo.sh "$@"

@@ -46,3 +46,26 @@ fi
 if [[ -x "$(command -v kubectl)" ]]; then
   source <(kubectl completion zsh)
 fi
+
+# awscli completion
+if [[ -x "$(command -v aws_completer)" ]]; then
+  autoload bashcompinit && bashcompinit
+  complete -C aws_completer aws
+fi
+
+# -- Isolated kubeconfig per shell session --
+
+# Each tab gets its own copy of ~/.kube/config so that switching
+# contexts (kubectl use-context, kubectx, claude-code, etc.) in one
+# tab never affects any other tab. Especially important when running
+# agents against prod and dev simultaneously.
+if [[ -f "$HOME/.kube/config" ]]; then
+    _isolated_kubeconfig=$(mktemp /tmp/kubeconfig-XXXXXX)
+    cp "$HOME/.kube/config" "$_isolated_kubeconfig"
+    export KUBECONFIG="$_isolated_kubeconfig"
+    # Reset context to a safe default on every new tab/session
+    kubectl config use-context sandbox-cluster-2 &>/dev/null
+    # Clean up the temp file when this shell exits
+    trap "rm -f $_isolated_kubeconfig" EXIT
+    unset _isolated_kubeconfig
+fi

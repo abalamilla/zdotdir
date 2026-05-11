@@ -1,0 +1,43 @@
+# Jujutsu Configuration (Personal/Default)
+# This file is tracked in zdotdir and contains personal settings only
+
+[user]
+name = "Abraham Alamilla"
+email = "abraham.alamilla@aalamilla.com"
+
+# Enable GPG signing for all commits
+[signing]
+sign-all = true
+backend = "gpg"
+key = "AD38DD4B522F0B91"  # Personal GPG key
+
+# Git colocated repository settings
+[git]
+auto-local-branch = true
+push-branch-prefix = ""
+
+# UI and display settings
+[ui]
+default-command = "status"
+diff-editor = "nvim"
+merge-editor = "nvim"
+pager = "less -FRX"
+
+# Aliases for common operations
+[aliases]
+# Git-like aliases for familiarity
+st = ["status"]
+lg = ["log", "-r", "::@"]
+
+# Workflow aliases
+sync = ["git", "fetch", "--all-remotes"]
+push-mine = ["git", "push", "--change", "@"]
+
+# Template settings
+[template-aliases]
+'format_short_signature(signature)' = 'signature.email()'
+
+# Revset aliases for common queries
+[revset-aliases]
+'mine()' = 'author(exact:"abraham.alamilla@aalamilla.com")'
+'recent(n)' = 'ancestors(@, n)'

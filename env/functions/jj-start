@@ -1,0 +1,31 @@
+#!/usr/bin/env zsh
+# Start new work: create bookmark and show status
+
+jj-start() {
+  if [[ -z "$1" ]]; then
+    echo "Usage: jj-start <bookmark-name>"
+    echo "Example: jj-start my-feature"
+    return 1
+  fi
+
+  local bookmark_name="$1"
+
+  # Check if bookmark already exists
+  if jj bookmark list 2>/dev/null | grep -q "^${bookmark_name}:"; then
+    echo "Error: Bookmark '$bookmark_name' already exists"
+    echo "Hint: Use 'jj bookmark set $bookmark_name' to update it"
+    echo ""
+    jj bookmark list | grep "^${bookmark_name}:"
+    return 1
+  fi
+
+  # Create bookmark
+  jj bookmark create "$bookmark_name" || return 1
+
+  echo ""
+  echo "✓ Created bookmark: $bookmark_name"
+  echo ""
+
+  # Show status
+  jj status
+}

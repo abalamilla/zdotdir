@@ -1,0 +1,12 @@
+# Initialize jj in existing git repo and auto-configure
+if [[ ! -d .git ]]; then
+    echo "Error: Not a git repository"
+    return 1
+fi
+
+echo "Initializing jj in colocated mode..."
+jj git init --colocate || return 1
+
+echo ""
+echo "Auto-configuring based on git remotes..."
+~/zdotdir/scripts/jj-setup-repo.sh

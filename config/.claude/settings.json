@@ -1,7 +1,5 @@
 {
-  "awsAuthRefresh": "awsenv architects",
   "permissions": {
-    "defaultMode": "default",
     "allow": [
       "Read",
       "Grep",
@@ -65,18 +63,20 @@
       "Bash(.claude/scripts/ch-debug.sh *:*)",
       "Bash(.claude/scripts/k8s-ops.sh:*)",
       "Bash(.claude/scripts/k8s-ops.sh *:*)"
-    ]
+    ],
+    "defaultMode": "default"
   },
-  "env": {
-    "ANTHROPIC_MODEL": "us.anthropic.claude-sonnet-4-5-20250929-v1:0",
-    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "anthropic.claude-haiku-4-5-20251001-v1:0",
-    "AWS_REGION": "us-west-2",
-    "AWS_PROFILE": "Architects_Development-Development",
-    "CLAUDE_CODE_USE_BEDROCK": "1"
-  },
+  "model": "haiku",
   "statusLine": {
     "type": "command",
-    "command": "bash ~/.claude/statusline.sh"
+    "command": "bash ~/.claude/statusline.sh",
+    "padding": 0
   },
-  "alwaysThinkingEnabled": true
+  "enabledPlugins": {
+    "engexp@engexp-marketplace": true,
+    "engexp-runbooks@engexp-runbooks": true
+  },
+  "alwaysThinkingEnabled": true,
+  "effortLevel": "xhigh",
+  "editorMode": "vim"
 }
