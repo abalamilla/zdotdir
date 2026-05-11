@@ -1,8 +1,52 @@
-CLUSTER=$1
-REGION=${2:-$REGION}
-CLUSTER_NAME=$(basename "$CLUSTER" | cut -d'/' -f2)
-ALIAS=${3:-$CLUSTER_NAME}
+#!/usr/bin/env zsh
 
-aws eks update-kubeconfig --name $CLUSTER --region $REGION --alias $ALIAS
+# Usage: eksctx <cluster-name> <region>
+# Creates unique kubectl context alias: <cluster-name>@<region>
+
+if [[ $# -lt 2 ]]; then
+    echo "Usage: eksctx <cluster-name> <region>"
+    echo "Example: eksctx my-cluster us-east-1"
+    return 1
+fi
+
+CLUSTER_NAME=$1
+REGION=$2
+ALIAS="${CLUSTER_NAME}@${REGION}"
+GLOBAL_CONFIG="$HOME/.kube/config"
+
+# Delete old contexts from global config:
+# 1. ARN contexts containing this cluster name
+# 2. Any context name containing cluster name (but not our @ format)
+if [[ -f "$GLOBAL_CONFIG" ]]; then
+    # Get all context names
+    CONTEXTS=$(kubectl config get-contexts -o name --kubeconfig="$GLOBAL_CONFIG" 2>/dev/null)
+
+    for ctx in ${(f)CONTEXTS}; do
+        # Delete if ARN pattern with this cluster OR non-@ format with cluster name
+        if [[ "$ctx" =~ "arn:aws:eks:.*:cluster/${CLUSTER_NAME}" ]] || \
+           [[ "$ctx" == *"${CLUSTER_NAME}"* && "$ctx" != *"@"* ]]; then
+            kubectl config delete-context "$ctx" --kubeconfig="$GLOBAL_CONFIG" &>/dev/null
+        fi
+    done
+fi
+
+# Update global config with new context
+aws eks update-kubeconfig --name "$CLUSTER_NAME" --region "$REGION" --alias "$ALIAS" --kubeconfig="$GLOBAL_CONFIG"
+
+if [[ $? -eq 0 ]]; then
+    # Unset current-context in global file (keep it neutral)
+    kubectl config unset current-context --kubeconfig="$GLOBAL_CONFIG" &>/dev/null
+
+    # Update current session's kubeconfig
+    if [[ -n "$KUBECONFIG" && "$KUBECONFIG" != "$GLOBAL_CONFIG" ]]; then
+        aws eks update-kubeconfig --name "$CLUSTER_NAME" --region "$REGION" --alias "$ALIAS" --kubeconfig="$KUBECONFIG"
+        echo "✓ Context '$ALIAS' added and set as current in this session"
+    else
+        echo "✓ Context '$ALIAS' added to global config"
+    fi
+else
+    echo "✗ Failed to add context for cluster '$CLUSTER_NAME' in region '$REGION'"
+    return 1
+fi
 
 # vim:ft=zsh
