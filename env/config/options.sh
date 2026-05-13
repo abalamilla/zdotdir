@@ -21,6 +21,12 @@ unset _ORIGINAL_PATH
 bindkey '^[[A' history-substring-search-up
 bindkey '^[[B' history-substring-search-down
 
+# vim-kitty-navigator: Unbind shell keys for seamless window navigation
+bindkey -r '^h'  # Remove Ctrl+h (was: vi-backward-delete-char)
+bindkey -r '^j'  # Remove Ctrl+j (was: accept-line)
+bindkey -r '^k'  # Remove Ctrl+k (was: self-insert)
+bindkey -r '^l'  # Remove Ctrl+l (was: clear-screen)
+
 if [[ -x "$(command -v mise)" ]]; then
   eval "$(~/.local/bin/mise activate zsh)"
   source <(~/.local/bin/mise completion zsh)

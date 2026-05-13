@@ -57,3 +57,16 @@ end, { desc = "Insert strikethrough markers" })
 local utils = require("config.utils")
 vim.keymap.set("n", "<leader>rr", utils.run_markdown_code, { desc = "Run code block" })
 vim.keymap.set("v", "<leader>rr", utils.run_markdown_code, { desc = "Run code block" })
+
+-- vim-kitty-navigator: Override LazyVim's default Ctrl+hjkl window navigation
+local opts = { noremap = true, silent = true }
+vim.keymap.set("n", "<C-h>", ":KittyNavigateLeft<CR>", opts)
+vim.keymap.set("n", "<C-j>", ":KittyNavigateDown<CR>", opts)
+vim.keymap.set("n", "<C-k>", ":KittyNavigateUp<CR>", opts)
+vim.keymap.set("n", "<C-l>", ":KittyNavigateRight<CR>", opts)
+-- Also map in insert mode
+vim.keymap.set("i", "<C-h>", "<C-\\><C-N>:KittyNavigateLeft<CR>", opts)
+vim.keymap.set("i", "<C-j>", "<C-\\><C-N>:KittyNavigateDown<CR>", opts)
+vim.keymap.set("i", "<C-k>", "<C-\\><C-N>:KittyNavigateUp<CR>", opts)
+vim.keymap.set("i", "<C-l>", "<C-\\><C-N>:KittyNavigateRight<CR>", opts)
+
