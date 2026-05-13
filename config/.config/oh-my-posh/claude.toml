@@ -1,0 +1,72 @@
+version = 3
+final_space = true
+
+[palette]
+blue = '#83a598'
+green = '#b8bb26'
+orange = '#fe8019'
+red = '#fb4934'
+purple = '#b16286'
+aqua = '#8ec07c'
+yellow = '#fabd2f'
+gray = '#928374'
+white = '#ebdbb2'
+
+# Shell context block (left)
+[[blocks]]
+type = 'prompt'
+alignment = 'left'
+
+[[blocks.segments]]
+type = 'path'
+foreground = 'p:blue'
+template = ' {{ .Path }} '
+
+[blocks.segments.properties]
+folder_icon = '..'
+home_icon = '~'
+style = 'agnoster_short'
+max_depth = 1
+
+[[blocks.segments]]
+type = 'git'
+foreground = 'p:green'
+template = ' {{ .HEAD }} '
+
+[blocks.segments.properties]
+fetch_status = false
+
+[[blocks.segments]]
+type = 'kubectl'
+templates_logic = 'first_match'
+templates = [
+  "{{ if or (matchP \"(?i)^(main|tooling)-\" .Context) }} <p:red>⎈ {{ base .Context }}</>{{ else }} <p:purple>⎈ {{ base .Context }}</>{{ end }}",
+  "",
+]
+
+[blocks.segments.properties]
+tips = ['kubectl', 'k9s']
+
+[[blocks.segments]]
+type = 'aws'
+templates_logic = 'first_match'
+templates = [
+  "{{ if matchP \"(?i).*prod.*\" .Profile }} <p:red> {{ .Profile }}</>{{ else }} <p:aqua> {{ .Profile }}</>{{ end }}",
+  "",
+]
+
+# Claude session block (right)
+[[blocks]]
+type = 'prompt'
+alignment = 'right'
+newline = true
+
+[[blocks.segments]]
+type = 'claude'
+foreground = 'p:white'
+template = ' 🤖 {{ .Model.DisplayName }}{{ if .Thinking.Enabled }} 🧠{{ end }}{{ if eq .Effort.Level "max" }} ⚡{{ end }}{{ if .FastMode }} 🚀{{ end }}{{ if .Agent.Name }} 🕵️ {{ .Agent.Name }}{{ end }} │ {{ .TokenGauge }} {{ .TokenUsagePercent }}% │ 📥 {{ .ContextWindow.TotalInputTokens }} 📤 {{ .ContextWindow.TotalOutputTokens }} │ 💰 {{ .FormattedCost }}{{ if .Worktree.Name }} │ 📦 {{ .Worktree.Name }}{{ end }}{{ if .Exceeds200KTokens }} │ ⚠️ >200K{{ end }} │ ⏱️ {{ .FormattedDuration }} '
+style = 'plain'
+
+[blocks.segments.properties]
+gauge_marked_char = '🟩'
+gauge_unmarked_char = '⬜'

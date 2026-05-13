@@ -69,12 +69,13 @@
   "model": "haiku",
   "statusLine": {
     "type": "command",
-    "command": "bash ~/.claude/statusline.sh",
+    "command": "oh-my-posh claude --config ~/.config/oh-my-posh/claude.toml",
     "padding": 0
   },
   "enabledPlugins": {
     "engexp@engexp-marketplace": true,
-    "engexp-runbooks@engexp-runbooks": true
+    "engexp-runbooks@engexp-runbooks": true,
+    "lua-lsp@claude-plugins-official": true
   },
   "alwaysThinkingEnabled": true,
   "effortLevel": "xhigh",
