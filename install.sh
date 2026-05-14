@@ -534,7 +534,7 @@ update_stow_config() {
 	print_message "Updating stow configuration" -1
 
 	# Try to stow (will skip existing, error on conflicts)
-	local stow_output=$(stow config -t ~ 2>&1)
+	local stow_output=$(stow -v config -t ~ 2>&1)
 	local stow_status=$?
 
 	if [[ $stow_status -ne 0 ]]; then
@@ -580,6 +580,7 @@ update_stow_config() {
 			return 1
 		fi
 	else
+		echo "$stow_output"
 		print_message "Stow configuration updated" 0
 	fi
 }
@@ -827,7 +828,7 @@ run_initial_setup() {
 
 	# Stow configuration files
 	if should_run_component "config" || should_run_component "all"; then
-		stow config -t ~
+		stow -v config -t ~
 	fi
 
 	# Configure macOS settings
