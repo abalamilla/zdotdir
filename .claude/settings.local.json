@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "mcp__context7__resolve-library-id",
+      "WebFetch(domain:jj-vcs.github.io)",
+      "mcp__context7__query-docs",
+      "WebFetch(domain:claude.ai)",
+      "WebFetch(domain:ohmyposh.dev)",
+      "Bash(curl -s \"https://ohmyposh.dev/docs/segments/claude\")",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(awk '{print $NF}')"
+    ]
+  }
+}
