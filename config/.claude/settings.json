@@ -73,8 +73,8 @@
     "padding": 0
   },
   "enabledPlugins": {
-    "engexp@engexp-marketplace": true,
-    "engexp-runbooks@engexp-runbooks": true,
+    "engexp@engexp-marketplace": false,
+    "engexp-runbooks@engexp-runbooks": false,
     "lua-lsp@claude-plugins-official": true
   },
   "alwaysThinkingEnabled": true,
