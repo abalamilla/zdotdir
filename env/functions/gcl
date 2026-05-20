@@ -1,10 +1,11 @@
 # Validate input
 if [ -z "$1" ]; then
-  echo "Usage: gcl <git-url>"
+  echo "Usage: gcl <git-url> [git-clone-flags]"
   return 1
 fi
 
 GIT_URL=$1
+GIT_FLAGS=("${@:2}")
 
 # Extract path after colon and strip .git suffix
 PATH_PART=$(echo "$GIT_URL" | cut -d':' -f2 | sed 's/\.git$//')
@@ -26,7 +27,7 @@ if [ ! -d "$GROUP" ]; then
   cd "$GROUP" || { echo "Error: Cannot cd to $GROUP"; return 1; }
 
   echo "Cloning $GIT_URL"
-  git clone "$GIT_URL"
+  git clone "${GIT_FLAGS[@]}" "$GIT_URL"
 else
   echo "Local group $GROUP exists"
   echo "CD to $GROUP"
@@ -35,7 +36,7 @@ fi
 
 if [ ! -d "$REPONAME" ]; then
   echo "Cloning $GIT_URL"
-  git clone "$GIT_URL"
+  git clone "${GIT_FLAGS[@]}" "$GIT_URL"
 
   echo "CD to $REPONAME"
   cd "$REPONAME" || { echo "Error: Cannot cd to $REPONAME"; return 1; }
