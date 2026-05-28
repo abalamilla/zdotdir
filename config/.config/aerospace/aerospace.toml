@@ -177,11 +177,11 @@ run = 'move-node-to-workspace C'
 
 [[on-window-detected]]
 if.app-id = 'com.microsoft.Outlook'
-run = 'move-node-to-workspace O'
+run = ['layout floating', 'move-node-to-workspace O']
 
 [[on-window-detected]]
 if.app-id = 'com.apple.mail'
-run = 'move-node-to-workspace O'
+run = ['layout floating', 'move-node-to-workspace O']
 
 [[on-window-detected]]
 if.app-id = 'com.tinyspeck.slackmacgap'
