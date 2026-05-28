@@ -1,4 +1,5 @@
 [tools]
 pkl = "latest"
+stern = "1.34.0"
 usage = "latest"
 
