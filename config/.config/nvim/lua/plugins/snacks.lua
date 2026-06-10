@@ -32,6 +32,9 @@ return {
       },
     },
     picker = {
+      matcher = {
+        frecency = true,
+      },
       sources = {
         explorer = {
           layout = { layout = { position = "right" } },

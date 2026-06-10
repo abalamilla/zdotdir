@@ -1,0 +1,33 @@
+#!/bin/bash
+
+commit_msg_file="$1"
+commit_msg=$(head -n 1 "$commit_msg_file")
+
+# Check if this is an office repo (gitlab remote)
+is_office_repo() {
+  git config --get-regexp '^remote\..*\.url' | grep -q 'git@gitlab'
+}
+
+# Validate CJPM prefix: CJPM-XXXXX where X is a digit
+validate_cjpm_prefix() {
+  local msg="$1"
+  # Check if message starts with CJPM- followed by digits and colon
+  if [[ $msg =~ ^CJPM-[0-9]+: ]]; then
+    return 0
+  else
+    return 1
+  fi
+}
+
+if is_office_repo; then
+  if ! validate_cjpm_prefix "$commit_msg"; then
+    echo "❌ Office profile detected (gitlab remote)."
+    echo "   Commit message must start with CJPM-XXXXX: format"
+    echo "   Example: CJPM-1234: Fix login bug"
+    echo ""
+    echo "   Current message: $commit_msg"
+    exit 1
+  fi
+fi
+
+exit 0
