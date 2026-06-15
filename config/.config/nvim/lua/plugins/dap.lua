@@ -50,6 +50,22 @@ return {
         },
       }
 
+      -- Scala debugging via Metals DAP
+      dap.adapters.scala = {
+        type = "server",
+        host = "localhost",
+        port = 8086,
+      }
+
+      dap.configurations.scala = {
+        {
+          type = "scala",
+          request = "launch",
+          name = "Metals Debug",
+          metals = {},
+        },
+      }
+
       -- Add new base configurations, override the default ones
       for _, language in ipairs(js_filetypes) do
         dap.configurations[language] = {

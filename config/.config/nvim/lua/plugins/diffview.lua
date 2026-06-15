@@ -1,5 +1,23 @@
 local close_panel = { "n", "<esc>", "", { desc = "Close file panel" } }
 
+-- Resize left diff window to 40% of screen width
+local function resize_diff_view(view)
+  if view and view.tabpage then
+    vim.schedule(function()
+      local wins = vim.api.nvim_tabpage_list_wins(view.tabpage)
+      local left_width = math.floor(vim.o.columns * 0.4)
+      for _, win in ipairs(wins) do
+        local buf = vim.api.nvim_win_get_buf(win)
+        local ft = vim.api.nvim_buf_get_option(buf, "filetype")
+        if ft ~= "DiffviewFiles" then
+          vim.api.nvim_win_set_width(win, left_width)
+          break
+        end
+      end
+    end)
+  end
+end
+
 -- Function to select and diff multiple commits
 local function multi_commit_diff()
   local pickers = require("telescope.pickers")
@@ -178,6 +196,17 @@ return {
       end,
       desc = "Diffview ignore whitespace",
     },
+    {
+      "<leader>gdvr",
+      function()
+        local view = require("diffview.lib").get_current_view()
+        resize_diff_view(view)
+        if view then
+          vim.notify("Redrew diffview layout", vim.log.levels.INFO)
+        end
+      end,
+      desc = "Redraw diffview layout",
+    },
   },
   opts = {
     diff_binaries = false,
@@ -214,8 +243,8 @@ return {
         folder_statuses = "only_folded",
       },
       win_config = {
-        position = "left",
-        width = 35,
+        position = "bottom",
+        height = 16,
       },
     },
     keymaps = {
@@ -266,10 +295,14 @@ return {
       },
     },
     hooks = {
+      view_opened = function(view)
+        resize_diff_view(view)
+      end,
       diff_buf_read = function()
         -- Enable synchronized scrolling
         vim.opt_local.scrollbind = true
         vim.opt_local.cursorbind = true
+        vim.opt_local.wrap = false
       end,
     },
   },
