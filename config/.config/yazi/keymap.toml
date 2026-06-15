@@ -4,6 +4,7 @@ run = '''
 	sh -c 'echo "$@" | cb copy'
 '''
 desc = "Copy file paths to clipboard"
+
 [[mgr.prepend_keymap]]
 on = ["c", "a", "a"]
 run = "plugin compress"
