@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+#MISE alias = "cc"
+#MISE confirm="This will clean uv, npm, pre-commit, Gradle, Cargo, Maven, and Ivy caches. Continue?"
+#MISE description="Clean all tool caches: uv, npm, pre-commit, Gradle, Cargo, Maven, Ivy"
+
+command -v uv &>/dev/null          && { echo "uv...";         uv cache clean; }
+command -v npm &>/dev/null         && { echo "npm...";        npm cache clean --force 2>/dev/null; }
+command -v pre-commit &>/dev/null  && { echo "pre-commit..."; pre-commit clean; }
+[[ -d ~/.gradle/caches ]]          && { echo "gradle...";     rm -rf ~/.gradle/caches; }
+[[ -d ~/.cargo/registry ]]         && { echo "cargo...";      rm -rf ~/.cargo/registry; }
+[[ -d ~/.m2/repository ]]          && { echo "maven...";      rm -rf ~/.m2/repository; }
+[[ -d ~/.ivy2/cache ]]             && { echo "ivy...";        rm -rf ~/.ivy2/cache; }
+
+echo "Done."
+
+# vim:ft=zsh
