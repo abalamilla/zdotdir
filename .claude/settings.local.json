@@ -9,7 +9,10 @@
       "WebFetch(domain:ohmyposh.dev)",
       "Bash(curl -s \"https://ohmyposh.dev/docs/segments/claude\")",
       "WebFetch(domain:raw.githubusercontent.com)",
-      "Bash(awk '{print $NF}')"
+      "Bash(awk '{print $NF}')",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:scalameta.org)",
+      "WebFetch(domain:api.github.com)"
     ]
   }
 }
