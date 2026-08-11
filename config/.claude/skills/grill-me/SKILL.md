@@ -16,7 +16,7 @@ Ask the questions one at a time.
 If a question can be answered by exploring the codebase, explore the codebase
 instead.
 
-Once all questions are answered, write a plan to
+Once all questions are answered, ask the user if wants to write a plan to
 `docs/plan-<short-topic-slug>.md` in the current repo summarizing every decision
 made (as a table or structured list). Do NOT print the plan content in the
 terminal — just output the file path as a link and ask the user to review it and
