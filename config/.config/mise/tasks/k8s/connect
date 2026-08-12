@@ -1,0 +1,42 @@
+#!/usr/bin/env zsh
+#MISE description="Authenticate to AWS account and connect to EKS cluster"
+#MISE alias="eks"
+#USAGE arg "[alias]" help="Cluster alias e.g. scusw2 (omit for interactive picker)"
+
+CLUSTERS_FILE="${CJ_CLUSTERS_FILE:-$HOME/.config/cj/clusters.yaml}"
+
+if [[ ! -f "$CLUSTERS_FILE" ]]; then
+    print -u2 "Cluster config not found: $CLUSTERS_FILE"
+    print -u2 "Source office_profile to generate it"
+    exit 1
+fi
+
+ALIAS_ARG="${usage_alias:-}"
+
+if [[ -n "$ALIAS_ARG" ]]; then
+    RAW=$(yq e 'to_entries[] | .key as $account | .value[] | select(.alias == "'"$ALIAS_ARG"'") | [$account, .cluster, .region] | join("|")' "$CLUSTERS_FILE")
+    if [[ -z "$RAW" ]]; then
+        print -u2 "No cluster found with alias: $ALIAS_ARG"
+        exit 1
+    fi
+    ACCOUNT=$(cut -d'|' -f1 <<< "$RAW")
+    CLUSTER=$(cut -d'|' -f2 <<< "$RAW")
+    REGION=$(cut -d'|' -f3 <<< "$RAW")
+else
+    SELECTION=$(yq e 'to_entries[] | .key as $account | .value[] | [.alias, $account, .cluster, .region] | join("|")' "$CLUSTERS_FILE" \
+        | fzf --delimiter='|' --header="alias | account | cluster | region")
+    [[ -z "$SELECTION" ]] && exit 0
+    ACCOUNT=$(cut -d'|' -f2 <<< "$SELECTION")
+    CLUSTER=$(cut -d'|' -f3 <<< "$SELECTION")
+    REGION=$(cut -d'|' -f4 <<< "$SELECTION")
+fi
+
+print "→ Getting credentials for: $ACCOUNT"
+eval "$(awsenv "$ACCOUNT" --reason "access cluster $CLUSTER" --export)"
+
+print "→ Connecting: $CLUSTER ($REGION)"
+fpath=("${MY_CONFIG_PATH:-$HOME/zdotdir}/env/functions" $fpath)
+autoload -Uz eksctx
+eksctx "$CLUSTER" "$REGION"
+
+# vim:ft=zsh
