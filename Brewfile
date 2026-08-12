@@ -60,7 +60,6 @@ brew "wakatime-cli"
 brew "watch"
 brew "wget"
 brew "yazi"
-brew "yq"
 brew "zlib"
 brew "zsh"
 
