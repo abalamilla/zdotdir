@@ -12,7 +12,7 @@ is_office_repo() {
 validate_cjpm_prefix() {
   local msg="$1"
   # Check if message starts with CJPM- followed by digits and colon
-  if [[ $msg =~ ^CJPM-[0-9]+: ]]; then
+  if [[ $msg =~ ^CJPM-[0-9]+: || $msg =~ ^Code\ improvement: ]]; then
     return 0
   else
     return 1
@@ -22,8 +22,9 @@ validate_cjpm_prefix() {
 if is_office_repo; then
   if ! validate_cjpm_prefix "$commit_msg"; then
     echo "❌ Office profile detected (gitlab remote)."
-    echo "   Commit message must start with CJPM-XXXXX: format"
-    echo "   Example: CJPM-1234: Fix login bug"
+    echo "   Commit message must start with one of:"
+    echo "     CJPM-XXXXX: <message>  (e.g. CJPM-1234: Fix login bug)"
+    echo "     Code improvement: <message>"
     echo ""
     echo "   Current message: $commit_msg"
     exit 1
