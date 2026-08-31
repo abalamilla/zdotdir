@@ -54,10 +54,23 @@ function AppID(app)
 	return hs.application.infoForBundlePath(app)["CFBundleIdentifier"]
 end
 
-local chromeBrowser = AppID("/Applications/Google Chrome.app")
--- safariBrowser = appID("/Applications/Safari.app")
+function FindBrowser()
+	local browsers = { "Brave Browser", "Google Chrome", "Safari", "Firefox" }
+	local locations = { "/Applications", os.getenv("HOME") .. "/Applications" }
 
-DefaultBrowser = chromeBrowser
+	for _, browserName in ipairs(browsers) do
+		for _, location in ipairs(locations) do
+			local browserPath = location .. "/" .. browserName .. ".app"
+			if hs.fs.attributes(browserPath) then
+				return AppID(browserPath)
+			end
+		end
+	end
+
+	return nil
+end
+
+DefaultBrowser = FindBrowser()
 
 spoon.SpoonInstall:andUse("URLDispatcher", {
 	config = {
