@@ -80,5 +80,6 @@
   "theme": "dark",
   "editorMode": "vim",
   "autoCompactEnabled": true,
-  "fileCheckpointingEnabled": true
+  "fileCheckpointingEnabled": true,
+  "tui": "fullscreen"
 }

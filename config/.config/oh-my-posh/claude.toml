@@ -64,7 +64,7 @@ newline = true
 [[blocks.segments]]
 type = 'claude'
 foreground = 'p:white'
-template = ' 🤖 {{ .Model.DisplayName }}{{ if .Thinking.Enabled }} 🧠{{ end }}{{ if eq .Effort.Level "max" }} ⚡{{ end }}{{ if .FastMode }} 🚀{{ end }}{{ if .Agent.Name }} 🕵️ {{ .Agent.Name }}{{ end }} │ {{ .TokenGauge }} {{ .TokenUsagePercent }}% │ 📥 {{ .ContextWindow.TotalInputTokens }} 📤 {{ .ContextWindow.TotalOutputTokens }} │ 💰 {{ .FormattedCost }}{{ if .Worktree.Name }} │ 📦 {{ .Worktree.Name }}{{ end }}{{ if .Exceeds200KTokens }} │ ⚠️ >200K{{ end }} │ ⏱️ {{ .FormattedDuration }} '
+template = ' 🤖 {{ .Model.DisplayName }}{{ if .Thinking }}{{ if .Thinking.Enabled }} 🧠{{ end }}{{ end }}{{ if .Effort }}{{ if eq .Effort.Level "max" }} ⚡{{ end }}{{ end }}{{ if .FastMode }} 🚀{{ end }}{{ if .Agent }}{{ if .Agent.Name }} 🕵️ {{ .Agent.Name }}{{ end }}{{ end }} │ {{ .TokenGauge }} {{ .TokenUsagePercent }}% │ 📥 {{ .ContextWindow.TotalInputTokens }} 📤 {{ .ContextWindow.TotalOutputTokens }} │ 💰 {{ .FormattedCost }}{{ if .Worktree }}{{ if .Worktree.Name }} │ 📦 {{ .Worktree.Name }}{{ end }}{{ end }}{{ if .Exceeds200KTokens }} │ ⚠️ >200K{{ end }} │ ⏱️ {{ .FormattedDuration }} '
 style = 'plain'
 
 [blocks.segments.properties]
