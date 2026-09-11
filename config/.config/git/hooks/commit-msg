@@ -2,10 +2,24 @@
 
 commit_msg_file="$1"
 commit_msg=$(head -n 1 "$commit_msg_file")
+gitlab_remote_url=$(git config --get-regexp '^remote\..*\.url' | grep 'git@gitlab' | head -n1 | awk '{print $2}')
+excluded_projects_file="$HOME/.config/git/commit-msg-excluded-projects"
 
 # Check if this is an office repo (gitlab remote)
 is_office_repo() {
-  git config --get-regexp '^remote\..*\.url' | grep -q 'git@gitlab'
+  [[ -n "$gitlab_remote_url" ]]
+}
+
+# Projects excluded from commit message format validation (any message
+# format accepted), matched as a fixed-string substring of the gitlab
+# remote URL. One "group/project" path per line in:
+#   ~/.config/git/commit-msg-excluded-projects
+# Not stow-managed / not committed to this (public) repo, since entries
+# would name internal projects - create the file locally per machine.
+is_excluded_project() {
+  [[ -z "$gitlab_remote_url" ]] && return 1
+  [[ -s "$excluded_projects_file" ]] || return 1
+  grep -qFf "$excluded_projects_file" <<< "$gitlab_remote_url"
 }
 
 # Validate CJPM prefix: CJPM-XXXXX where X is a digit
@@ -19,7 +33,7 @@ validate_cjpm_prefix() {
   fi
 }
 
-if is_office_repo; then
+if is_office_repo && ! is_excluded_project; then
   if ! validate_cjpm_prefix "$commit_msg"; then
     echo "❌ Office profile detected (gitlab remote)."
     echo "   Commit message must start with one of:"
