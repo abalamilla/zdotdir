@@ -14,7 +14,7 @@ fi
 ALIAS_ARG="${usage_alias:-}"
 
 if [[ -n "$ALIAS_ARG" ]]; then
-    RAW=$(yq e 'to_entries[] | .key as $account | .value[] | select(.alias == "'"$ALIAS_ARG"'") | [$account, .cluster, .region] | join("|")' "$CLUSTERS_FILE")
+    RAW=$(yq e 'to_entries[] | .key as $account | .value[] | select(.alias == "'"$ALIAS_ARG"'") | [$account, .cluster, .region] | join("|")' "$CLUSTERS_FILE" | grep .)
     if [[ -z "$RAW" ]]; then
         print -u2 "No cluster found with alias: $ALIAS_ARG"
         exit 1
@@ -24,7 +24,7 @@ if [[ -n "$ALIAS_ARG" ]]; then
     REGION=$(cut -d'|' -f3 <<< "$RAW")
 else
     SELECTION=$(yq e 'to_entries[] | .key as $account | .value[] | [.alias, $account, .cluster, .region] | join("|")' "$CLUSTERS_FILE" \
-        | fzf --delimiter='|' --header="alias | account | cluster | region")
+        | grep . | fzf --delimiter='|' --header="alias | account | cluster | region")
     [[ -z "$SELECTION" ]] && exit 0
     ACCOUNT=$(cut -d'|' -f2 <<< "$SELECTION")
     CLUSTER=$(cut -d'|' -f3 <<< "$SELECTION")
