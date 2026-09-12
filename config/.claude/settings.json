@@ -50,7 +50,7 @@
     ],
     "defaultMode": "default"
   },
-  "model": "sonnet",
+  "model": "sonnet[1m]",
   "skillOverrides": {
     "grill-me": "on",
     "task": "on",
@@ -70,16 +70,14 @@
     "padding": 0
   },
   "enabledPlugins": {
-    "engexp@engexp-marketplace": true,
-    "engexp-runbooks@engexp-runbooks": true,
     "lua-lsp@claude-plugins-official": true,
     "jdtls-lsp@claude-plugins-official": true,
     "pyright-lsp@claude-plugins-official": true
   },
   "effortLevel": "xhigh",
+  "tui": "fullscreen",
   "theme": "dark",
   "editorMode": "vim",
   "autoCompactEnabled": true,
-  "fileCheckpointingEnabled": true,
-  "tui": "fullscreen"
+  "fileCheckpointingEnabled": true
 }
