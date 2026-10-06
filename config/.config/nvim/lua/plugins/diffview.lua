@@ -170,12 +170,21 @@ return {
     "nvim-telescope/telescope.nvim",
   },
   keys = {
-    { "<leader>gdvc", ":DiffviewClose<CR>", desc = "Close Diffview" },
-    { "<leader>gdvo", ":DiffviewOpen<CR>", desc = "Open Diffview" },
-    { "<leader>gdvl", ":DiffviewLog<CR>", desc = "Open Diffview Log" },
-    { "<leader>gdvh", ":DiffviewFileHistory<CR>", desc = "Open Diffview File History" },
     {
-      "<leader>gdvg",
+      "<leader>gvv",
+      function()
+        if require("diffview.lib").get_current_view() then
+          vim.cmd("DiffviewClose")
+        else
+          vim.cmd("DiffviewOpen")
+        end
+      end,
+      desc = "Toggle Diffview",
+    },
+    { "<leader>gvh", "<cmd>DiffviewFileHistory %<CR>", desc = "File history (current file)" },
+    { "<leader>gvH", "<cmd>DiffviewFileHistory<CR>", desc = "File history (repo)" },
+    {
+      "<leader>gvg",
       function()
         local grep_pattern = vim.fn.input("Grep pattern: ")
         if grep_pattern ~= "" then
@@ -185,19 +194,19 @@ return {
       desc = "Diffview File History with grep",
     },
     {
-      "<leader>gdvm",
+      "<leader>gvm",
       multi_commit_diff,
       desc = "Multi-commit diff (filter & select)",
     },
     {
-      "<leader>gdvw",
+      "<leader>gvw",
       function()
         vim.cmd("DiffviewOpen -w")
       end,
       desc = "Diffview ignore whitespace",
     },
     {
-      "<leader>gdvr",
+      "<leader>gvr",
       function()
         local view = require("diffview.lib").get_current_view()
         resize_diff_view(view)
@@ -302,7 +311,6 @@ return {
         -- Enable synchronized scrolling
         vim.opt_local.scrollbind = true
         vim.opt_local.cursorbind = true
-        vim.opt_local.wrap = false
       end,
     },
   },
