@@ -9,6 +9,10 @@ Guidance for Claude Code across all projects.
 - Use GitHub-flavored markdown for formatting
 - Output text to communicate - never use tools or code comments for
   communication
+- User has a clipboard manager - when multiple things need to be copied
+  (e.g. a title and a description), fire multiple `pbcopy` commands right
+  away instead of staging them one at a time and waiting for confirmation
+  between each
 
 ## Agent-Based Investigation
 
@@ -39,6 +43,10 @@ Conservative approach: verify before destructive operations:
 - Ask before: `git reset --hard`, `git checkout .`, destructive refactors
 - Safe default: propose changes first, execute only after approval
 - Create new commits rather than amending published work
+- Commit changes directly on whatever branch is currently checked out
+  (usually main) rather than creating a new branch by default - only
+  create a new branch if the checked-out branch is already something
+  other than main, or the user explicitly asks for a new branch
 
 ## Professional Objectivity
 
