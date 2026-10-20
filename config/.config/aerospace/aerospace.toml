@@ -214,12 +214,16 @@ if.app-id = 'com.apple.Music'
 run = ['layout floating', 'move-node-to-workspace F']
 
 [[on-window-detected]]
+if.app-id = 'com.audible.iphone'
+run = ['layout floating', 'move-node-to-workspace F']
+
+[[on-window-detected]]
 if.app-id = 'com.apple.Preview'
 run = 'move-node-to-workspace P'
 
 [[on-window-detected]]
 if.app-id = 'io.zsa.keymapp'
-run = 'move-node-to-workspace W'
+run = ['layout floating', 'move-node-to-workspace W']
 
 [workspace-to-monitor-force-assignment]
 B = 'Built-in'
