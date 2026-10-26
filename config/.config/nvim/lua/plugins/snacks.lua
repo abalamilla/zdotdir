@@ -47,6 +47,20 @@ return {
             end
           end,
           hidden = true,
+          actions = {
+            goto_work_dir = {
+              action = function(picker)
+                local dir = vim.env.WORK_DIR
+                if not dir or dir == "" then
+                  vim.notify("$WORK_DIR is not set", vim.log.levels.WARN)
+                  return
+                end
+                picker:set_cwd(dir)
+                picker:find()
+              end,
+              desc = "Goto $WORK_DIR",
+            },
+          },
           win = {
             list = {
               wo = {
@@ -54,6 +68,7 @@ return {
                 relativenumber = true,
               },
               keys = {
+                ["gl"] = "goto_work_dir",
                 -- Send file(s) to Claude Code
                 ["<leader>gd"] = {
                   function(self)
@@ -229,6 +244,10 @@ return {
         },
         grep = {
           hidden = true,
+        },
+        projects = {
+          dev = { vim.env.WORK_DIR },
+          max_depth = 3,
         },
       },
       files = {
