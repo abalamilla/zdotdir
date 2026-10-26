@@ -32,12 +32,12 @@ desc = "Archive selected files (password+header+level)"
 
 [[mgr.prepend_keymap]]
 on = ["g", "w", "r"]
-run = "cd $CJGITLAB"
+run = "cd $WORK_DIR"
 desc = "Go to gitlab directory"
 
 [[mgr.prepend_keymap]]
 on = ["g", "w", "a"]
-run = "cd $CJGITLAB/architects"
+run = "cd $WORK_DIR/architects"
 desc = "Go to architects directory"
 
 [[mgr.prepend_keymap]]

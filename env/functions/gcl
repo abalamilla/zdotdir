@@ -16,8 +16,8 @@ REPONAME=$(echo "$PATH_PART" | rev | cut -d'/' -f1 | rev)
 # Get group path (all segments except last)
 GROUP=$(echo "$PATH_PART" | rev | cut -d'/' -f2- | rev)
 
-echo "CD to $CJGITLAB"
-cd "$CJGITLAB" || { echo "Error: Cannot cd to $CJGITLAB"; return 1; }
+echo "CD to $WORK_DIR"
+cd "$WORK_DIR" || { echo "Error: Cannot cd to $WORK_DIR"; return 1; }
 
 if [ ! -d "$GROUP" ]; then
   echo "Creating group $GROUP"
