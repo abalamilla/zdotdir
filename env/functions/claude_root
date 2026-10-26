@@ -1,0 +1,10 @@
+# Launch Claude at $WORK_DIR when inside it, otherwise in the current dir
+if [ -n "$WORK_DIR" ]; then
+  case "$PWD/" in
+    "$WORK_DIR"/*) cd "$WORK_DIR" || return 1 ;;
+  esac
+fi
+
+claude "$@"
+
+# vim:ft=zsh
