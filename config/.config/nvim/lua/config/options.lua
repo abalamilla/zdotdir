@@ -14,6 +14,8 @@ opt.autoindent = true
 opt.wrap = true
 opt.clipboard = ""
 opt.colorcolumn = "80"
+opt.title = true
+opt.titlestring = "%t%( %M%)"
 
 -- add python venv
 local venv = vim.fn.expand("$HOME/zdotdir/.venv/bin/python")
