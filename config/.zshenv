@@ -29,5 +29,9 @@ export _ZO_ECHO=1
 # https://github.com/keybase/keybase-issues/issues/2798
 export GPG_TTY=$(tty)
 
+# share terraform providers across working dirs instead of one copy per .terraform
+export TF_PLUGIN_CACHE_DIR=$HOME/.terraform.d/plugin-cache
+[[ -d $TF_PLUGIN_CACHE_DIR ]] || mkdir -p "$TF_PLUGIN_CACHE_DIR"
+
 # custom k9s config path
 export K9S_CONFIG_DIR=$HOME/.config/k9s

@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+#MISE alias = "cgc"
+#MISE confirm="Run git gc on every repository under {{usage.path}}?"
+#MISE description="Run git gc on every git repository found under a path (history is not changed)"
+#USAGE arg "<path>" help="Path to search for git repositories"
+
+find "${usage_path}" -xdev -maxdepth 6 -type d -name .git -prune -print 2>/dev/null |
+  while IFS= read -r gitdir; do
+    repo=$(dirname "$gitdir")
+    before=$(du -sk "$gitdir" | cut -f1)
+    git -C "$repo" gc --quiet 2>/dev/null || { echo "failed: $repo"; continue; }
+    after=$(du -sk "$gitdir" | cut -f1)
+    (( before - after > 10240 )) && echo "$repo: $((before / 1024))M -> $((after / 1024))M"
+  done
+
+echo "Done."
+
+# vim:ft=zsh

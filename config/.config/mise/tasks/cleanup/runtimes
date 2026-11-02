@@ -1,11 +1,26 @@
 #!/usr/bin/env bash
 #MISE alias = "crc"
 #MISE confirm="Are you sure you want to recursively remove runtime caches from {{usage.path}}?"
-#MISE description="Recursive remove runtime caches. Directories to find and remove: node_modules, __pycache__, .terraform, .venv, venv, build, dist, .idea, .pytest_cache"
+#MISE description="Recursive remove runtime caches. Directories to find and remove: node_modules, __pycache__, .terraform, .venv, venv, build, dist, target, .gradle, .idea, .pytest_cache, .tox, .nox, .mypy_cache, .ruff_cache, .next, .turbo, .parcel-cache, .cpcache, .shadow-cljs, *.egg-info, out and .cache (skipped when they hold git-tracked files)"
 #USAGE arg "<path>" help="Path to recursively remove runtime caches"
 
 find "${usage_path}" -xdev -maxdepth 10 -type d \( -name node_modules -o -name __pycache__ \
   -o -name .terraform -o -name .venv -o -name venv -o -name build \
-  -o -name dist -o -name .idea -o -name .pytest_cache \) -prune -print -exec rm -rf {} + 2>/dev/null
+  -o -name dist -o -name target -o -name .gradle -o -name .idea -o -name .pytest_cache \
+  -o -name .tox -o -name .nox -o -name .mypy_cache -o -name .ruff_cache \
+  -o -name .next -o -name .turbo -o -name .parcel-cache \
+  -o -name .cpcache -o -name .shadow-cljs -o -name '*.egg-info' \) -prune -print -exec rm -rf {} + 2>/dev/null
+
+# `out` and `.cache` are sometimes committed (static site exports, test fixtures,
+# cached API data), so only remove them when git tracks nothing inside them.
+find "${usage_path}" -xdev -maxdepth 10 -type d \( -name out -o -name .cache \) -prune -print0 2>/dev/null |
+  while IFS= read -r -d '' dir; do
+    if [[ -n "$(git -C "$(dirname "$dir")" ls-files -- "$(basename "$dir")" 2>/dev/null | head -1)" ]]; then
+      echo "skipped (git-tracked): $dir"
+    else
+      echo "$dir"
+      rm -rf "$dir"
+    fi
+  done
 
 # vim:ft=zsh

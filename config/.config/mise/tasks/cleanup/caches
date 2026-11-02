@@ -1,15 +1,31 @@
 #!/usr/bin/env bash
 #MISE alias = "cc"
-#MISE confirm="This will clean uv, npm, pre-commit, Gradle, Cargo, Maven, and Ivy caches. Continue?"
-#MISE description="Clean all tool caches: uv, npm, pre-commit, Gradle, Cargo, Maven, Ivy"
+#MISE confirm="This will clean uv, npm, pre-commit, Gradle, Cargo, Maven, Ivy, Homebrew, Go build, node-gyp and TypeScript caches. Continue?"
+#MISE description="Clean all tool caches: uv, npm, pre-commit, Gradle, Cargo, Maven, Ivy, Homebrew, Go build, node-gyp, TypeScript; list prunable mise versions"
 
 command -v uv &>/dev/null          && { echo "uv...";         uv cache clean; }
 command -v npm &>/dev/null         && { echo "npm...";        npm cache clean --force 2>/dev/null; }
-command -v pre-commit &>/dev/null  && { echo "pre-commit..."; pre-commit clean; }
+if command -v pre-commit &>/dev/null; then
+  echo "pre-commit..."; pre-commit clean
+elif [[ -d ${PRE_COMMIT_HOME:-$HOME/.cache/pre-commit} ]]; then
+  echo "pre-commit..."; rm -rf "${PRE_COMMIT_HOME:-$HOME/.cache/pre-commit}"
+fi
 [[ -d ~/.gradle/caches ]]          && { echo "gradle...";     rm -rf ~/.gradle/caches; }
 [[ -d ~/.cargo/registry ]]         && { echo "cargo...";      rm -rf ~/.cargo/registry; }
 [[ -d ~/.m2/repository ]]          && { echo "maven...";      rm -rf ~/.m2/repository; }
 [[ -d ~/.ivy2/cache ]]             && { echo "ivy...";        rm -rf ~/.ivy2/cache; }
+command -v brew &>/dev/null        && { echo "homebrew...";   brew cleanup -s; }
+command -v go &>/dev/null          && { echo "go build...";   go clean -cache; }
+[[ -d ~/Library/Caches/node-gyp ]]   && { echo "node-gyp...";   rm -rf ~/Library/Caches/node-gyp; }
+[[ -d ~/Library/Caches/typescript ]] && { echo "typescript..."; rm -rf ~/Library/Caches/typescript; }
+
+# Report only: mise counts just the configs it has seen loaded, so prune would also
+# remove versions pinned by repos not opened recently (and sole installs of some tools).
+# Review the list, then prune explicitly: mise prune <tool>@<version>
+if command -v mise &>/dev/null; then
+  echo "mise versions not referenced by any tracked config (not removed):"
+  mise ls --prunable
+fi
 
 echo "Done."
 
