@@ -69,6 +69,18 @@
     "command": "oh-my-posh claude --config ~/.config/oh-my-posh/claude.toml",
     "padding": 0
   },
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/scripts/kitty-claude-session.sh"
+          }
+        ]
+      }
+    ]
+  },
   "enabledPlugins": {
     "lua-lsp@claude-plugins-official": true,
     "jdtls-lsp@claude-plugins-official": true,
