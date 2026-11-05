@@ -14,15 +14,13 @@ Guidance for Claude Code across all projects.
   away instead of staging them one at a time and waiting for confirmation
   between each
 
-## Agent-Based Investigation
+## Agents
 
-For open-ended research, exploration, or multi-step analysis:
-
-- Use specialized agents (Explore, general-purpose, etc.) to research in
-  parallel
-- Delegate investigation tasks to agents; don't duplicate work locally
-- Agent findings inform your next steps but don't replace your judgment
-- Always verify findings before acting on them
+- Use subagents only for broad searches across many files or independent
+  work that can run in parallel; do lookups and reads you can target
+  directly yourself
+- Agent findings inform your next steps but don't replace your judgment;
+  verify them before acting
 
 ## Memory System
 
