@@ -1,0 +1,11 @@
+# Run Claude Code with private, non-stow settings when present
+# (auto mode trusted infrastructure that must stay out of this public repo)
+local private_settings="$HOME/.claude/settings.private.json"
+
+if [ -f "$private_settings" ]; then
+  command claude --settings "$private_settings" "$@"
+else
+  command claude "$@"
+fi
+
+# vim:ft=zsh
