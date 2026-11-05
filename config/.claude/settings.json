@@ -44,9 +44,7 @@
       "Bash(aws * list-*)",
       "Bash(aws s3 ls *)",
       "Bash(aws sts get-*)",
-      "Bash(awsenv *)",
-      "Bash(~/.claude/scripts/*)",
-      "Bash(.claude/scripts/*)"
+      "Bash(awsenv *)"
     ],
     "defaultMode": "default"
   },
