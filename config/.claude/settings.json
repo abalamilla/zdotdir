@@ -1,9 +1,6 @@
 {
   "permissions": {
     "allow": [
-      "Read",
-      "Grep",
-      "Glob",
       "Bash(git fetch *)",
       "Bash(kubectl get *)",
       "Bash(kubectl describe *)",
@@ -41,7 +38,13 @@
       "Bash(helm uninstall *)",
       "Bash(helm rollback *)",
       "Bash(terraform apply *)",
-      "Bash(terraform destroy *)"
+      "Bash(terraform destroy *)",
+      "Bash(aws s3 rm *)",
+      "Bash(aws s3 cp *)",
+      "Bash(aws s3 mv *)",
+      "Bash(aws s3 sync *)",
+      "Bash(aws * delete-*)",
+      "Bash(aws * terminate-*)"
     ],
     "deny": [
       "Read(~/.aws/credentials)",
@@ -82,6 +85,17 @@
           {
             "type": "command",
             "command": "~/.claude/scripts/kitty-claude-session.sh"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/scripts/lint-on-edit.sh"
           }
         ]
       }
