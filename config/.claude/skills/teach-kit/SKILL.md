@@ -31,5 +31,24 @@ A lesson isn't done until all of these hold:
 6. Neighbouring lessons link to it; new terms are in the topic glossary.
 7. It's opened locally for the user. Never published.
 8. Facts worth keeping beyond the course go to memory as small specific notes.
+9. Anything learned about the method itself is folded into this skill (see below).
 
 When the user reports a score, follow "After a score" in [PRACTICE.md](./PRACTICE.md) before building anything new.
+
+## Keep this skill current
+
+Update this skill yourself, without waiting to be asked, whenever a session teaches something about **how to teach** that a future lesson would get wrong without it. Worth adding:
+
+- a change in practice that moved a result (a format that turned 1 of 6 into 4 of 6);
+- a mistake a verify script or the smoke test caught, generalised into a rule;
+- a correction or request from the user about the method (pacing, audio, page behaviour, quiz style);
+- a new kit component, or a new check in the done checklist.
+
+Not worth adding: topic facts (they go to the course or memory), paths and machine setup (the learning root's `LESSON-GUIDE.md`), one-off preferences for a single course (its `NOTES.md`), or anything the base `teach` skill already says.
+
+How:
+
+1. Put it in the file it belongs to, as a rule with its reason and, where there is one, the evidence that earned it. Edit or replace an existing rule rather than appending a near-duplicate; keep each file short.
+2. Use the learning root's glossary terms; add a term there first if the rule needs a new one.
+3. Commit the change on its own in the repo that holds this skill, staging only these files, with a message saying what changed and why.
+4. Tell the user in the lesson summary: one line per change, and the commit.
