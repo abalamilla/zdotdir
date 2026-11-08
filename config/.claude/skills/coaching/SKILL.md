@@ -9,16 +9,19 @@ You are acting as a cycling coach for this user. Follow these steps exactly:
    - `~/Documents/coaching/athlete-context.md` — accumulated physiological knowledge, calibration history, equipment, patterns
    - `~/Documents/coaching/training-log.md` — recent sessions and open issues
 
-2. Pull recent activities using `strava_list_activities` (limit 5). The latest session may be split across several activities (e.g. "Part 1"/"Part 2" started within ~30 min of each other); if so, treat them as one session: sum distance and time, weight HR and cadence by duration. Also pull the previous session of the same type (e.g. previous Tempo if this is Tempo) for direct comparison.
+2. Run `python3 -I ~/.claude/scripts/strava_session.py` (add `--activity <id>` for an older ride). It fetches the latest ride and the previous ride of the same type from Strava itself and prints one compact JSON object with `current` and `previous`. Do not pull raw activity streams through the Strava MCP tools and do not hand-compute phase stats. If the script fails (auth, network), report the error instead of improvising.
+   - Rides recorded as "Part 1"/"Part 2" files are already merged into one session.
+   - Phases, targets and planned durations come from `~/Documents/coaching/workouts.json`. Change that file, not the script, when the plan changes.
 
-3. Pull HR and cadence streams for the latest activity using `strava_get_activity_streams` (keys: time, heartrate, cadence). Long sessions exceed the tool output limit and get saved to a file: compute stats from that file with `python3 -I` or `jq` rather than reading it raw. Use the stream to:
-   - Detect workout phases from HR pattern: warmup (rising HR), main block (stable elevated HR), cooldown (falling HR). Warmup typically ends ~8-10min in; cooldown starts when HR drops sharply.
-   - Compute main block avg HR, max HR, and cadence separately from full-session averages.
-   - If the previous same-type session has stream data available, compare main block metrics directly.
+3. Read the output:
+   - `phase_source` says how warmup and cooldown boundaries were found: `laps` (3-lap rides), `parts` (split files), `hr` (detected from the HR drop) or `plan` (config durations, least reliable). Mention it when it is `plan`.
+   - `work` has avg and max HR, cadence, minutes per zone and `pct_in_target`/`pct_above`/`pct_below` against the workout's target HR. Use these for zone time instead of estimating.
+   - Intervals add `reps`: work-bout avg HR and recovery avg HR over the full recovery step.
+   - `previous` is the same output for the last ride of the same type, for direct comparison.
 
 4. Analyze against the training plan:
-   - Use main block avg HR (not session avg) for zone assessment
-   - Check cadence against the per-session-type target in athlete-context.md (e.g. Z2 88-97, Tempo 95-100 flats and 80-90 climbs); use the same numbers written into coaching-context.txt
+   - Use work block avg HR (not session avg) for zone assessment
+   - Check cadence against the per-session-type target in `workouts.json`; use the same numbers written into coaching-context.txt
    - Note distance progression vs previous same session type
    - Flag any open issues from the log that are relevant
 
@@ -35,7 +38,7 @@ You are acting as a cycling coach for this user. Follow these steps exactly:
    - Keep everything the Shortcut needs; there is no hard size cap (about 2000 characters is fine). Trim old detail only if it passes roughly 3000 characters.
    - Sentence order: current mesocycle week and upcoming dates (deload, FTP retest, tests); weekly schedule; HR zones and FTP; per-session-type targets (HR, cadence, power, interval recovery); open issues (current ones only, one clause each); the last 5 sessions, newest first (date, type, distance, time, session avg HR, work block avg HR when known, max HR, cadence).
    - Never write today's date or the word "today": the Shortcut sends the current date itself and a baked-in one goes stale and conflicts. State only dated facts (e.g. "deload runs Mon Nov 9 to Sun Nov 15") and give explicit weekday plus date for every session in an upcoming deload or test week. The model gets weekday arithmetic wrong.
-   - Include a sentence "Next session: <weekday> <date> <type>, about <N>min total." computed by you from the schedule, the plan durations in athlete-context.md and any deload (40% cut) or test week. The model must not compute it.
+   - Include a sentence "Next session: <weekday> <date> <type>, about <N>min total." computed by you from the schedule, the planned durations and `deload_factor` in workouts.json, and any deload or test week. The model must not compute it.
    - Label every HR as "session avg HR" or "work block HR"; say "work block HR not recorded" for sessions without lap splits. Say the lap rule: 3 laps only, intervals work lap covers all bouts.
    - Tie each open-issue fix to its session type (e.g. descent cadence fix applies to Tempo only).
    - Give each open issue with its verified cause, and give interval work-bout HR separately from session avg HR.
