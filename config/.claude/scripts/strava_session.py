@@ -14,7 +14,7 @@ import re
 import sys
 import time
 from datetime import datetime
-from urllib.error import HTTPError
+from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 
@@ -26,6 +26,11 @@ SMOOTH_WINDOW = 30
 MAX_SAMPLE_GAP_S = 5
 PART_RE = re.compile(r"\s*part\s*\d+\s*$", re.I)
 END = float("inf")
+RETRY_DELAYS_S = (2, 5)
+FIT_LAG_S = 40  # HR trails each step change; measured on 3 Watch rides with real step laps
+FIT_SEARCH_S = 360
+FIT_STEP_S = 5
+MIN_REP_CONTRAST_BPM = 10
 
 
 # --- pure logic -------------------------------------------------------------
@@ -179,12 +184,43 @@ def cooldown_start_from_hr(t, hr, warmup_end, planned_start):
     return t[onset]
 
 
+def _window_mean(t, hr, start_s, end_s):
+    vals = [h for h in hr[bisect.bisect_left(t, start_s) : bisect.bisect_left(t, end_s)] if h > 0]
+    return sum(vals) / len(vals) if vals else None
+
+
+def fit_work_start(t, hr, reps, planned_start):
+    """Offset where the rep structure best matches the HR trace (work high, recovery low)."""
+    step = reps["work_s"] + reps["recovery_s"]
+    scores = []
+    center = int(planned_start) + FIT_LAG_S
+    for offset in range(max(60, center - FIT_SEARCH_S), center + FIT_SEARCH_S + 1, FIT_STEP_S):
+        if offset + (reps["count"] - 1) * step + reps["work_s"] > t[-1]:
+            break
+        gaps = []
+        for k in range(reps["count"]):
+            a = offset + k * step
+            work = _window_mean(t, hr, a, a + reps["work_s"])
+            rest = _window_mean(t, hr, a + reps["work_s"], a + step)
+            if work is None or rest is None:
+                break
+            gaps.append(work - rest)
+        else:
+            scores.append((offset, sum(gaps) / len(gaps)))
+    if not scores:
+        return None
+    best = max(score for _, score in scores)
+    if best < MIN_REP_CONTRAST_BPM:
+        return None
+    plateau = sorted(o for o, score in scores if score >= best - 0.25)
+    return max(0, plateau[len(plateau) // 2] - FIT_LAG_S)
+
+
 def detect_boundaries(t, hr, workout, laps, part_starts):
     total = t[-1]
     if laps and len(laps) == 3:
-        last = len(t) - 1
-        w_end = t[min(laps[1]["start_index"], last)]
-        c_start = t[min(laps[2]["start_index"], last)]
+        w_end = min(laps[0]["elapsed_time"], total)
+        c_start = min(w_end + laps[1]["elapsed_time"], total)
         return w_end, c_start, {"warmup": "laps", "cooldown": "laps"}
     warmup_s = workout["warmup_min"] * 60
     cooldown_s = workout["cooldown_min"] * 60
@@ -192,6 +228,15 @@ def detect_boundaries(t, hr, workout, laps, part_starts):
     w_end = min(warmup_s, total / 2)
     if part_starts and 0.5 * warmup_s <= part_starts[0] <= 2 * warmup_s:
         w_end, sources["warmup"] = part_starts[0], "parts"
+    reps = workout.get("reps")
+    if reps:
+        if sources["warmup"] == "plan":
+            fitted = fit_work_start(t, hr, reps, w_end)
+            if fitted is not None:
+                w_end, sources["warmup"] = fitted, "hr_fit"
+        if sources["warmup"] != "plan":
+            span = reps["count"] * (reps["work_s"] + reps["recovery_s"])
+            return w_end, min(w_end + span, total), {**sources, "cooldown": "structure"}
     planned = min(max(total - cooldown_s, w_end + 60), total)
     c_start = planned
     if workout.get("detect") == "hr":
@@ -317,6 +362,7 @@ def analyze_ride(group, t, hr, cad, laps, part_starts, key, cfg, watts=None):
     if "reps" in workout:
         report["reps"] = rep_stats(t, hr, cad, w_end, c_start, workout["reps"])
         report["reps"]["recovery_hr_max"] = workout["reps"]["recovery_hr_max"]
+        report["reps"]["aligned_by"] = sources["warmup"]
     return report
 
 
@@ -351,10 +397,12 @@ def pick_anchor(activities, activity_id):
 
 
 class StravaApi:
-    def __init__(self, strava_dir=STRAVA_DIR, clock=time.time):
+    def __init__(self, strava_dir=STRAVA_DIR, clock=time.time, opener=urlopen, sleep=time.sleep):
         self._token_path = os.path.join(strava_dir, "tokens.json")
         self._config_path = os.path.join(strava_dir, "config.json")
         self._clock = clock
+        self._opener = opener
+        self._sleep = sleep
 
     def _load(self, path):
         try:
@@ -384,12 +432,23 @@ class StravaApi:
         return fresh["access_token"]
 
     def _request(self, request):
-        try:
-            with urlopen(request, timeout=30) as resp:
-                return json.loads(resp.read())
-        except HTTPError as e:
-            hint = " (run strava-auth.py to re-authorize)" if e.code == 401 else ""
-            sys.exit(f"ERROR: Strava {e.code} for {request.full_url.split('?')[0]}{hint}")
+        for delay in (*RETRY_DELAYS_S, None):
+            try:
+                with self._opener(request, timeout=30) as resp:
+                    return json.loads(resp.read())
+            except HTTPError as e:
+                e.close()
+                if e.code >= 500 and delay is not None:
+                    self._sleep(delay)
+                    continue
+                hint = " (run strava-auth.py to re-authorize)" if e.code == 401 else ""
+                sys.exit(f"ERROR: Strava {e.code} for {request.full_url.split('?')[0]}{hint}")
+            except (URLError, TimeoutError) as e:
+                if delay is not None:
+                    self._sleep(delay)
+                    continue
+                sys.exit(f"ERROR: cannot reach Strava: {e!r}")
+        raise AssertionError("the last attempt always returns or exits")
 
     def _get(self, path, params=None):
         url = API + path + ("?" + urlencode(params) if params else "")

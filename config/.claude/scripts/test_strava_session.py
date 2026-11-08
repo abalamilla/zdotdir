@@ -1,3 +1,4 @@
+import io
 import unittest
 
 import strava_session as ss
@@ -33,6 +34,11 @@ def stream(hr, cadence=90):
 
 def z2_ride(warm=600, work=3000, cool=600, work_hr=134):
     return ramp(90, work_hr, warm) + [work_hr] * work + ramp(work_hr, 105, cool)
+
+
+def interval_hr(warm_s, count, work_s, rec_s, cool_s, lag_s=40):
+    steps = [140] * warm_s + ([170] * work_s + [139] * rec_s) * count + [110] * cool_s
+    return [140] * lag_s + steps[:-lag_s]
 
 
 def activity(aid, name, start, elapsed):
@@ -95,7 +101,7 @@ class BoundaryTest(unittest.TestCase):
         self.assertEqual((w_end, sources["warmup"]), (719, "parts"))
 
     def test_three_laps_override_detection(self):
-        laps = [{"start_index": 0}, {"start_index": 700}, {"start_index": 3500}]
+        laps = [{"elapsed_time": 700}, {"elapsed_time": 2800}, {"elapsed_time": 600}]
         self.assertEqual(
             ss.detect_boundaries(self.t, self.hr, CFG["workouts"]["z2_long"], laps, []),
             (700, 3500, {"warmup": "laps", "cooldown": "laps"}),
@@ -109,21 +115,30 @@ class BoundaryTest(unittest.TestCase):
 
 
 class IntervalsTest(unittest.TestCase):
-    def test_reps_split_by_the_configured_structure(self):
-        hr = ramp(90, 140, 600)
-        cad = [90] * 600
-        for _ in range(7):
-            hr += [170] * 210 + [139] * 180
-            cad += [99] * 210 + [70] * 180
-        hr += [110] * 600
-        cad += [80] * 600
-        t = list(range(len(hr)))
+    def test_reps_are_split_where_the_steps_really_started_despite_hr_lag(self):
+        hr = interval_hr(600, 7, 210, 180, 600)
         group = [activity(7, "Intervals Z4-Z5", "2026-11-04T11:14:11Z", len(hr))]
-        report = ss.analyze_ride(group, t, hr, cad, None, [], "intervals", CFG)
-        self.assertEqual(report["reps"]["work_avg_hr"], 170.0)
-        self.assertEqual(report["reps"]["recovery_avg_hr"], 139.0)
+        report = ss.analyze_ride(group, list(range(len(hr))), hr, [90] * len(hr), None, [], "intervals", CFG)
+        self.assertAlmostEqual(report["warmup"]["min"], 10, delta=0.2)
         self.assertEqual(len(report["reps"]["per_rep_work_rec_cad"]), 7)
+        self.assertAlmostEqual(report["reps"]["work_avg_hr"], 164, delta=1.5)
+        self.assertAlmostEqual(report["reps"]["recovery_avg_hr"], 146, delta=1.5)
+        self.assertEqual(report["phase_source"], {"warmup": "hr_fit", "cooldown": "structure"})
+        self.assertEqual(report["reps"]["aligned_by"], "hr_fit")
+
+    def test_reps_are_aligned_even_when_the_warmup_ran_longer_than_planned(self):
+        hr = interval_hr(780, 7, 210, 180, 600)
+        group = [activity(7, "Intervals Z4-Z5", "2026-11-04T11:14:11Z", len(hr))]
+        report = ss.analyze_ride(group, list(range(len(hr))), hr, [90] * len(hr), None, [], "intervals", CFG)
+        self.assertAlmostEqual(report["warmup"]["min"], 13, delta=0.2)
+        self.assertAlmostEqual(report["reps"]["work_avg_hr"], 164, delta=1.5)
+
+    def test_no_contrast_in_hr_falls_back_to_the_plan_and_says_so(self):
+        hr = [150] * 4000
+        group = [activity(7, "Intervals Z4-Z5", "2026-11-04T11:14:11Z", len(hr))]
+        report = ss.analyze_ride(group, list(range(len(hr))), hr, [90] * len(hr), None, [], "intervals", CFG)
         self.assertEqual(report["phase_source"], {"warmup": "plan", "cooldown": "plan"})
+        self.assertEqual(report["reps"]["aligned_by"], "plan")
 
 
 DELOAD_CFG = {
@@ -133,7 +148,7 @@ DELOAD_CFG = {
         **CFG["workouts"],
         "intervals": {
             **CFG["workouts"]["intervals"],
-            "deload": {"warmup_min": 6, "work_min": 26, "cooldown_min": 6, "reps": {"count": 4}},
+            "deload": {"warmup_min": 10, "work_min": 18, "cooldown_min": 8, "reps": {"count": 3, "work_s": 180}},
         },
     },
 }
@@ -144,21 +159,20 @@ class DeloadTest(unittest.TestCase):
         workout = DELOAD_CFG["workouts"]["intervals"]
         inside, flag = ss.effective_workout(workout, "2026-11-11", DELOAD_CFG)
         outside, outside_flag = ss.effective_workout(workout, "2026-11-04", DELOAD_CFG)
-        self.assertEqual((inside["warmup_min"], inside["reps"]["count"], inside["reps"]["work_s"], flag), (6, 4, 210, True))
+        self.assertEqual(
+            (inside["warmup_min"], inside["reps"]["count"], inside["reps"]["work_s"], inside["reps"]["recovery_s"], flag),
+            (10, 3, 180, 180, True),
+        )
         self.assertEqual((outside, outside_flag), (workout, False))
 
     def test_deload_intervals_use_the_shorter_structure(self):
-        hr, cad = ramp(90, 140, 360), [90] * 360
-        for _ in range(4):
-            hr += [170] * 210 + [139] * 180
-            cad += [99] * 210 + [70] * 180
-        hr += [110] * 360
-        cad += [80] * 360
+        hr = interval_hr(600, 3, 180, 180, 480)
         group = [activity(8, "Intervals Z4-Z5", "2026-11-11T11:00:00Z", len(hr))]
-        report = ss.analyze_ride(group, list(range(len(hr))), hr, cad, None, [], "intervals", DELOAD_CFG)
+        report = ss.analyze_ride(group, list(range(len(hr))), hr, [90] * len(hr), None, [], "intervals", DELOAD_CFG)
         self.assertTrue(report["deload"])
-        self.assertEqual(len(report["reps"]["per_rep_work_rec_cad"]), 4)
-        self.assertEqual((report["reps"]["work_avg_hr"], report["reps"]["recovery_avg_hr"]), (170.0, 139.0))
+        self.assertEqual(len(report["reps"]["per_rep_work_rec_cad"]), 3)
+        self.assertAlmostEqual(report["warmup"]["min"], 10, delta=0.2)
+        self.assertAlmostEqual(report["reps"]["work_avg_hr"], 163, delta=1.5)
 
 
 class FtpTestTest(unittest.TestCase):
@@ -220,6 +234,71 @@ class ReportTest(unittest.TestCase):
         report = ss.build_report(FakeApi({9: stream([130] * 3000)}), [ride], ride, CFG)
         self.assertIsNone(report["current"]["type"])
         self.assertNotIn("previous", report)
+
+
+class FakeResponse:
+    def __init__(self, body):
+        self._body = body
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *exc):
+        return False
+
+    def read(self):
+        return self._body
+
+
+class FlakyOpener:
+    def __init__(self, failures, error):
+        self.calls, self._failures, self._error = 0, failures, error
+
+    def __call__(self, request, timeout=30):
+        self.calls += 1
+        if self.calls <= self._failures:
+            raise self._error(request)
+        return FakeResponse(b'{"ok": true}')
+
+
+def server_error(request):
+    return ss.HTTPError(request.full_url, 500, "boom", {}, io.BytesIO(b""))
+
+
+def unauthorized(request):
+    return ss.HTTPError(request.full_url, 401, "no", {}, io.BytesIO(b""))
+
+
+def network_down(request):
+    return ss.URLError("down")
+
+
+class RetryTest(unittest.TestCase):
+    def api(self, opener, slept):
+        return ss.StravaApi(opener=opener, sleep=slept.append)
+
+    def test_server_errors_are_retried_with_backoff_until_success(self):
+        slept, opener = [], FlakyOpener(2, server_error)
+        result = self.api(opener, slept)._request(ss.Request("https://example.test/x"))
+        self.assertEqual((result, opener.calls, slept), ({"ok": True}, 3, [2, 5]))
+
+    def test_network_errors_are_retried_too(self):
+        slept, opener = [], FlakyOpener(1, network_down)
+        self.api(opener, slept)._request(ss.Request("https://example.test/x"))
+        self.assertEqual((opener.calls, slept), (2, [2]))
+
+    def test_gives_up_after_the_last_retry(self):
+        opener = FlakyOpener(99, server_error)
+        with self.assertRaises(SystemExit):
+            self.api(opener, [])._request(ss.Request("https://example.test/x"))
+        self.assertEqual(opener.calls, 3)
+
+    def test_auth_errors_are_not_retried(self):
+        opener = FlakyOpener(99, unauthorized)
+        with self.assertRaises(SystemExit) as raised:
+            self.api(opener, [])._request(ss.Request("https://example.test/x"))
+        self.assertEqual(opener.calls, 1)
+        self.assertIn("re-authorize", str(raised.exception))
 
 
 if __name__ == "__main__":
