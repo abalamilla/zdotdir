@@ -202,6 +202,14 @@ class ReportTest(unittest.TestCase):
         self.assertEqual(current["work"]["pct_above"], 0)
         self.assertEqual(previous["session"]["date"], "2026-11-01")
 
+    def test_work_block_reports_the_share_of_time_with_zero_cadence(self):
+        hr = z2_ride()
+        cad = [90] * len(hr)
+        cad[1000:1300] = [0] * 300
+        group = [activity(7, "Z2 Long", "2026-11-07T12:00:00Z", len(hr))]
+        report = ss.analyze_ride(group, list(range(len(hr))), hr, cad, None, [], "z2_long", CFG)
+        self.assertAlmostEqual(report["work"]["coasting_pct"], 10, delta=1)
+
     def test_session_carries_the_weekday_so_nobody_has_to_compute_it(self):
         ride = activity(6, "Z2 Long", "2026-11-07T12:00:00Z", 3000)
         report = ss.build_report(FakeApi({6: stream(z2_ride())}), [ride], ride, CFG, with_previous=False)

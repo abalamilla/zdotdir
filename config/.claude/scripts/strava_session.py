@@ -274,6 +274,11 @@ def rep_stats(t, hr, cad, work_start, work_end, reps):
     }
 
 
+def coasting_pct(t, cad, start_s, end_s):
+    seg = cad[bisect.bisect_left(t, start_s) : bisect.bisect_left(t, end_s)]
+    return round(100 * sum(1 for c in seg if c == 0) / len(seg), 1) if seg else None
+
+
 def analyze_ride(group, t, hr, cad, laps, part_starts, key, cfg, watts=None):
     workout = cfg["workouts"].get(key)
     first = group[0]
@@ -297,6 +302,7 @@ def analyze_ride(group, t, hr, cad, laps, part_starts, key, cfg, watts=None):
     work = stats(t, hr, cad, w_end, c_start)
     work["zone_min"] = zone_minutes(t, hr, w_end, c_start, cfg["zones"])
     work.update(target_split(t, hr, w_end, c_start, *workout["hr"]))
+    work["coasting_pct"] = coasting_pct(t, cad, w_end, c_start)
     report = {
         "type": key,
         "target_hr": workout["hr"],
