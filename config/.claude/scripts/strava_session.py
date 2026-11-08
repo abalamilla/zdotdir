@@ -79,8 +79,8 @@ def previous_same_type(activities, group, key, workouts):
 
 
 def combine_streams(parts):
-    """parts: [(start_epoch, streams)] oldest first -> time, hr, cadence, later part start offsets."""
-    t, hr, cad, part_starts = [], [], [], []
+    """parts: [(start_epoch, streams)] oldest first -> time, hr, cadence, watts, later part start offsets."""
+    t, hr, cad, watts, part_starts = [], [], [], [], []
     base = parts[0][0]
     for k, (epoch, streams) in enumerate(parts):
         offset = epoch - base
@@ -88,13 +88,56 @@ def combine_streams(parts):
         n = len(times)
         h = streams.get("heartrate") or [0] * n
         c = streams.get("cadence") or [0] * n
-        n = min(n, len(h), len(c))
+        w = streams.get("watts") or [0] * n
+        n = min(n, len(h), len(c), len(w))
         if k:
             part_starts.append(offset)
         t += [offset + x for x in times[:n]]
         hr += h[:n]
         cad += c[:n]
-    return t, hr, cad, part_starts
+        watts += w[:n]
+    return t, hr, cad, watts, part_starts
+
+
+def in_deload(date, cfg):
+    return any(start <= date <= end for start, end in cfg.get("deload_weeks", []))
+
+
+def effective_workout(workout, date, cfg):
+    override = workout.get("deload")
+    if not override or not in_deload(date, cfg):
+        return workout, False
+    merged = {**workout, **{k: v for k, v in override.items() if k != "reps"}}
+    if "reps" in override:
+        merged["reps"] = {**workout["reps"], **override["reps"]}
+    return merged, True
+
+
+def best_window(t, hr, cad, watts, window_min, ftp_factor):
+    """Hardest window of window_min minutes: by watts when the stream has them, else by HR."""
+    use_watts = any(watts)
+    series = watts if use_watts else hr
+    prefix = [0.0]
+    for v in series:
+        prefix.append(prefix[-1] + v)
+    window_s = window_min * 60
+    best = None
+    for i in range(len(t)):
+        if t[i] + window_s > t[-1] + 1:
+            break
+        j = bisect.bisect_left(t, t[i] + window_s)
+        avg = (prefix[j] - prefix[i]) / (j - i)
+        if best is None or avg > best[0]:
+            best = (avg, i)
+    if best is None:
+        return None
+    avg, i = best
+    out = {"metric": "watts" if use_watts else "hr", "window_min": window_min, "start_min": round(t[i] / 60, 1)}
+    out.update({k: v for k, v in stats(t, hr, cad, t[i], t[i] + window_s).items() if k != "min"})
+    if use_watts:
+        out["avg_watts"] = round(avg)
+        out["est_ftp_w"] = round(avg * ftp_factor)
+    return out
 
 
 def smooth(values, window):
@@ -231,12 +274,13 @@ def rep_stats(t, hr, cad, work_start, work_end, reps):
     }
 
 
-def analyze_ride(group, t, hr, cad, laps, part_starts, key, cfg):
+def analyze_ride(group, t, hr, cad, laps, part_starts, key, cfg, watts=None):
     workout = cfg["workouts"].get(key)
     first = group[0]
     session = {
         "name": base_name(first["name"]),
         "date": first["start_date_local"][:10],
+        "weekday": datetime.strptime(first["start_date_local"][:10], "%Y-%m-%d").strftime("%a"),
         "activities": [a["id"] for a in group],
         "distance_km": round(sum(a["distance"] for a in group) / 1000, 1),
         "moving_min": round(sum(a["moving_time"] for a in group) / 60, 1),
@@ -245,6 +289,10 @@ def analyze_ride(group, t, hr, cad, laps, part_starts, key, cfg):
     }
     if workout is None:
         return {"type": None, "session": session, "note": "no workout config matches the activity name"}
+    if workout.get("detect") == "best_window":
+        window = best_window(t, hr, cad, watts or [0] * len(t), workout["window_min"], workout["ftp_factor"])
+        return {"type": key, "session": session, "best_window": window}
+    workout, deload = effective_workout(workout, session["date"], cfg)
     w_end, c_start, sources = detect_boundaries(t, hr, workout, laps, part_starts)
     work = stats(t, hr, cad, w_end, c_start)
     work["zone_min"] = zone_minutes(t, hr, w_end, c_start, cfg["zones"])
@@ -258,6 +306,8 @@ def analyze_ride(group, t, hr, cad, laps, part_starts, key, cfg):
         "work": work,
         "cooldown": stats(t, hr, cad, c_start, END),
     }
+    if deload:
+        report["deload"] = True
     if "reps" in workout:
         report["reps"] = rep_stats(t, hr, cad, w_end, c_start, workout["reps"])
         report["reps"]["recovery_hr_max"] = workout["reps"]["recovery_hr_max"]
@@ -268,9 +318,9 @@ def analyze(api, activities, anchor, cfg):
     group = group_parts(activities, anchor, cfg["group_gap_minutes"] * 60)
     key = match_workout(base_name(anchor["name"]), cfg["workouts"])
     parts = [(start_epoch(a), api.streams(a["id"])) for a in group]
-    t, hr, cad, part_starts = combine_streams(parts)
+    t, hr, cad, watts, part_starts = combine_streams(parts)
     laps = api.laps(group[0]["id"]) if len(group) == 1 else None
-    return analyze_ride(group, t, hr, cad, laps, part_starts, key, cfg), group, key
+    return analyze_ride(group, t, hr, cad, laps, part_starts, key, cfg, watts), group, key
 
 
 def build_report(api, activities, anchor, cfg, with_previous=True):
@@ -345,7 +395,7 @@ class StravaApi:
     def streams(self, activity_id):
         raw = self._get(
             f"/activities/{activity_id}/streams",
-            {"keys": "time,heartrate,cadence", "key_by_type": "true"},
+            {"keys": "time,heartrate,cadence,watts", "key_by_type": "true"},
         )
         return {k: v["data"] for k, v in raw.items()}
 

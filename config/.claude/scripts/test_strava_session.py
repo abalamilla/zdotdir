@@ -126,6 +126,62 @@ class IntervalsTest(unittest.TestCase):
         self.assertEqual(report["phase_source"], {"warmup": "plan", "cooldown": "plan"})
 
 
+DELOAD_CFG = {
+    **CFG,
+    "deload_weeks": [["2026-11-09", "2026-11-15"]],
+    "workouts": {
+        **CFG["workouts"],
+        "intervals": {
+            **CFG["workouts"]["intervals"],
+            "deload": {"warmup_min": 6, "work_min": 26, "cooldown_min": 6, "reps": {"count": 4}},
+        },
+    },
+}
+
+
+class DeloadTest(unittest.TestCase):
+    def test_override_applies_only_inside_deload_weeks(self):
+        workout = DELOAD_CFG["workouts"]["intervals"]
+        inside, flag = ss.effective_workout(workout, "2026-11-11", DELOAD_CFG)
+        outside, outside_flag = ss.effective_workout(workout, "2026-11-04", DELOAD_CFG)
+        self.assertEqual((inside["warmup_min"], inside["reps"]["count"], inside["reps"]["work_s"], flag), (6, 4, 210, True))
+        self.assertEqual((outside, outside_flag), (workout, False))
+
+    def test_deload_intervals_use_the_shorter_structure(self):
+        hr, cad = ramp(90, 140, 360), [90] * 360
+        for _ in range(4):
+            hr += [170] * 210 + [139] * 180
+            cad += [99] * 210 + [70] * 180
+        hr += [110] * 360
+        cad += [80] * 360
+        group = [activity(8, "Intervals Z4-Z5", "2026-11-11T11:00:00Z", len(hr))]
+        report = ss.analyze_ride(group, list(range(len(hr))), hr, cad, None, [], "intervals", DELOAD_CFG)
+        self.assertTrue(report["deload"])
+        self.assertEqual(len(report["reps"]["per_rep_work_rec_cad"]), 4)
+        self.assertEqual((report["reps"]["work_avg_hr"], report["reps"]["recovery_avg_hr"]), (170.0, 139.0))
+
+
+class FtpTestTest(unittest.TestCase):
+    def test_best_window_finds_the_hardest_block_and_estimates_ftp(self):
+        watts = [100] * 600 + [240] * 1200 + [100] * 600
+        hr = [120] * 600 + [165] * 1200 + [110] * 600
+        t = list(range(len(watts)))
+        window = ss.best_window(t, hr, [95] * len(t), watts, 20, 0.95)
+        self.assertEqual((window["metric"], window["avg_watts"], window["est_ftp_w"]), ("watts", 240, 228))
+        self.assertAlmostEqual(window["start_min"], 10, delta=0.1)
+        self.assertEqual(window["avg_hr"], 165.0)
+
+    def test_without_watts_the_window_is_found_by_hr_and_no_ftp_is_claimed(self):
+        hr = [120] * 600 + [165] * 1200 + [110] * 600
+        t = list(range(len(hr)))
+        window = ss.best_window(t, hr, [95] * len(t), [0] * len(t), 20, 0.95)
+        self.assertEqual(window["metric"], "hr")
+        self.assertNotIn("est_ftp_w", window)
+
+    def test_ride_shorter_than_the_window_has_no_result(self):
+        self.assertIsNone(ss.best_window(list(range(600)), [150] * 600, [90] * 600, [0] * 600, 20, 0.95))
+
+
 class ReportTest(unittest.TestCase):
     def test_split_ride_is_one_session_with_previous_for_comparison(self):
         part1 = activity(1, "Z2 Long Part 1", "2026-11-07T12:07:55Z", 706)
@@ -145,6 +201,11 @@ class ReportTest(unittest.TestCase):
         self.assertAlmostEqual(current["work"]["avg_hr"], 134, delta=1)
         self.assertEqual(current["work"]["pct_above"], 0)
         self.assertEqual(previous["session"]["date"], "2026-11-01")
+
+    def test_session_carries_the_weekday_so_nobody_has_to_compute_it(self):
+        ride = activity(6, "Z2 Long", "2026-11-07T12:00:00Z", 3000)
+        report = ss.build_report(FakeApi({6: stream(z2_ride())}), [ride], ride, CFG, with_previous=False)
+        self.assertEqual(report["current"]["session"]["weekday"], "Sat")
 
     def test_unmatched_activity_name_is_reported_not_guessed(self):
         ride = activity(9, "Morning ride", "2026-11-08T11:00:00Z", 3000)
