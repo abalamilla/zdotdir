@@ -22,6 +22,17 @@
       "Bash(aws sts get-*)",
       "Bash(awsenv *)"
     ],
+    "deny": [
+      "Read(~/.aws/credentials)",
+      "Read(~/.ssh/**)",
+      "Read(~/.gnupg/**)",
+      "Read(~/.kube/config)",
+      "Read(~/.config/gh/hosts.yml)",
+      "Read(~/.docker/config.json)",
+      "Read(~/.netrc)",
+      "Read(**/.env)",
+      "Read(**/.env.*)"
+    ],
     "ask": [
       "Bash(git push *)",
       "Bash(glab mr create *)",
@@ -46,20 +57,9 @@
       "Bash(aws * delete-*)",
       "Bash(aws * terminate-*)"
     ],
-    "deny": [
-      "Read(~/.aws/credentials)",
-      "Read(~/.ssh/**)",
-      "Read(~/.gnupg/**)",
-      "Read(~/.kube/config)",
-      "Read(~/.config/gh/hosts.yml)",
-      "Read(~/.docker/config.json)",
-      "Read(~/.netrc)",
-      "Read(**/.env)",
-      "Read(**/.env.*)"
-    ],
-    "defaultMode": "default"
+    "defaultMode": "auto"
   },
-  "model": "opus",
+  "model": "sonnet",
   "skillOverrides": {
     "grill-me": "on",
     "task": "on",
@@ -72,11 +72,6 @@
     "security-review": "user-invocable-only",
     "init": "user-invocable-only",
     "review": "user-invocable-only"
-  },
-  "statusLine": {
-    "type": "command",
-    "command": "oh-my-posh claude --config ~/.config/oh-my-posh/claude.toml",
-    "padding": 0
   },
   "hooks": {
     "SessionStart": [
@@ -101,10 +96,25 @@
       }
     ]
   },
+  "statusLine": {
+    "type": "command",
+    "command": "oh-my-posh claude --config ~/.config/oh-my-posh/claude.toml",
+    "padding": 0
+  },
   "enabledPlugins": {
     "lua-lsp@claude-plugins-official": true,
     "jdtls-lsp@claude-plugins-official": true,
-    "pyright-lsp@claude-plugins-official": true
+    "pyright-lsp@claude-plugins-official": true,
+    "coaching@abalamilla-plugins": true,
+    "teach-kit@abalamilla-plugins": true
+  },
+  "extraKnownMarketplaces": {
+    "abalamilla-plugins": {
+      "source": {
+        "source": "directory",
+        "path": "/Users/aalamilla/claude-plugins"
+      }
+    }
   },
   "modelSettings": {
     "claude-sonnet-5": {
