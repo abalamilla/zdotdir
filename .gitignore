@@ -20,18 +20,3 @@ config/.config/k9s/clusters
 config/.config/k9s/screen-dumps
 config/.gnupg/*
 !config/.gnupg/gpg-agent.conf
-
-# skills linked from ~/.agents/skills by npx skills
-config/.claude/skills/diagnosing-bugs
-config/.claude/skills/domain-modeling
-config/.claude/skills/grill-me
-config/.claude/skills/grill-with-docs
-config/.claude/skills/grilling
-config/.claude/skills/handoff
-config/.claude/skills/prototype
-config/.claude/skills/research
-config/.claude/skills/retro
-config/.claude/skills/tdd
-config/.claude/skills/teach
-config/.claude/skills/wait-what
-config/.claude/skills/wizard
