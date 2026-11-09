@@ -179,7 +179,7 @@ list_apps_to_remove() {
 
 			local app_name=$(basename "$app")
 			local source_name=$(echo "$app_name" | sed 's/\.app$//' | tr '[:upper:]' '[:lower:]' | tr ' ' '-')
-			local source_file="${SCRIPT_DIR}/automator/${source_name}.applescript"
+			local source_file="${APP_PREFS_DIR:-$HOME/app-prefs}/automator/${source_name}.applescript"
 
 			if [[ -f "$source_file" ]]; then
 				apps_found+=("$app_name")
@@ -445,7 +445,7 @@ uninstall_apps() {
 			# Convert app name to lowercase and replace spaces with hyphens
 			# to check if it matches our source files
 			local source_name=$(echo "$app_name" | sed 's/\.app$//' | tr '[:upper:]' '[:lower:]' | tr ' ' '-')
-			local source_file="${SCRIPT_DIR}/automator/${source_name}.applescript"
+			local source_file="${APP_PREFS_DIR:-$HOME/app-prefs}/automator/${source_name}.applescript"
 
 			# Only remove if we have the source file
 			if [[ -f "$source_file" ]]; then

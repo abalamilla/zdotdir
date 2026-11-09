@@ -750,8 +750,8 @@ build_applescript_apps() {
 	local apps_built=0
 	local apps_failed=0
 
-	if [[ -d "$MY_ZDOTDIR/automator" ]]; then
-		for script_file in "$MY_ZDOTDIR/automator"/*.applescript; do
+	if [[ -d "${APP_PREFS_DIR:-$HOME/app-prefs}/automator" ]]; then
+		for script_file in "${APP_PREFS_DIR:-$HOME/app-prefs}/automator"/*.applescript; do
 			# Skip if no .applescript files found
 			[[ ! -f "$script_file" ]] && continue
 
@@ -766,7 +766,7 @@ build_applescript_apps() {
 			# Compile AppleScript to app bundle
 			if osacompile -o "$temp_app" "$script_file" 2>&1; then
 				# Check for custom icon
-				local icon_file="$MY_ZDOTDIR/automator/icons/${script_name}.icns"
+				local icon_file="${APP_PREFS_DIR:-$HOME/app-prefs}/automator/icons/${script_name}.icns"
 				if [[ -f "$icon_file" ]]; then
 					# Copy icon to app bundle
 					cp "$icon_file" "$temp_app/Contents/Resources/applet.icns"
@@ -792,7 +792,7 @@ build_applescript_apps() {
 	fi
 
 	if [[ $apps_built -eq 0 ]] && [[ $apps_failed -eq 0 ]]; then
-		print_message "No AppleScript files found in automator/" -2
+		print_message "No AppleScript files found in ${APP_PREFS_DIR:-$HOME/app-prefs}/automator/" -2
 	elif [[ $apps_failed -gt 0 ]]; then
 		print_message "Built $apps_built app(s), $apps_failed failed" 1
 	else
