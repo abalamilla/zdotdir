@@ -80,9 +80,7 @@ Skills and plugins live outside this repo:
 
 - Own skills (`coaching`, `teach-kit`) are plugins in a separate
   `~/claude-plugins` marketplace, enabled via
-  `enabledPlugins` / `extraKnownMarketplaces` in `settings.json`. The
-  marketplace source is a local directory until that repo is pushed; then
-  switch it to a `github` source.
+  `enabledPlugins` / `extraKnownMarketplaces` in `settings.json`.
 - Upstream skills (`mattpocock/skills`) are installed by `npx skills` into
   `~/.agents/skills` and symlinked from `~/.claude/skills`, which is a real
   directory, not stow-managed. Never add `config/.claude/skills/` (stow would

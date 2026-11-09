@@ -111,8 +111,8 @@
   "extraKnownMarketplaces": {
     "abalamilla-plugins": {
       "source": {
-        "source": "directory",
-        "path": "/Users/aalamilla/claude-plugins"
+        "source": "github",
+        "repo": "abalamilla/claude-plugins"
       }
     }
   },
