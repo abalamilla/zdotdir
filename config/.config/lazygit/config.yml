@@ -7,3 +7,18 @@ git:
 os:
   editPreset: nvim
 quitOnTopLevelReturn: true
+customCommands:
+  - key: U
+    context: commits
+    description: Push up to selected commit
+    prompts:
+      - type: confirm
+        title: Push up to selected commit
+        body: >-
+          git push {{.CheckedOutBranch.UpstreamRemote}}
+          {{slice .SelectedCommit.Hash 0 8}}:refs/heads/{{.CheckedOutBranch.UpstreamBranch}}
+    command: >-
+      git push {{.CheckedOutBranch.UpstreamRemote | quote}}
+      {{.SelectedCommit.Hash}}:refs/heads/{{.CheckedOutBranch.UpstreamBranch | quote}}
+    output: log
+    loadingText: Pushing...
