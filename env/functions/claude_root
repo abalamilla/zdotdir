@@ -6,5 +6,6 @@ if [ -n "$WORK_DIR" ]; then
 fi
 
 claude "$@"
+print -n "claude exited, press Enter to close... "; read -r
 
 # vim:ft=zsh

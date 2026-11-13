@@ -34,6 +34,9 @@ def find_process(window: dict[str, Any], name: str) -> dict[str, Any] | None:
     return None
 
 
+WAIT_ENTER = 'print -n "claude exited, press Enter to close... "; read -r'
+
+
 def zsh(command: str) -> list[str]:
     return ['zsh', '-ic', f'source ~/.zshrc; {command}']
 
@@ -43,7 +46,7 @@ def window_spec(window: dict[str, Any]) -> tuple[str, str, list[str]]:
     if proc := find_process(window, 'claude'):
         session_id = (window.get('user_vars') or {}).get('CLAUDE_SESSION_ID', '')
         if UUID_RE.match(session_id):
-            return 'claude', proc['cwd'], zsh(f'claude --resume {session_id}')
+            return 'claude', proc['cwd'], zsh(f'claude --resume {session_id}; {WAIT_ENTER}')
         return 'claude-new', proc['cwd'], zsh('claude_root')
     if proc := find_process(window, 'nvim'):
         return 'nvim', proc['cwd'], zsh(NVIM_RESTORE)
