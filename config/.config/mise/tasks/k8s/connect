@@ -2,6 +2,7 @@
 #MISE description="Authenticate to AWS account and connect to EKS cluster"
 #MISE alias="eks"
 #USAGE arg "[alias]" help="Cluster alias e.g. scusw2 (omit for interactive picker)"
+#USAGE flag "--reason <reason>" help="Reason for credential request (default: access cluster <cluster>)"
 
 CLUSTERS_FILE="${CJ_CLUSTERS_FILE:-$HOME/.config/cj/clusters.yaml}"
 
@@ -14,7 +15,7 @@ fi
 ALIAS_ARG="${usage_alias:-}"
 
 if [[ -n "$ALIAS_ARG" ]]; then
-    RAW=$(yq e 'to_entries[] | .key as $account | .value[] | select(.alias == "'"$ALIAS_ARG"'") | [$account, .cluster, .region] | join("|")' "$CLUSTERS_FILE" | grep .)
+    RAW=$(yq e 'to_entries[] | .key as $account | .value[] | select(.alias == "'"$ALIAS_ARG"'") | [$account, .cluster, .region, (.role // "")] | join("|")' "$CLUSTERS_FILE" | grep .)
     if [[ -z "$RAW" ]]; then
         print -u2 "No cluster found with alias: $ALIAS_ARG"
         exit 1
@@ -22,17 +23,27 @@ if [[ -n "$ALIAS_ARG" ]]; then
     ACCOUNT=$(cut -d'|' -f1 <<< "$RAW")
     CLUSTER=$(cut -d'|' -f2 <<< "$RAW")
     REGION=$(cut -d'|' -f3 <<< "$RAW")
+    ROLE=$(cut -d'|' -f4 <<< "$RAW")
 else
-    SELECTION=$(yq e 'to_entries[] | .key as $account | .value[] | [.alias, $account, .cluster, .region] | join("|")' "$CLUSTERS_FILE" \
-        | grep . | fzf --delimiter='|' --header="alias | account | cluster | region")
+    SELECTION=$(yq e 'to_entries[] | .key as $account | .value[] | [.alias, $account, .cluster, .region, (.role // "")] | join("|")' "$CLUSTERS_FILE" \
+        | grep . | fzf --delimiter='|' --header="alias | account | cluster | region | role")
     [[ -z "$SELECTION" ]] && exit 0
     ACCOUNT=$(cut -d'|' -f2 <<< "$SELECTION")
     CLUSTER=$(cut -d'|' -f3 <<< "$SELECTION")
     REGION=$(cut -d'|' -f4 <<< "$SELECTION")
+    ROLE=$(cut -d'|' -f5 <<< "$SELECTION")
+fi
+
+REASON="${usage_reason:-access cluster $CLUSTER}"
+
+# Optional per-cluster role from the clusters file; --refresh-credentials so cached creds with another role are replaced
+AWSENV_ARGS=()
+if [[ -n "$ROLE" ]]; then
+    AWSENV_ARGS=(--role "$ROLE" --refresh-credentials)
 fi
 
 print "→ Getting credentials for: $ACCOUNT"
-eval "$(awsenv "$ACCOUNT" --reason "access cluster $CLUSTER" --export)"
+eval "$(awsenv "$ACCOUNT" "${AWSENV_ARGS[@]}" --reason "$REASON" --export)"
 
 print "→ Connecting: $CLUSTER ($REGION)"
 fpath=("${MY_CONFIG_PATH:-$HOME/zdotdir}/env/functions" $fpath)
