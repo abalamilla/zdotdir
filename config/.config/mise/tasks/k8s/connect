@@ -2,6 +2,7 @@
 #MISE description="Authenticate to AWS account(s) and connect to one or more EKS clusters"
 #MISE alias="eks"
 #USAGE arg "[alias]..." var=#true help="One or more cluster aliases e.g. scusw2 mcusw1 (omit for interactive picker)"
+#USAGE flag "--role <role>" help="awsenv role for every cluster, overriding the role from the clusters file"
 #USAGE flag "--reason <reason>" help="Reason for credential request (default: access cluster <cluster>)"
 
 CLUSTERS_FILE="${CJ_CLUSTERS_FILE:-$HOME/.config/cj/clusters.yaml}"
@@ -37,6 +38,7 @@ connect_one() {
         return 1
     fi
     IFS='|' read -r _ account cluster region role <<< "$line"
+    role="${usage_role:-$role}"
 
     key="$account|$role"
     if [[ -n "${BAD_CREDS[$key]:-}" ]]; then
@@ -44,7 +46,7 @@ connect_one() {
         return 1
     fi
     if [[ "$LAST_CREDS" != "$key" ]]; then
-        # Optional per-cluster role from the clusters file; --refresh-credentials so cached creds with another role are replaced
+        # Role from --role, else the per-cluster one in the clusters file; --refresh-credentials so cached creds with another role are replaced
         local awsenv_args=()
         [[ -n "$role" ]] && awsenv_args=(--role "$role" --refresh-credentials)
         print "→ Getting credentials for: $account"
