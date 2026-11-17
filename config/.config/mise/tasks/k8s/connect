@@ -1,7 +1,7 @@
 #!/usr/bin/env zsh
-#MISE description="Authenticate to AWS account and connect to EKS cluster"
+#MISE description="Authenticate to AWS account(s) and connect to one or more EKS clusters"
 #MISE alias="eks"
-#USAGE arg "[alias]" help="Cluster alias e.g. scusw2 (omit for interactive picker)"
+#USAGE arg "[alias]..." var=#true help="One or more cluster aliases e.g. scusw2 mcusw1 (omit for interactive picker)"
 #USAGE flag "--reason <reason>" help="Reason for credential request (default: access cluster <cluster>)"
 
 CLUSTERS_FILE="${CJ_CLUSTERS_FILE:-$HOME/.config/cj/clusters.yaml}"
@@ -12,42 +12,65 @@ if [[ ! -f "$CLUSTERS_FILE" ]]; then
     exit 1
 fi
 
-ALIAS_ARG="${usage_alias:-}"
+# alias|account|cluster|region|role, one line per cluster
+TABLE=$(yq e 'to_entries[] | .key as $account | .value[] | [.alias, $account, .cluster, .region, (.role // "")] | join("|")' "$CLUSTERS_FILE" | grep .)
 
-if [[ -n "$ALIAS_ARG" ]]; then
-    RAW=$(yq e 'to_entries[] | .key as $account | .value[] | select(.alias == "'"$ALIAS_ARG"'") | [$account, .cluster, .region, (.role // "")] | join("|")' "$CLUSTERS_FILE" | grep .)
-    if [[ -z "$RAW" ]]; then
-        print -u2 "No cluster found with alias: $ALIAS_ARG"
-        exit 1
-    fi
-    ACCOUNT=$(cut -d'|' -f1 <<< "$RAW")
-    CLUSTER=$(cut -d'|' -f2 <<< "$RAW")
-    REGION=$(cut -d'|' -f3 <<< "$RAW")
-    ROLE=$(cut -d'|' -f4 <<< "$RAW")
+ALIASES=()
+if [[ -n "${usage_alias:-}" ]]; then
+    ALIASES=(${=usage_alias})
 else
-    SELECTION=$(yq e 'to_entries[] | .key as $account | .value[] | [.alias, $account, .cluster, .region, (.role // "")] | join("|")' "$CLUSTERS_FILE" \
-        | grep . | fzf --delimiter='|' --header="alias | account | cluster | region | role")
+    SELECTION=$(fzf --delimiter='|' --header="alias | account | cluster | region | role" <<< "$TABLE")
     [[ -z "$SELECTION" ]] && exit 0
-    ACCOUNT=$(cut -d'|' -f2 <<< "$SELECTION")
-    CLUSTER=$(cut -d'|' -f3 <<< "$SELECTION")
-    REGION=$(cut -d'|' -f4 <<< "$SELECTION")
-    ROLE=$(cut -d'|' -f5 <<< "$SELECTION")
+    ALIASES=("${SELECTION%%|*}")
 fi
 
-REASON="${usage_reason:-access cluster $CLUSTER}"
-
-# Optional per-cluster role from the clusters file; --refresh-credentials so cached creds with another role are replaced
-AWSENV_ARGS=()
-if [[ -n "$ROLE" ]]; then
-    AWSENV_ARGS=(--role "$ROLE" --refresh-credentials)
-fi
-
-print "→ Getting credentials for: $ACCOUNT"
-eval "$(awsenv "$ACCOUNT" "${AWSENV_ARGS[@]}" --reason "$REASON" --export)"
-
-print "→ Connecting: $CLUSTER ($REGION)"
 fpath=("${MY_CONFIG_PATH:-$HOME/zdotdir}/env/functions" $fpath)
 autoload -Uz eksctx
-eksctx "$CLUSTER" "$REGION"
+
+LAST_CREDS=""   # account|role of the credentials currently exported, to avoid re-vending per cluster
+typeset -A BAD_CREDS   # account|role that awsenv already refused: skip its clusters instead of asking again
+connect_one() {
+    local alias_name=$1 line account cluster region role creds_out key
+    line=$(grep -m1 "^${alias_name}|" <<< "$TABLE")
+    if [[ -z "$line" ]]; then
+        print -u2 "No cluster found with alias: $alias_name"
+        return 1
+    fi
+    IFS='|' read -r _ account cluster region role <<< "$line"
+
+    key="$account|$role"
+    if [[ -n "${BAD_CREDS[$key]:-}" ]]; then
+        print -u2 "→ Skipping $cluster ($region): no credentials for $account"
+        return 1
+    fi
+    if [[ "$LAST_CREDS" != "$key" ]]; then
+        # Optional per-cluster role from the clusters file; --refresh-credentials so cached creds with another role are replaced
+        local awsenv_args=()
+        [[ -n "$role" ]] && awsenv_args=(--role "$role" --refresh-credentials)
+        print "→ Getting credentials for: $account"
+        creds_out=$(awsenv "$account" "${awsenv_args[@]}" --reason "${usage_reason:-access cluster $cluster}" --export) || { BAD_CREDS[$key]=1; return 1 }
+        eval "$creds_out"
+        LAST_CREDS="$key"
+    fi
+
+    print "→ Connecting: $cluster ($region)"
+    eksctx "$cluster" "$region"
+}
+
+FAILED=()
+for a in "${ALIASES[@]}"; do
+    connect_one "$a" || FAILED+=("$a")
+done
+
+if (( ${#FAILED} )); then
+    print -u2 ""
+    print -u2 "✗ Failed (${#FAILED}/${#ALIASES}): ${FAILED[*]}"
+    print -u2 "  Likely the credentials are for the wrong account or role, or the alias is unknown"
+    exit 1
+fi
+if (( ${#ALIASES} > 1 )); then
+    print "✓ Connected ${#ALIASES} clusters"
+fi
+exit 0
 
 # vim:ft=zsh
