@@ -1,4 +1,7 @@
 {
+  "env": {
+    "CLAUDE_CODE_AUTO_MODE_MODEL": "claude-haiku-5-5"
+  },
   "permissions": {
     "allow": [
       "Bash(git fetch *)",
@@ -59,7 +62,6 @@
     ],
     "defaultMode": "auto"
   },
-  "model": "sonnet",
   "skillOverrides": {
     "grill-me": "on",
     "task": "on",
