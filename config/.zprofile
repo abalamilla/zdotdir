@@ -10,14 +10,3 @@ else
     # linux
     eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
 fi
-
-export HB_CNF_HANDLER="$(brew --repository)/Library/Taps/homebrew/homebrew-command-not-found/handler.sh"
-
-# IMPORTANT! Order matters
-SOURCE_PATHS=(
-  $HB_CNF_HANDLER
-  $MY_ZTYLES_PATH         # zsh options
-  $MY_ENV_PATH            # environment path
-  $OFFICE_PROFILE
-)
-

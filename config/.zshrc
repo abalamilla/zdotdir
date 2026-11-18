@@ -4,6 +4,18 @@
 
 source $MY_INITIAL_CONFIGURATION
 
+# Defined here, not in .zprofile, so non-login interactive shells (kitty launchers,
+# `zsh -ic`) source the same files as login shells.
+(( $+commands[brew] )) && export HB_CNF_HANDLER="$(brew --repository)/Library/Taps/homebrew/homebrew-command-not-found/handler.sh"
+
+# IMPORTANT! Order matters
+SOURCE_PATHS=(
+  $HB_CNF_HANDLER
+  $MY_ZTYLES_PATH         # zsh options
+  $MY_ENV_PATH            # environment path
+  $OFFICE_PROFILE
+)
+
 # zsh glob expansion
 # . only files
 # N sets the NULL_GLOB option for the current pattern
