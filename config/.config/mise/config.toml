@@ -1,4 +1,5 @@
 [tools]
+"go:github.com/babarot/gh-mini" = "0.2.2"
 pkl = "latest"
 stern = "1.34.0"
 usage = "latest"

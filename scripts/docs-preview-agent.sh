@@ -4,7 +4,7 @@
 #
 # A plist cannot expand variables and launchd cannot read a profile kept in a synced
 # folder, so $WORK_DIR and the gh-mini path are resolved now, from your shell.
-# Re-run after moving WORK_DIR or upgrading the Go toolchain that holds gh-mini.
+# Re-run after moving WORK_DIR or bumping gh-mini in the mise config (the path is versioned).
 #
 # DOCS_PREVIEW_PORT (default 6419) and DOCS_PREVIEW_HTML_PORT (default 6421) set the
 # ports. The HTML preview port is fixed on purpose: it is the origin lesson pages keep
@@ -32,7 +32,7 @@ fi
 DOCS="$WORK_DIR/docs"
 [[ -d "$DOCS" ]] || { echo "no docs directory at $DOCS" >&2; exit 1; }
 GH_MINI="$(type -P gh-mini || true)"
-[[ -n "$GH_MINI" ]] || { echo "gh-mini not on PATH (go install github.com/babarot/gh-mini@latest)" >&2; exit 1; }
+[[ -n "$GH_MINI" ]] || { echo "gh-mini not on PATH (mise install, it is in config/.config/mise/config.toml)" >&2; exit 1; }
 
 mkdir -p "$(dirname "$PLIST")" "$(dirname "$LOG")"
 cat > "$PLIST" <<PLIST
