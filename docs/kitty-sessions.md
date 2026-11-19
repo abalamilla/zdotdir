@@ -50,8 +50,23 @@ which also replays things like `rm` or `kubectl delete`.
 Loading the file adds tabs next to whatever is open, so restoring while the
 original windows still run would resume the same Claude sessions twice.
 
+## Orphaned nvim servers are stopped after a restore
+
+A terminal nvim is a UI client plus an `nvim --embed` server. When kitty quits or
+crashes before nvim does, the server can survive with parent PID 1: no UI, no socket
+to attach to, its language servers still running, and growing (one reached 27 GB).
+Nothing can reconnect to it, so after a restore `orphan_nvim_cleanup.sh` stops every
+`nvim --embed` of yours whose parent is PID 1: SIGTERM first, which keeps swap files
+so unsaved edits can be recovered, then SIGKILL after 5s, because a hung language
+server can block a clean exit. A notification says how many it stopped and how much
+memory they held; nothing is shown when there were none.
+
+Run it by hand after a crash you do not restore from:
+`~/.config/kitty/orphan_nvim_cleanup.sh --dry-run`, then without `--dry-run`.
+
 ## Files
 
 - `config/.config/kitty/save_session.py`, `restore_session.py`: the kittens
+- `config/.config/kitty/orphan_nvim_cleanup.sh`: stops orphaned `nvim --embed` servers
 - `config/.claude/scripts/kitty-claude-session.sh`: the Claude hook
 - New files under `config/` need `stow -v config -t ~` to be linked

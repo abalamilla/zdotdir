@@ -6,11 +6,14 @@ layout is all that is left. See ~/zdotdir/docs/kitty-sessions.md.
 """
 
 import os
+import subprocess
 from typing import Any
 
 from kittens.tui.handler import result_handler
 
 SESSION_FILE = os.path.expanduser('~/.local/share/kitty/sessions/current.kitty-session')
+# nvim servers left behind by the kitty that saved the session; see the script.
+ORPHAN_CLEANUP = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'orphan_nvim_cleanup.sh')
 
 
 def main(args: list[str]) -> None:
@@ -34,3 +37,6 @@ def handle_result(args: list[str], answer: str, target_window_id: int, boss: Any
     original = windows[0]
     boss.goto_session(SESSION_FILE)
     boss.mark_window_for_close(original)
+    if os.access(ORPHAN_CLEANUP, os.X_OK):
+        subprocess.Popen([ORPHAN_CLEANUP], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+                         start_new_session=True)
