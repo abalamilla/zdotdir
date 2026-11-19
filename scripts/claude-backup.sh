@@ -10,9 +10,11 @@
 # Rules:
 # - New and changed files are staged, deletions never are. Chats that Claude Code
 #   cleans up after cleanupPeriodDays stay in the repo.
-# - gitleaks scans what is staged. A file with a finding is left out of this run
-#   and logged; redact the value by hand and the next run picks the file up.
-# - It only commits locally. Pushing is not part of this script.
+# - gitleaks scans what is staged. Flagged values are replaced with [REDACTED]
+#   in the staged copy only; the file on disk is left as it is. A file whose
+#   finding survives the replace is left out of the run and logged.
+# - It commits locally every run, and pushes only when a remote named origin
+#   is configured.
 #
 # A plist cannot expand variables and launchd has a minimal PATH, so --install
 # resolves the tool paths now, from your shell. Re-run it after a jq/gitleaks move.
@@ -90,21 +92,57 @@ fi
 git add --ignore-removal . || { log "git add failed"; exit 1; }
 git diff --cached --quiet && exit 0
 
-# Leave out any staged file gitleaks flags.
+# Secret scan of what is staged. gitleaks writes the matched values into the
+# report, so it lives in a 0600 temp file that is removed on exit and never printed.
 report="$(mktemp)"
-gitleaks git --pre-commit --staged --redact --no-banner \
-  --report-format json --report-path "$report" . >/dev/null 2>&1
-rc=$?
-if [ $rc -ne 0 ] && [ -s "$report" ] && [ "$(jq length "$report")" -gt 0 ]; then
-  jq -r '.[] | "\(.File)\t\(.RuleID)"' "$report" | sort -u | while IFS=$'\t' read -r f rule; do
-    git reset -q -- "$f" 2>/dev/null || git rm -q --cached -- "$f" 2>/dev/null
-    log "skipped $f ($rule)"
-  done
-elif [ $rc -ne 0 ]; then
-  rm -f "$report"; log "gitleaks failed (exit $rc), nothing committed"; exit 1
+trap 'rm -rf "$LOCK"; rm -f "$report"' EXIT
+scan() {
+  : > "$report"
+  gitleaks git --pre-commit --staged --no-banner \
+    --report-format json --report-path "$report" . >/dev/null 2>&1
+}
+findings() { [ -s "$report" ] && [ "$(jq length "$report")" -gt 0 ]; }
+
+scan; rc=$?
+if [ $rc -ne 0 ] && ! findings; then
+  log "gitleaks failed (exit $rc), nothing committed"; exit 1
 fi
-rm -f "$report"
+
+# Redact flagged values in the staged copy only. The file on disk keeps its
+# original text; the index gets a blob with [REDACTED] in place of each value.
+if findings; then
+  python3 -I - "$report" <<'PY' | while IFS= read -r line; do log "$line"; done
+import collections, json, subprocess, sys
+secrets, rules = collections.defaultdict(set), collections.defaultdict(set)
+for f in json.load(open(sys.argv[1])):
+    if f.get("Secret"):
+        secrets[f["File"]].add(f["Secret"].encode())
+        rules[f["File"]].add(f["RuleID"])
+for path, values in secrets.items():
+    blob = subprocess.run(["git", "show", ":" + path], capture_output=True).stdout
+    for v in sorted(values, key=len, reverse=True):
+        blob = blob.replace(v, b"[REDACTED]")
+    sha = subprocess.run(["git", "hash-object", "-w", "--stdin"], input=blob,
+                         capture_output=True, check=True).stdout.decode().strip()
+    subprocess.run(["git", "update-index", "--cacheinfo", f"100644,{sha},{path}"], check=True)
+    print(f"redacted {path} ({', '.join(sorted(rules[path]))}; {len(values)} values)")
+PY
+  # Anything still flagged (a value the replace could not match) stays out.
+  scan
+  if findings; then
+    jq -r '.[] | "\(.File)\t\(.RuleID)"' "$report" | sort -u | while IFS=$'\t' read -r f rule; do
+      git reset -q -- "$f" 2>/dev/null || git rm -q --cached -- "$f" 2>/dev/null
+      log "skipped $f ($rule)"
+    done
+  fi
+fi
 git diff --cached --quiet && exit 0
 
 git commit -q -m "backup: $(date -u +%Y-%m-%dT%H:%M:%SZ)" || { log "commit failed"; exit 1; }
 log "committed $(git rev-parse --short HEAD)"
+
+# Push only once a remote named origin is configured. Off VPN it fails and the
+# next run pushes the backlog.
+if git remote get-url origin >/dev/null 2>&1; then
+  out="$(git push -q origin HEAD 2>&1)" || log "push failed: $(printf '%s' "$out" | tail -1)"
+fi
