@@ -12,7 +12,8 @@
 #   cleans up after cleanupPeriodDays stay in the repo.
 # - gitleaks scans what is staged. Flagged values are replaced with [REDACTED]
 #   in the staged copy only; the file on disk is left as it is. A file whose
-#   finding survives the replace is left out of the run and logged.
+#   finding survives the replace is left out of the run and logged. Unreferenced
+#   objects (the unredacted blobs `git add` wrote) are pruned after each commit.
 # - It commits locally every run, and pushes only when a remote named origin
 #   is configured.
 #
@@ -95,7 +96,15 @@ git diff --cached --quiet && exit 0
 # Secret scan of what is staged. gitleaks writes the matched values into the
 # report, so it lives in a 0600 temp file that is removed on exit and never printed.
 report="$(mktemp)"
-trap 'rm -rf "$LOCK"; rm -f "$report"' EXIT
+# On every exit: `git add` wrote the unredacted blobs into .git/objects before the
+# index was swapped to the redacted ones (or the file was skipped). Nothing
+# references them, so prune them at once instead of waiting for gc to expire them.
+cleanup() {
+  rm -f "$report"
+  git prune --expire=now >/dev/null 2>&1 || log "prune failed"
+  rm -rf "$LOCK"
+}
+trap cleanup EXIT
 scan() {
   : > "$report"
   gitleaks git --pre-commit --staged --no-banner \
