@@ -4,6 +4,8 @@
 # so caches and other rebuildable state never get staged.
 #
 #   claude-backup.sh              run one backup (what the LaunchAgent does)
+#   claude-backup.sh --init       make ~/.claude a git repo with the whitelist
+#                                 .gitignore (does nothing to an existing repo)
 #   claude-backup.sh --install    write and load the LaunchAgent (run from your shell)
 #   claude-backup.sh --uninstall  unload and remove it
 #
@@ -32,7 +34,56 @@ INTERVAL="${CLAUDE_BACKUP_INTERVAL:-3600}"
 
 log() { printf '%s %s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$*" >> "$LOG"; }
 
+write_gitignore() {
+  cat > "$1" <<'EOF'
+# Whitelist: ignore everything, then allow only what is worth restoring.
+# Rebuildable or throwaway state (file-history, caches, session-env, debug,
+# telemetry, paste-cache, shell-snapshots, plugin caches) stays out.
+/*
+!/.gitignore
+!/RESTORE.md
+!/history.jsonl
+!/tasks.json
+!/settings.local.json
+
+# Exports written by the backup script (mcpServers from ~/.claude.json,
+# ~/.agents/.skill-lock.json).
+!/exports/
+
+!/plugins/
+/plugins/*
+!/plugins/installed_plugins.json
+!/plugins/known_marketplaces.json
+
+# Chats and memories. Background-job chats from temp worktrees are left out.
+!/projects/
+/projects/-private-var-folders-*/
+/projects/-var-folders-*/
+EOF
+  # The runbooks clone's background-job chats are left out too. Its path comes
+  # from the shell ($EE_RUNBOOKS) so no internal name is written into this repo.
+  # Claude names a project dir after the launch path with / and . turned into -.
+  if [ -n "${EE_RUNBOOKS:-}" ]; then
+    printf '/projects/%s/\n' "$(printf '%s' "$EE_RUNBOOKS" | sed 's#[/.]#-#g')" >> "$1"
+  fi
+}
+
 case "${1:-}" in
+  --init)
+    set -e
+    mkdir -p "$REPO"
+    if [ -d "$REPO/.git" ]; then
+      echo "$REPO is already a git repo, left as it is"
+      exit 0
+    fi
+    git -C "$REPO" init -q -b main
+    if [ -e "$REPO/.gitignore" ]; then
+      echo "kept the existing $REPO/.gitignore"
+    else
+      write_gitignore "$REPO/.gitignore"
+    fi
+    echo "initialised $REPO; the next run commits everything the .gitignore allows"
+    exit 0 ;;
   --uninstall)
     launchctl bootout "gui/$(id -u)/$LABEL" 2>/dev/null || true
     rm -f "$PLIST"
@@ -67,6 +118,7 @@ PLIST
     launchctl bootout "gui/$(id -u)/$LABEL" 2>/dev/null || true
     launchctl bootstrap "gui/$(id -u)" "$PLIST"
     echo "installed $LABEL: every ${INTERVAL}s, log $LOG"
+    [ -d "$REPO/.git" ] || echo "warning: $REPO is not a git repo yet; run $0 --init (or clone the backup into it)"
     exit 0 ;;
 esac
 
