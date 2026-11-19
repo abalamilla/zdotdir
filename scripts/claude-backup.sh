@@ -8,8 +8,9 @@
 #   claude-backup.sh --uninstall  unload and remove it
 #
 # Rules:
-# - New and changed files are staged, deletions never are. Chats that Claude Code
-#   cleans up after cleanupPeriodDays stay in the repo.
+# - Every change is staged, deletions included. A chat Claude Code cleans up after
+#   cleanupPeriodDays leaves the latest commit but stays in history
+#   (git log -- <path>; git checkout <sha> -- <path>).
 # - gitleaks scans what is staged. Flagged values are replaced with [REDACTED]
 #   in the staged copy only; the file on disk is left as it is. A file whose
 #   finding survives the replace is left out of the run and logged. Unreferenced
@@ -89,8 +90,9 @@ else
 fi
 [ -f "$HOME/.agents/.skill-lock.json" ] && cp "$HOME/.agents/.skill-lock.json" exports/skill-lock.json
 
-# Stage new and modified files only, never deletions.
-git add --ignore-removal . || { log "git add failed"; exit 1; }
+# Stage everything, deletions included: a chat removed by cleanupPeriodDays or a
+# deleted memory leaves HEAD (so a clone does not bring it back) but stays in history.
+git add -A . || { log "git add failed"; exit 1; }
 git diff --cached --quiet && exit 0
 
 # Secret scan of what is staged. gitleaks writes the matched values into the
