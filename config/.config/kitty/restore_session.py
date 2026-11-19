@@ -10,10 +10,11 @@ import subprocess
 from typing import Any
 
 from kittens.tui.handler import result_handler
+from kitty.constants import config_dir
 
 SESSION_FILE = os.path.expanduser('~/.local/share/kitty/sessions/current.kitty-session')
 # nvim servers left behind by the kitty that saved the session; see the script.
-ORPHAN_CLEANUP = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'orphan_nvim_cleanup.sh')
+ORPHAN_CLEANUP = os.path.join(os.path.realpath(config_dir), 'orphan_nvim_cleanup.sh')
 
 
 def main(args: list[str]) -> None:
