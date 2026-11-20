@@ -34,8 +34,20 @@ end
 local appWatcher = hs.application.watcher.new(ApplicationWatcher)
 appWatcher:start()
 
+-- nil when the app is gone, instead of an error
+function AppID(app)
+	local info = hs.application.infoForBundlePath(app)
+	return info and info["CFBundleIdentifier"]
+end
+
+-- Read from the app, because Teams changed its bundle ID once (com.microsoft.teams to teams2).
+TeamsID = AppID("/Applications/Microsoft Teams.app")
+if not TeamsID then
+	hs.alert.show("Microsoft Teams not found: hyper+1 and Teams links are off", 10)
+end
+
 function ToggleMute()
-	local teams = hs.application.find("com.microsoft.teams2")
+	local teams = TeamsID and hs.application.find(TeamsID)
 	if not (teams == nil) then
 		hs.eventtap.keyStroke({ "cmd", "shift" }, "m", 0, teams)
 	end
@@ -49,10 +61,6 @@ hs.hotkey.bind(hyper, "1", ToggleMute)
 hs.hotkey.bind(hyper, "v", TypePasteboardContet)
 
 hs.loadSpoon("SpoonInstall")
-
-function AppID(app)
-	return hs.application.infoForBundlePath(app)["CFBundleIdentifier"]
-end
 
 function FindBrowser()
 	local browsers = { "Brave Browser", "Google Chrome", "Safari", "Firefox" }
@@ -72,14 +80,15 @@ end
 
 DefaultBrowser = FindBrowser()
 
+-- Without Teams, leave Teams links to the browser instead of rewriting them to msteams:.
 spoon.SpoonInstall:andUse("URLDispatcher", {
 	config = {
-		url_patterns = {
-			{ "msteams:", "com.microsoft.teams2" },
-		},
-		url_redir_decoders = {
+		url_patterns = TeamsID and {
+			{ "msteams:", TeamsID },
+		} or {},
+		url_redir_decoders = TeamsID and {
 			{ "MS Teams URLs", "(https://teams.microsoft.com.*)", "msteams:%1", true },
-		},
+		} or {},
 		default_handler = DefaultBrowser,
 	},
 	start = true,
