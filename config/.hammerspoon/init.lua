@@ -137,5 +137,11 @@ spoon.SpoonInstall:andUse("KSheet", {
 
 -- open and quit Slack, Teams and Roar around working hours (workday_apps.lua)
 WorkdayApps = require("workday_apps").start()
+hs.hotkey.bind(hyper, "o", function()
+	WorkdayApps.manual("open")
+end)
+hs.hotkey.bind(hyper, "c", function()
+	WorkdayApps.manual("close")
+end)
 
 -- END

@@ -8,6 +8,9 @@
 --
 -- Paused dates are written by the workday-apps shell function (env/functions/workday-apps)
 -- and read at every check.
+--
+-- Manual runs: hyper+O opens and hyper+C quits right away (bound in init.lua). They skip
+-- every guard and the dialog, log "(manual)" and leave the done markers alone.
 
 local M = {}
 
@@ -116,22 +119,28 @@ local function runningCloseApps()
 	return apps
 end
 
-local function openApps(late)
+-- how: nil for an on-time run, "catch-up" or "manual".
+local function openApps(how)
 	local started = {}
 	for _, app in ipairs(OPEN_APPS) do
-		hs.task.new("/usr/bin/open", nil, { "-g", app.path }):start() -- -g: stay in the background
+		hs.task.new("/usr/bin/open", nil, { "-g", app.path }):start() -- -g asks for background; Slack and Teams still come forward
 		table.insert(started, app.name)
 	end
 	if os.date("%w") == "5" then
-		-- Last and in front: the only app that takes focus.
+		-- Opened last, so it ends up in front.
 		M.fridayTimer = hs.timer.doAfter(5, function()
 			hs.task.new("/usr/bin/open", nil, { FRIDAY_APP.path }):start()
 		end)
 		table.insert(started, FRIDAY_APP.name)
 	end
 	local result = "started " .. table.concat(started, ", ")
-	markDone("open", result .. (late and " (catch-up)" or ""))
-	if late then
+	if how == "manual" then
+		log("open (manual): " .. result)
+		announce("manual open: " .. result)
+		return
+	end
+	markDone("open", result .. (how and (" (" .. how .. ")") or ""))
+	if how == "catch-up" then
 		announce("catch-up: " .. result)
 	end
 end
@@ -151,6 +160,11 @@ local function quitApps(reason, attempt)
 		app:kill() -- graceful quit, so Teams can still ask about a call
 	end
 	local result = #quit > 0 and ("quit " .. table.concat(quit, ", ")) or "nothing running"
+	if reason == "manual" then
+		log("close (manual): " .. result)
+		announce("manual close: " .. result)
+		return
+	end
 	markDone("close", result .. (reason and (" (" .. reason .. ")") or ""))
 end
 
@@ -207,7 +221,7 @@ function M.check()
 	local openAt, closeAt = minutesOf(OPEN_AT), minutesOf(CLOSE_AT)
 
 	if now >= openAt and now < closeAt and not doneToday("open") then
-		openApps(now - openAt > LATE_MINUTES)
+		openApps(now - openAt > LATE_MINUTES and "catch-up" or nil)
 	end
 
 	if now >= closeAt and now <= minutesOf(CLOSE_UNTIL) and not doneToday("close") and not closing then
@@ -226,6 +240,15 @@ function M.check()
 		else
 			askToClose()
 		end
+	end
+end
+
+-- run: "open" or "close". Called by the hyper+O and hyper+C hotkeys in init.lua.
+function M.manual(run)
+	if run == "open" then
+		openApps("manual")
+	else
+		quitApps("manual")
 	end
 end
 
