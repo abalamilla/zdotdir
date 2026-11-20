@@ -1,0 +1,172 @@
+# Pause the workday apps (config/.hammerspoon/workday_apps.lua) on given dates.
+#
+#   workday-apps pause <date|range>...   e.g. 2026-12-01 2026-12-24..2027-01-02
+#   workday-apps resume <date|range>...
+#   workday-apps status
+#   workday-apps                         interactive menu (needs fzf and a terminal)
+#
+# On a paused date neither the open run nor the close run happens. Hammerspoon reads
+# the dates file at every check, so no reload is needed. Past dates are pruned on write.
+emulate -L zsh
+
+local state_dir=${WORKDAY_APPS_STATE_DIR:-$HOME/.local/state/workday-apps}
+local paused_file=$state_dir/paused-dates
+local today=${WORKDAY_APPS_TODAY:-$(date +%F)}
+local usage="usage: workday-apps [pause|resume <YYYY-MM-DD|YYYY-MM-DD..YYYY-MM-DD>... | status]
+       workday-apps          interactive menu (needs fzf and a terminal)"
+
+# A real calendar date in YYYY-MM-DD (BSD date rolls 2026-02-30 over, so compare back).
+_workday_apps_valid() {
+  [[ $1 =~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}$' ]] && [[ $(date -j -f %F "$1" +%F 2>/dev/null) == "$1" ]]
+}
+
+# Print every date the arguments cover, one per line. Fails on the first bad argument.
+_workday_apps_expand() {
+  local arg from to d n
+  for arg in "$@"; do
+    if [[ $arg == *..* ]]; then
+      from=${arg%%..*} to=${arg#*..}
+    else
+      from=$arg to=$arg
+    fi
+    if ! _workday_apps_valid "$from" || ! _workday_apps_valid "$to"; then
+      print -u2 "workday-apps: not a date or range: $arg"
+      return 1
+    fi
+    if [[ $from > $to ]]; then
+      print -u2 "workday-apps: range ends before it starts: $arg"
+      return 1
+    fi
+    d=$from n=0
+    while [[ ! $d > $to ]]; do
+      if (( ++n > 366 )); then
+        print -u2 "workday-apps: range longer than a year: $arg"
+        return 1
+      fi
+      print -- "$d"
+      d=$(date -j -v+1d -f %F "$d" +%F)
+    done
+  done
+}
+
+# Paused dates from today on, sorted.
+_workday_apps_read() {
+  [[ -r $paused_file ]] || return 0
+  local d
+  for d in ${(f)"$(<$paused_file)"}; do
+    [[ $d < $today ]] || print -- "$d"
+  done | sort -u
+}
+
+_workday_apps_write() {
+  mkdir -p "$state_dir" || return 1
+  local tmp
+  tmp=$(mktemp "$state_dir/.paused-dates.XXXXXX") || return 1
+  print -l -- "$@" | sed '/^$/d' | sort -u >"$tmp" && mv "$tmp" "$paused_file"
+}
+
+_workday_apps_label() {
+  date -j -f %F "$1" '+%a %F'
+}
+
+_workday_apps_pause() {
+  local -a wanted current added
+  wanted=(${(f)"$(_workday_apps_expand "$@")"}) || return 1
+  (( $#wanted )) || { print -u2 $usage; return 1 }
+  current=(${(f)"$(_workday_apps_read)"})
+  local d
+  for d in $wanted; do
+    if [[ $d < $today ]]; then
+      print "skipped $(_workday_apps_label $d): in the past"
+    elif (( ! ${current[(Ie)$d]} )); then
+      added+=($d)
+    fi
+  done
+  _workday_apps_write $current $added || return 1
+  for d in $added; do print "paused $(_workday_apps_label $d)"; done
+  (( $#added )) || print "nothing new to pause"
+}
+
+_workday_apps_resume() {
+  local -a wanted current kept removed
+  wanted=(${(f)"$(_workday_apps_expand "$@")"}) || return 1
+  (( $#wanted )) || { print -u2 $usage; return 1 }
+  current=(${(f)"$(_workday_apps_read)"})
+  local d
+  for d in $current; do
+    if (( ${wanted[(Ie)$d]} )); then removed+=($d); else kept+=($d); fi
+  done
+  _workday_apps_write $kept || return 1
+  for d in $removed; do print "resumed $(_workday_apps_label $d)"; done
+  (( $#removed )) || print "none of those dates were paused"
+}
+
+_workday_apps_status() {
+  local -a current
+  current=(${(f)"$(_workday_apps_read)"})
+  local state=active
+  (( ${current[(Ie)$today]} )) && state=paused
+  [[ $(date -j -f %F "$today" +%u) -gt 5 ]] && state="weekend, no runs"
+  print "today $(_workday_apps_label $today): $state"
+  local run line
+  for run in open close; do
+    line=$(cat "$state_dir/last-$run" 2>/dev/null)
+    if [[ ${line[1,10]} == $today ]]; then
+      print "  $run run: done ${line[12,-1]}"
+    else
+      print "  $run run: not yet"
+    fi
+  done
+  if (( $#current )); then
+    print "paused dates:"
+    local d
+    for d in $current; do print "  $(_workday_apps_label $d)"; done
+  else
+    print "no paused dates"
+  fi
+}
+
+_workday_apps_interactive() {
+  if [[ ! -t 0 || ! -t 1 ]] || ! (( $+commands[fzf] )); then
+    print -u2 $usage
+    return 1
+  fi
+  local action
+  action=$(print -l pause resume status | fzf --prompt 'workday-apps> ' --height 6 --reverse) || return 1
+  case $action in
+    status) _workday_apps_status ;;
+    pause)
+      local -a current
+      current=(${(f)"$(_workday_apps_read)"})
+      if (( $#current )); then
+        print "already paused:"
+        local d
+        for d in $current; do print "  $(_workday_apps_label $d)"; done
+      fi
+      local input
+      while true; do
+        read "input?dates to pause (e.g. 2026-12-01 2026-12-24..2027-01-02, empty to cancel): " || return 1
+        [[ -z ${input// } ]] && { print "cancelled"; return 1 }
+        _workday_apps_expand ${=input} >/dev/null && break
+      done
+      _workday_apps_pause ${=input}
+      ;;
+    resume)
+      local picked
+      picked=$(_workday_apps_read | while read -r d; do _workday_apps_label $d; done)
+      [[ -n $picked ]] || { print "no paused dates"; return 0 }
+      picked=$(print -r -- $picked | fzf --multi --prompt 'resume (Tab to mark)> ' --height 12 --reverse) || return 1
+      _workday_apps_resume ${(f)"$(print -r -- $picked | awk '{print $2}')"}
+      ;;
+  esac
+}
+
+case ${1:-} in
+  pause) shift; _workday_apps_pause "$@" ;;
+  resume) shift; _workday_apps_resume "$@" ;;
+  status) _workday_apps_status ;;
+  '') _workday_apps_interactive ;;
+  *) print -u2 $usage; return 1 ;;
+esac
+
+# vim:ft=zsh
