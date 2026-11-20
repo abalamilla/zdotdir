@@ -26,12 +26,13 @@ local DIALOG_SECONDS = 120
 local LATE_MINUTES = 5 -- a run this late is a catch-up run and shows an on-screen alert
 local EMPTY_SECONDS = 120 -- app lookups can come back empty for a moment, so "nothing running" must last this long
 
-local OPEN_APPS = {
-	{ name = "Slack", path = HOME .. "/Applications/Slack.app" },
-	{ name = "Microsoft Teams", path = "/Applications/Microsoft Teams.app" },
-}
-local FRIDAY_APP = { name = "Roar", path = HOME .. "/Applications/Chrome Apps.localized/rOarXMarcel.app" }
-local CLOSE_BUNDLE_IDS = { "com.tinyspeck.slackmacgap", "com.microsoft.teams2" }
+-- Paths only: bundle IDs are read from each app's Info.plist at run time, because they
+-- change (Teams went from com.microsoft.teams to com.microsoft.teams2).
+local SLACK = { name = "Slack", path = HOME .. "/Applications/Slack.app" }
+local TEAMS = { name = "Microsoft Teams", path = "/Applications/Microsoft Teams.app" }
+local ROAR = { name = "Roar", path = HOME .. "/Applications/Chrome Apps.localized/rOarXMarcel.app" }
+local OPEN_APPS = { SLACK, TEAMS }
+local CLOSE_APPS = { SLACK, TEAMS }
 
 local closing = false -- a close dialog is up or snoozed
 local loggedPause = {} -- dates already logged as paused in this config load
@@ -103,37 +104,127 @@ local function isScreenLocked()
 	return props["CGSSessionScreenIsLocked"] == true
 end
 
+local function bundleID(app)
+	local info = hs.application.infoForBundlePath(app.path)
+	return info and info.CFBundleIdentifier
+end
+
+local function warn(text)
+	log("WARN " .. text)
+	hs.alert.show("Workday apps: " .. text, 10)
+end
+
+-- Names of the apps whose path is gone or has no bundle ID, after warning about each.
+local function missingApps(apps)
+	local missing = {}
+	for _, app in ipairs(apps) do
+		if not bundleID(app) then
+			warn(app.name .. " not found at " .. app.path)
+			table.insert(missing, app.name)
+		end
+	end
+	return missing
+end
+
+local function withMissing(result, missing)
+	return #missing > 0 and (result .. "; missing " .. table.concat(missing, ", ")) or result
+end
+
 local function runningCloseApps()
 	local apps = {}
-	for _, id in ipairs(CLOSE_BUNDLE_IDS) do
-		-- applicationsForBundleID came back empty right after the dialog closed while both
-		-- apps were running, and a second lookup found them, so fall back to get().
-		local found = hs.application.applicationsForBundleID(id) or {}
-		if #found == 0 then
-			found = { hs.application.get(id) }
-		end
-		for _, app in ipairs(found) do
-			table.insert(apps, app)
+	for _, closeApp in ipairs(CLOSE_APPS) do
+		local id = bundleID(closeApp)
+		if id then
+			-- applicationsForBundleID came back empty right after the dialog closed while both
+			-- apps were running, and a second lookup found them, so fall back to get().
+			local found = hs.application.applicationsForBundleID(id) or {}
+			if #found == 0 then
+				found = { hs.application.get(id) }
+			end
+			for _, app in ipairs(found) do
+				table.insert(apps, app)
+			end
 		end
 	end
 	return apps
 end
 
+-- Run /usr/bin/open on each app and call done(started, failed) once all have answered.
+local function launch(apps, args, done)
+	local started, failed, pending = {}, {}, #apps
+	local function finish(ok, name)
+		table.insert(ok and started or failed, name)
+		pending = pending - 1
+		if pending == 0 then
+			done(started, failed)
+		end
+	end
+	for _, app in ipairs(apps) do
+		if not bundleID(app) then
+			warn(app.name .. " not found at " .. app.path)
+			finish(false, app.name)
+		else
+			local taskArgs = {}
+			for _, a in ipairs(args) do
+				table.insert(taskArgs, a)
+			end
+			table.insert(taskArgs, app.path)
+			local task = hs.task.new("/usr/bin/open", function(exitCode, _, stdErr)
+				if exitCode ~= 0 then
+					warn("could not open " .. app.name .. ": " .. (stdErr or ""):gsub("%s+$", ""))
+				end
+				finish(exitCode == 0, app.name)
+			end, taskArgs)
+			table.insert(M.tasks, task) -- keep a reference until it answers
+			task:start()
+		end
+	end
+end
+
+local function openResult(started, failed)
+	local parts = {}
+	if #started > 0 then
+		table.insert(parts, "started " .. table.concat(started, ", "))
+	end
+	if #failed > 0 then
+		table.insert(parts, "failed " .. table.concat(failed, ", "))
+	end
+	return table.concat(parts, "; ")
+end
+
 -- how: nil for an on-time run, "catch-up" or "manual".
 local function openApps(how)
-	local started = {}
-	for _, app in ipairs(OPEN_APPS) do
-		hs.task.new("/usr/bin/open", nil, { "-g", app.path }):start() -- -g asks for background; Slack and Teams still come forward
-		table.insert(started, app.name)
+	M.tasks = {}
+	if how ~= "manual" then
+		-- Marks the run done now, so a check while open is still answering cannot start a second one.
+		os.execute('/bin/mkdir -p "' .. STATE_DIR .. '"')
+		local f = io.open(STATE_DIR .. "/last-open", "w")
+		if f then
+			f:write(os.date("%Y-%m-%d %H:%M ") .. "starting\n")
+			f:close()
+		end
 	end
-	if os.date("%w") == "5" then
-		-- Opened last, so it ends up in front.
+	-- -g asks for the background; Slack and Teams still come forward.
+	launch(OPEN_APPS, { "-g" }, function(started, failed)
+		if os.date("%w") ~= "5" then
+			return M.reportOpen(how, openResult(started, failed))
+		end
+		-- Roar opens last, so it ends up in front.
 		M.fridayTimer = hs.timer.doAfter(5, function()
-			hs.task.new("/usr/bin/open", nil, { FRIDAY_APP.path }):start()
+			launch({ ROAR }, {}, function(rStarted, rFailed)
+				for _, n in ipairs(rStarted) do
+					table.insert(started, n)
+				end
+				for _, n in ipairs(rFailed) do
+					table.insert(failed, n)
+				end
+				M.reportOpen(how, openResult(started, failed))
+			end)
 		end)
-		table.insert(started, FRIDAY_APP.name)
-	end
-	local result = "started " .. table.concat(started, ", ")
+	end)
+end
+
+function M.reportOpen(how, result)
 	if how == "manual" then
 		log("open (manual): " .. result)
 		announce("manual open: " .. result)
@@ -159,7 +250,8 @@ local function quitApps(reason, attempt)
 		table.insert(quit, app:name())
 		app:kill() -- graceful quit, so Teams can still ask about a call
 	end
-	local result = #quit > 0 and ("quit " .. table.concat(quit, ", ")) or "nothing running"
+	local result =
+		withMissing(#quit > 0 and ("quit " .. table.concat(quit, ", ")) or "nothing running", missingApps(CLOSE_APPS))
 	if reason == "manual" then
 		log("close (manual): " .. result)
 		announce("manual close: " .. result)
@@ -230,7 +322,7 @@ function M.check()
 				emptySince = { date = date, time = os.time() }
 			elseif os.time() - emptySince.time >= EMPTY_SECONDS then
 				emptySince = nil
-				markDone("close", "nothing running")
+				markDone("close", withMissing("nothing running", missingApps(CLOSE_APPS)))
 			end
 			return
 		end
@@ -253,6 +345,7 @@ function M.manual(run)
 end
 
 function M.start()
+	missingApps({ SLACK, TEAMS, ROAR }) -- warn at load, not only at 07:00
 	M.timer = hs.timer.doEvery(60, M.check)
 	M.watcher = hs.caffeinate.watcher.new(function(event)
 		if event == hs.caffeinate.watcher.systemDidWake or event == hs.caffeinate.watcher.screensDidUnlock then
