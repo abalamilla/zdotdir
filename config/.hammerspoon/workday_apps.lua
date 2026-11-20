@@ -20,7 +20,8 @@ local CLOSE_AT = "17:00"
 local CLOSE_UNTIL = "23:59"
 local SNOOZE_MINUTES = 10
 local DIALOG_SECONDS = 120
-local LATE_MINUTES = 5 -- a run this late is a catch-up run and shows a notification
+local LATE_MINUTES = 5 -- a run this late is a catch-up run and shows an on-screen alert
+local EMPTY_SECONDS = 120 -- app lookups can come back empty for a moment, so "nothing running" must last this long
 
 local OPEN_APPS = {
 	{ name = "Slack", path = HOME .. "/Applications/Slack.app" },
@@ -31,6 +32,7 @@ local CLOSE_BUNDLE_IDS = { "com.tinyspeck.slackmacgap", "com.microsoft.teams2" }
 
 local closing = false -- a close dialog is up or snoozed
 local loggedPause = {} -- dates already logged as paused in this config load
+local emptySince = nil -- { date, time } of the first close check that found no app running
 
 local function minutesOf(hm)
 	local h, m = hm:match("(%d+):(%d+)")
@@ -63,8 +65,9 @@ local function log(line)
 	end
 end
 
-local function notify(text)
-	hs.notify.new({ title = "Workday apps", informativeText = text }):send()
+-- hs.alert, not hs.notify: it needs no notification permission and no Focus mode hides it.
+local function announce(text)
+	hs.alert.show("Workday apps " .. text, 5)
 end
 
 local function isPaused(date)
@@ -100,7 +103,13 @@ end
 local function runningCloseApps()
 	local apps = {}
 	for _, id in ipairs(CLOSE_BUNDLE_IDS) do
-		for _, app in ipairs(hs.application.applicationsForBundleID(id)) do
+		-- applicationsForBundleID came back empty right after the dialog closed while both
+		-- apps were running, and a second lookup found them, so fall back to get().
+		local found = hs.application.applicationsForBundleID(id) or {}
+		if #found == 0 then
+			found = { hs.application.get(id) }
+		end
+		for _, app in ipairs(found) do
 			table.insert(apps, app)
 		end
 	end
@@ -123,13 +132,21 @@ local function openApps(late)
 	local result = "started " .. table.concat(started, ", ")
 	markDone("open", result .. (late and " (catch-up)" or ""))
 	if late then
-		notify("Catch-up open run: " .. result)
+		announce("catch-up: " .. result)
 	end
 end
 
-local function quitApps(reason)
+local function quitApps(reason, attempt)
+	attempt = attempt or 1
+	local apps = runningCloseApps()
+	if #apps == 0 and attempt < 3 then
+		M.quitRetryTimer = hs.timer.doAfter(2, function()
+			quitApps(reason, attempt + 1)
+		end)
+		return
+	end
 	local quit = {}
-	for _, app in ipairs(runningCloseApps()) do
+	for _, app in ipairs(apps) do
 		table.insert(quit, app:name())
 		app:kill() -- graceful quit, so Teams can still ask about a call
 	end
@@ -195,8 +212,16 @@ function M.check()
 
 	if now >= closeAt and now <= minutesOf(CLOSE_UNTIL) and not doneToday("close") and not closing then
 		if #runningCloseApps() == 0 then
-			markDone("close", "nothing running")
-		elseif isScreenLocked() then
+			if not emptySince or emptySince.date ~= date then
+				emptySince = { date = date, time = os.time() }
+			elseif os.time() - emptySince.time >= EMPTY_SECONDS then
+				emptySince = nil
+				markDone("close", "nothing running")
+			end
+			return
+		end
+		emptySince = nil
+		if isScreenLocked() then
 			quitApps("screen locked") -- nobody is there to answer the dialog
 		else
 			askToClose()
