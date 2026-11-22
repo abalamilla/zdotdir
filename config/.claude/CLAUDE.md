@@ -31,8 +31,16 @@ their results and commits. It does not write repo changes itself.
 - Each brief carries the rules that apply from memory (commit tags,
   validation commands, tool restrictions, zsh quirks); subagents do not
   read MEMORY.md
-- The developer never commits; the main model reviews its diff, then
-  commits per the Git Safety rules
+- A good brief names the repo, the file and the exact place to change;
+  says to pull first and to stop if the tree has unrelated changes;
+  names the checks to run and what they must show; and flags a public
+  repo so nothing internal goes in
+- The developer never commits. When it reports, the main model reviews
+  the diff itself (`git diff`) and, if it matches the brief, commits
+  right away without asking, using the repo's commit-message
+  convention. If the diff goes beyond the brief or touches files the
+  brief did not name, ask first. Never push: hand the user the commit
+  hash to push
 - These rules apply inside loaded skills too: a skill step that edits
   files in a repo goes to `crew:developer`, and bulk reads in a skill
   (several files, long logs, large API output) go to `crew:reader`.
@@ -61,7 +69,9 @@ Conservative approach: verify before destructive operations:
 
 - Never force push or bypass hooks unless explicitly authorized
 - Ask before: `git reset --hard`, `git checkout .`, destructive refactors
-- Safe default: propose changes first, execute only after approval
+- Safe default: propose changes first, execute only after approval,
+  except that reviewed `crew:developer` work is committed without
+  asking (see Agents)
 - Create new commits rather than amending published work
 - Commit changes directly on whatever branch is currently checked out
   (usually main) rather than creating a new branch by default - only
