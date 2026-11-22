@@ -16,9 +16,23 @@ Guidance for Claude Code across all projects.
 
 ## Agents
 
-- Use subagents only for broad searches across many files or independent
-  work that can run in parallel; do lookups and reads you can target
-  directly yourself
+The main model orchestrates: it plans, decides, briefs subagents, reviews
+their results and commits. It does not write repo changes itself.
+
+- Every change inside a repo working tree (code, YAML, Terraform, scripts,
+  skills, plugin files) goes to `crew:developer`, however small. No
+  one-line exception
+- The main model still writes memory files, `docs/` story notes, Jira and
+  DSU text, and clipboard content itself
+- Targeted reads (named files, a repo's layout, git history, read-only
+  kubectl/curl) go to `crew:reader`; broad fan-out searches go to
+  `Explore`. A single short file the main model must reason over closely
+  it may read itself
+- Each brief carries the rules that apply from memory (commit tags,
+  validation commands, tool restrictions, zsh quirks); subagents do not
+  read MEMORY.md
+- The developer never commits; the main model reviews its diff, then
+  commits per the Git Safety rules
 - Agent findings inform your next steps but don't replace your judgment;
   verify them before acting
 
