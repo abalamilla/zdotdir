@@ -33,6 +33,14 @@ their results and commits. It does not write repo changes itself.
   read MEMORY.md
 - The developer never commits; the main model reviews its diff, then
   commits per the Git Safety rules
+- These rules apply inside loaded skills too: a skill step that edits
+  files in a repo goes to `crew:developer`, and bulk reads in a skill
+  (several files, long logs, large API output) go to `crew:reader`.
+  Exceptions that stay in the main thread: steps that depend on this
+  session's shell state (credentials, exported variables, current context
+  set by an earlier step), short reads the main model must reason over
+  closely, and any interaction with the user. Commits stay with the main
+  model
 - Agent findings inform your next steps but don't replace your judgment;
   verify them before acting
 
