@@ -60,6 +60,11 @@ files:
 - Use memory for recurring patterns: user preferences, project context, learned
   feedback
 - Don't save ephemeral task state; use tasks list for that
+- Don't save facts about a single story or ticket (its setup, status or
+  hand-off details), and don't add story-specific refinements to existing
+  memories, unless the user asks or the configuration is new. A pattern
+  that already has precedents in the repos is derivable, so it stays in
+  the story's own docs. This applies during wrap-up too
 - Review memory before proposing approaches; verify it's still accurate
 - Update or remove stale memories when they no longer reflect reality
 
